@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "804933162743",
+    "firebase_url": "https://ebikereader.firebaseio.com",
+    "project_id": "ebikereader",
+    "storage_bucket": "ebikereader.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804933162743:android:e6c75b922aa673d9",
+        "android_client_info": {
+          "package_name": "nl.easthome.ebikereader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804933162743-v92r16t2ora7s7hlqt0nt7av7klc9l5j.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "804933162743-dvnjpvikq2nkl99r2sr3fsqkkj01c7p8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "nl.easthome.ebikereader",
+            "certificate_hash": "089dee1d94743d3053b6bcbd77176bfdbf23eed7"
+          }
+        },
+        {
+          "client_id": "804933162743-sgi2jbc697dvdlv2sgespf5haltrg0ir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlHGSj4LfVwlqTiNhHIIif1JPmRZ9tt_8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804933162743-v92r16t2ora7s7hlqt0nt7av7klc9l5j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

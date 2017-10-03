@@ -1,0 +1,66 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/colorBackground"
+             tools:context="nl.easthome.ebikereader.LoginActivity">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="?colorPrimaryDark"
+                app:srcCompat="@drawable/ic_ebike"
+                android:id="@+id/imageView2"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"/>
+
+        <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="110dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true">
+
+        </com.google.android.gms.common.SignInButton>
+
+        <TextView
+                android:text="Ebike Reader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="32sp"
+                android:textColor="@color/appNameColor"
+                android:layout_above="@+id/sign_in_button"
+                android:layout_marginBottom="36dp"
+                android:id="@+id/appName"
+                android:layout_alignParentEnd="true"/>
+
+        <TextView
+                android:text="Signed Out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="29dp"
+                android:id="@+id/loginResult"/>
+
+        <Button
+                android:text="SIGNOUT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sign_out_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"/>
+
+
+    </RelativeLayout>
+
+</FrameLayout>
