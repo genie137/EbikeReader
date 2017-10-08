@@ -46,6 +46,8 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-auth:3.0.0'
     compile 'com.firebaseui:firebase-ui-storage:3.0.0'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    compile 'com.github.bmarrdev:android-DecoView-charting:v1.2'
+
 
 }
 
