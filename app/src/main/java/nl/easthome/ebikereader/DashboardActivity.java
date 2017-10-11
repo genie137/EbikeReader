@@ -19,35 +19,43 @@ import android.widget.RelativeLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hookedonplay.decoviewlib.DecoView;
 import com.hookedonplay.decoviewlib.charts.SeriesItem;
 import com.hookedonplay.decoviewlib.events.DecoEvent;
+import nl.easthome.ebikereader.InfoServices.GPSLocationService;
+import nl.easthome.ebikereader.InfoServices.MappingService;
 import nl.easthome.ebikereader.Objects.Chat;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-	@BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-	@BindView(R.id.nav_view) NavigationView mNavigationView;
-	@BindView(R.id.toolbar) Toolbar mToolbar;
-	@BindView(R.id.dashboard_layout) LinearLayout mDashboardLayout;
-	@BindView(R.id.dynamicArcView) DecoView mDecoView;
-	@BindView(R.id.dashboard_content_holder) RelativeLayout mContentHolder;
-	@OnClick(R.id.fab) public void onFabButtonPress(){
-		Snackbar.make(mDashboardLayout, "Starting a new ride.", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+	private GPSLocationService mGPSLocationService;
+	private MappingService mMappingService;
+	private SupportMapFragment mMapFragment;
+
+
+	@BindView(R.id.drawer_layout)
+	DrawerLayout mDrawerLayout;
+	@BindView(R.id.nav_view)
+	NavigationView mNavigationView;
+	@BindView(R.id.toolbar)
+	Toolbar mToolbar;
+	@BindView(R.id.dashboard_layout)
+	LinearLayout mDashboardLayout;
+	@BindView(R.id.dynamicArcView)
+	DecoView mDecoView;
+	@BindView(R.id.dashboard_content_holder)
+	RelativeLayout mContentHolder;
+
+	@OnClick(R.id.fab)
+	public void onFabButtonPress() {
+		Snackbar.make(mDashboardLayout, "Starting a new ride.", Snackbar.LENGTH_SHORT).show();
 		populatePieChart();
 		FirebaseDatabase database = FirebaseDatabase.getInstance();
 		DatabaseReference myRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
 		myRef.setValue(new Chat("lol", "howlol", "12"));
-	}
-
-	private void populatePieChart() {
-		SeriesItem seriesItem1 = new SeriesItem.Builder(Color.argb(255, 64, 196, 0)).setRange(0, 100, 0).setLineWidth(80f).build();
-		int series1Index = mDecoView.addSeries(seriesItem1);
-		mDecoView.addEvent(new DecoEvent.Builder(25).setIndex(series1Index).setDelay(4000).build());
-		mDecoView.addEvent(new DecoEvent.Builder(100).setIndex(series1Index).setDelay(8000).build());
-		mDecoView.addEvent(new DecoEvent.Builder(10).setIndex(series1Index).setDelay(12000).build());
 	}
 
 	@Override
@@ -57,39 +65,18 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		ButterKnife.bind(this);
 		onCreateSetupNav();
 		applyViewSizeChanges();
-		mDecoView.configureAngles(180,0);
-		mDecoView.addSeries(new SeriesItem.Builder(Color.argb(255, 218, 218, 218))
-									.setRange(0, 100, 100)
-									.setInitialVisibility(true)
-									.setLineWidth(80f)
-									.build());
-	}
-
-	private void applyViewSizeChanges() {
-		ViewTreeObserver vto = mDecoView.getViewTreeObserver();
-		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				Log.d("ParentSize", "HEIGHT: " + pxToDp(mDashboardLayout.getHeight()) + ", WIDTH: " + mDashboardLayout.getWidth());
-				Log.d("ContentSize", "HEIGHT: " + pxToDp(mContentHolder.getHeight()) + ", WIDTH: " + mContentHolder.getWidth());
-				Log.d("ChartSize", "HEIGHT: " + pxToDp(mDecoView.getHeight()) + ", WIDTH: " + mDecoView.getWidth());
-				ViewGroup.LayoutParams parentParams = mDashboardLayout.getLayoutParams();
-				parentParams.height = mDashboardLayout.getHeight() + mDecoView.getHeight();
-				mDashboardLayout.requestLayout();
-				mDecoView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-			}
-		});
-
+		mMappingService = new MappingService(this);
+		mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+		mGPSLocationService = new GPSLocationService(this);
+		mGPSLocationService.startLocationUpdates();
 
 
 	}
 
-	private void onCreateSetupNav() {
-		setSupportActionBar(mToolbar);
-		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-		mDrawerLayout.addDrawerListener(toggle);
-		toggle.syncState();
-		mNavigationView.setNavigationItemSelectedListener(this);
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mGPSLocationService.stopLocationUpdates();
 	}
 
 	@Override
@@ -123,10 +110,53 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		return true;
 	}
 
+	private void populatePieChart() {
+		SeriesItem seriesItem1 = new SeriesItem.Builder(Color.argb(255, 64, 196, 0)).setRange(0, 100, 0).setLineWidth(80f).build();
+		int series1Index = mDecoView.addSeries(seriesItem1);
+		mDecoView.addEvent(new DecoEvent.Builder(25).setIndex(series1Index).setDelay(4000).build());
+		mDecoView.addEvent(new DecoEvent.Builder(100).setIndex(series1Index).setDelay(8000).build());
+		mDecoView.addEvent(new DecoEvent.Builder(10).setIndex(series1Index).setDelay(12000).build());
+	}
+
+	private void applyViewSizeChanges() {
+		ViewTreeObserver vto = mDecoView.getViewTreeObserver();
+		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				Log.d("ParentSize", "HEIGHT: " + pxToDp(mDashboardLayout.getHeight()) + ", WIDTH: " + mDashboardLayout.getWidth());
+				Log.d("ContentSize", "HEIGHT: " + pxToDp(mContentHolder.getHeight()) + ", WIDTH: " + mContentHolder.getWidth());
+				Log.d("ChartSize", "HEIGHT: " + pxToDp(mDecoView.getHeight()) + ", WIDTH: " + mDecoView.getWidth());
+				ViewGroup.LayoutParams parentParams = mDashboardLayout.getLayoutParams();
+				parentParams.height = mDashboardLayout.getHeight() + mDecoView.getHeight();
+				mDashboardLayout.requestLayout();
+				mDecoView.configureAngles(180, 0);
+				mDecoView.addSeries(new SeriesItem.Builder(Color.argb(255, 218, 218, 218))
+											.setRange(0, 100, 100)
+											.setInitialVisibility(true)
+											.setLineWidth(80f)
+											.build());
+				mDecoView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+			}
+		});
+	}
+
+	private void onCreateSetupNav() {
+		setSupportActionBar(mToolbar);
+		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+		mDrawerLayout.addDrawerListener(toggle);
+		toggle.syncState();
+		mNavigationView.setNavigationItemSelectedListener(this);
+	}
+
 	private void logoutApp() {
 		Log.d("APP", "logout hit");
 		FirebaseAuth.getInstance().signOut();
 		finish();
+	}
+
+	public void updateLocationViews(double latitude, double longitude) {
+		mMappingService.addPointToMap(latitude, longitude);
 	}
 
 	private int pxToDp(int px){

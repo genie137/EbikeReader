@@ -11,6 +11,8 @@ buildscript {
         classpath "io.realm:realm-gradle-plugin:3.7.2"
 
     }
+
+
 }
 
 allprojects {
