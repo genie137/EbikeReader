@@ -19,23 +19,15 @@ import android.widget.RelativeLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.hookedonplay.decoviewlib.DecoView;
 import com.hookedonplay.decoviewlib.charts.SeriesItem;
 import com.hookedonplay.decoviewlib.events.DecoEvent;
-import nl.easthome.ebikereader.InfoServices.GPSLocationService;
-import nl.easthome.ebikereader.InfoServices.MappingService;
-import nl.easthome.ebikereader.Objects.Chat;
+import nl.easthome.ebikereader.Objects.RideMeasurement;
+import nl.easthome.ebikereader.Services.MappingService;
+import nl.easthome.ebikereader.Services.RideRecorderService;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-	private GPSLocationService mGPSLocationService;
-	private MappingService mMappingService;
-	private SupportMapFragment mMapFragment;
-
-
 	@BindView(R.id.drawer_layout)
 	DrawerLayout mDrawerLayout;
 	@BindView(R.id.nav_view)
@@ -48,14 +40,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 	DecoView mDecoView;
 	@BindView(R.id.dashboard_content_holder)
 	RelativeLayout mContentHolder;
+	private MappingService mMappingService;
+	private RideRecorderService mRideRecorderService;
 
 	@OnClick(R.id.fab)
 	public void onFabButtonPress() {
 		Snackbar.make(mDashboardLayout, "Starting a new ride.", Snackbar.LENGTH_SHORT).show();
 		populatePieChart();
-		FirebaseDatabase database = FirebaseDatabase.getInstance();
-		DatabaseReference myRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
-		myRef.setValue(new Chat("lol", "howlol", "12"));
+		mRideRecorderService.toggleRecording();
 	}
 
 	@Override
@@ -65,18 +57,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		ButterKnife.bind(this);
 		onCreateSetupNav();
 		applyViewSizeChanges();
+		mRideRecorderService = new RideRecorderService(this);
 		mMappingService = new MappingService(this);
-		mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-		mGPSLocationService = new GPSLocationService(this);
-		mGPSLocationService.startLocationUpdates();
-
-
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		mGPSLocationService.stopLocationUpdates();
 	}
 
 	@Override
@@ -86,6 +68,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		} else {
 			super.onBackPressed();
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
 	}
 
 	@SuppressWarnings("StatementWithEmptyBody")
@@ -155,10 +142,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		finish();
 	}
 
-	public void updateLocationViews(double latitude, double longitude) {
-		mMappingService.addPointToMap(latitude, longitude);
-	}
-
 	private int pxToDp(int px){
 		DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
 		int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
@@ -170,4 +153,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		return px;
 	}
 
+	public void updateViews(final RideMeasurement measurement) {
+		this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				mMappingService.addPointToMap(measurement.getLocation());
+			}
+		});
+	}
 }

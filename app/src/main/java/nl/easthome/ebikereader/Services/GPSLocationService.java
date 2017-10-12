@@ -1,10 +1,9 @@
-package nl.easthome.ebikereader.InfoServices;
+package nl.easthome.ebikereader.Services;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import com.google.android.gms.location.*;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
@@ -17,10 +16,12 @@ public class GPSLocationService extends LocationCallback {
 	private FusedLocationProviderClient mFusedLocationClient;
 	private LocationRequest mLocationRequest = new LocationRequest().setInterval(5000).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	private DashboardActivity mActivity;
+	private RideRecorderService mRideRecorderService;
 
-	public GPSLocationService(DashboardActivity activity) {
-		mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
-		mActivity = activity;
+	public GPSLocationService(RideRecorderService rideRecorderService) {
+		mRideRecorderService = rideRecorderService;
+		mActivity = rideRecorderService.getDashboardActivity();
+		mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mActivity);
 		mIsRequestingLocationUpdates = false;
 	}
 
@@ -55,10 +56,7 @@ public class GPSLocationService extends LocationCallback {
 	@Override
 	public void onLocationResult(LocationResult locationResult) {
 		for (Location location : locationResult.getLocations()){
-			Log.d("LOCATION", location.toString());
-			mActivity.updateLocationViews(location.getLatitude(), location.getLongitude());
-
-			//TODO act when new location is in.
+			mRideRecorderService.onNewLocation(location);
 		}
 	}
 }
