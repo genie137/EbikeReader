@@ -2,14 +2,17 @@ package nl.easthome.ebikereader.Objects;
 
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 public class Ride {
 
-	private String mRideId;
-	private long mRideStart;
-	private long mRideEnd;
+	private static String mRideId;
+	private static long mRideStart;
+	private static long mRideEnd;
+	private static ArrayList<RideMeasurement> mRideMeasurement;
 
 	public Ride() {
-
+		mRideMeasurement = new ArrayList<>();
 	}
 
 	public void startRide() {
@@ -37,7 +40,12 @@ public class Ride {
 		return mRideEnd;
 	}
 
-	public void addMeasurement(RideMeasurement measurement) {
-		FirebaseDatabase.getInstance().getReference("rides").child(mRideId).child("measurements").child(Long.toString(System.currentTimeMillis())).setValue(measurement);
+	public ArrayList<RideMeasurement> getRideMeasurements() {
+		return mRideMeasurement;
+	}
+
+	public void addRideMeasurement(RideMeasurement rideMeasurement) {
+		mRideMeasurement.add(rideMeasurement);
+		FirebaseDatabase.getInstance().getReference("rides").child(mRideId).child("measurements").child(Long.toString(System.currentTimeMillis())).setValue(rideMeasurement);
 	}
 }

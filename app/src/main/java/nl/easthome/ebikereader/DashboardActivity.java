@@ -2,8 +2,8 @@ package nl.easthome.ebikereader;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,15 +19,20 @@ import android.widget.RelativeLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.hookedonplay.decoviewlib.DecoView;
 import com.hookedonplay.decoviewlib.charts.SeriesItem;
 import com.hookedonplay.decoviewlib.events.DecoEvent;
+import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Services.MappingService;
 import nl.easthome.ebikereader.Services.RideRecorderService;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+	private static MappingService mMappingService;
+	private static RideRecorderService mRideRecorderService;
 	@BindView(R.id.drawer_layout)
 	DrawerLayout mDrawerLayout;
 	@BindView(R.id.nav_view)
@@ -40,12 +45,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 	DecoView mDecoView;
 	@BindView(R.id.dashboard_content_holder)
 	RelativeLayout mContentHolder;
-	private MappingService mMappingService;
-	private RideRecorderService mRideRecorderService;
 
 	@OnClick(R.id.fab)
 	public void onFabButtonPress() {
-		Snackbar.make(mDashboardLayout, "Starting a new ride.", Snackbar.LENGTH_SHORT).show();
 		populatePieChart();
 		mRideRecorderService.toggleRecording();
 	}
@@ -59,6 +61,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		applyViewSizeChanges();
 		mRideRecorderService = new RideRecorderService(this);
 		mMappingService = new MappingService(this);
+		if (mRideRecorderService != null) {
+			if (mRideRecorderService.isRecording()) {
+				mRideRecorderService.restoreRecording();
+			}
+		}
 	}
 
 	@Override
@@ -66,7 +73,23 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
 			mDrawerLayout.closeDrawer(GravityCompat.START);
 		} else {
-			super.onBackPressed();
+			if (mRideRecorderService.isRecording()) {
+				new MaterialDialog.Builder(this)
+						.title("Are you sure?")
+						.content("You are about to quit the app, but there is still a recording running.")
+						.positiveText("Quit anyway.")
+						.negativeText("Take me back!")
+						.onPositive(new MaterialDialog.SingleButtonCallback() {
+							@Override
+							public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+								mRideRecorderService.toggleRecording();
+								DashboardActivity.super.onBackPressed();
+							}
+						})
+						.show();
+			} else {
+				DashboardActivity.super.onBackPressed();
+			}
 		}
 	}
 
@@ -158,6 +181,15 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 			@Override
 			public void run() {
 				mMappingService.addPointToMap(measurement.getLocation());
+			}
+		});
+	}
+
+	public void restoreViews(final Ride ride) {
+		this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				mMappingService.restoreAllPointsOnMap(ride.getRideMeasurements());
 			}
 		});
 	}

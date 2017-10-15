@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">EbikeReader</string>
+    <string name="notification_id_channel">"default"</string>
+
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -13,5 +15,6 @@
     <string name="no_internet_connection">You are offline, we cant log you in.</string>
     <string name="unknown_error">Something went wrong, please try again later.</string>
     <string name="unknown_sign_in_response">Something went wrong, please contact the developer.</string>
+    <string name="notification_id">6575424</string>
 
 </resources>

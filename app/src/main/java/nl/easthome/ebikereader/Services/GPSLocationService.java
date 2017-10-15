@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import com.google.android.gms.location.*;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
@@ -12,9 +13,9 @@ import nl.easthome.ebikereader.DashboardActivity;
 
 public class GPSLocationService extends LocationCallback {
 
-	private boolean mIsRequestingLocationUpdates;
-	private FusedLocationProviderClient mFusedLocationClient;
-	private LocationRequest mLocationRequest = new LocationRequest().setInterval(5000).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+	private static boolean mIsRequestingLocationUpdates = false;
+	private static FusedLocationProviderClient mFusedLocationClient;
+	private static LocationRequest mLocationRequest = new LocationRequest().setInterval(5000).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 	private DashboardActivity mActivity;
 	private RideRecorderService mRideRecorderService;
 
@@ -56,6 +57,7 @@ public class GPSLocationService extends LocationCallback {
 	@Override
 	public void onLocationResult(LocationResult locationResult) {
 		for (Location location : locationResult.getLocations()){
+			Log.d("LOCATION", "-->> New Location");
 			mRideRecorderService.onNewLocation(location);
 		}
 	}

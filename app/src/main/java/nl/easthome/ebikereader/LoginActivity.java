@@ -1,6 +1,10 @@
 package nl.easthome.ebikereader;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -39,14 +43,23 @@ public class LoginActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Fabric.with(this, new Crashlytics());
 		setContentView(R.layout.activity_login);
+		Fabric.with(this, new Crashlytics());
 		FirebaseApp.initializeApp(this);
 		ButterKnife.bind(this);
+		setupNotificationChannel();
 
 		FirebaseAuth auth = FirebaseAuth.getInstance();
 		if (auth.getCurrentUser() != null) {
-			startActivity(new Intent(this, DashboardActivity.class).putExtra("my_token", auth.getCurrentUser().getUid()));
+			startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+		}
+	}
+
+	private void setupNotificationChannel() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			NotificationChannel mNotificationChannel = new NotificationChannel(this.getResources().getString(R.string.notification_id_channel), "EbikeReader", NotificationManager.IMPORTANCE_DEFAULT);
+			mNotificationManager.createNotificationChannel(mNotificationChannel);
 		}
 	}
 
