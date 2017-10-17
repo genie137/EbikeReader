@@ -9,18 +9,20 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.RelativeLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.crashlytics.android.Crashlytics;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import io.fabric.sdk.android.Fabric;
 
 import java.util.Arrays;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.fabric.sdk.android.Fabric;
 
 public class LoginActivity extends AppCompatActivity {
 	private static final int RC_SIGN_IN = 9001;
@@ -32,12 +34,13 @@ public class LoginActivity extends AppCompatActivity {
 								Arrays.asList(
 										new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
 										new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
-						.setTosUrl("www.google.com")
-						.setPrivacyPolicyUrl("www.google.nl")
+						.setTosUrl(getString(R.string.auth_tos_url))
+						.setPrivacyPolicyUrl(getString(R.string.auth_privacypolicy_url))
 						.setIsSmartLockEnabled(!BuildConfig.DEBUG)
 						.setTheme(R.style.AppTheme)
 						.setLogo(R.drawable.ic_ebike)
-						.build(), RC_SIGN_IN);
+						.build(),
+				RC_SIGN_IN);
 	}
 
 	@Override
@@ -58,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
 	private void setupNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			NotificationChannel mNotificationChannel = new NotificationChannel(this.getResources().getString(R.string.notification_id_channel), "EbikeReader", NotificationManager.IMPORTANCE_DEFAULT);
+			NotificationChannel mNotificationChannel = new NotificationChannel(getString(R.string.notification_id_channel), getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
 			mNotificationManager.createNotificationChannel(mNotificationChannel);
 		}
 	}
@@ -70,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 			IdpResponse response = IdpResponse.fromResultIntent(data);
 
 			if (resultCode == RESULT_OK) {
-				startActivity(new Intent(this, DashboardActivity.class).putExtra("my_token", response.getIdpToken()));
+				startActivity(new Intent(this, DashboardActivity.class));
 				return;
 			}
 			else {

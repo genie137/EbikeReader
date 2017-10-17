@@ -1,5 +1,8 @@
 package nl.easthome.ebikereader;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,42 +19,50 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.hookedonplay.decoviewlib.DecoView;
 import com.hookedonplay.decoviewlib.charts.SeriesItem;
 import com.hookedonplay.decoviewlib.events.DecoEvent;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Services.MappingService;
 import nl.easthome.ebikereader.Services.RideRecorderService;
+import nl.easthome.ebikereader.Services.RideRecordingService;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-	private static MappingService mMappingService;
-	private static RideRecorderService mRideRecorderService;
-	@BindView(R.id.drawer_layout)
-	DrawerLayout mDrawerLayout;
-	@BindView(R.id.nav_view)
-	NavigationView mNavigationView;
-	@BindView(R.id.toolbar)
-	Toolbar mToolbar;
-	@BindView(R.id.dashboard_layout)
-	LinearLayout mDashboardLayout;
-	@BindView(R.id.dynamicArcView)
-	DecoView mDecoView;
-	@BindView(R.id.dashboard_content_holder)
-	RelativeLayout mContentHolder;
+	private MappingService mMappingService;
+	private Intent mRideRecordingIntent;
+	@BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+	@BindView(R.id.nav_view) NavigationView mNavigationView;
+	@BindView(R.id.toolbar) Toolbar mToolbar;
+	@BindView(R.id.dashboard_layout) LinearLayout mDashboardLayout;
+	@BindView(R.id.dynamicArcView) DecoView mDecoView;
+	@BindView(R.id.dashboard_content_holder) RelativeLayout mContentHolder;
+    @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
+	@OnClick(R.id.fab) public void onRightFabButtonPress() {
 
-	@OnClick(R.id.fab)
-	public void onFabButtonPress() {
-		populatePieChart();
-		mRideRecorderService.toggleRecording();
+        Log.d("SERVICE", String.valueOf(isMyServiceRunning(RideRecordingService.class)));
+
+        if (!isMyServiceRunning(RideRecorderService.class)){
+            populatePieChart();
+            startService(mRideRecordingIntent);
+            mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
+        }
+        else {
+            stopService(mRideRecordingIntent);
+            mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+        }
+
+
 	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -59,13 +70,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		ButterKnife.bind(this);
 		onCreateSetupNav();
 		applyViewSizeChanges();
-		mRideRecorderService = new RideRecorderService(this);
+		mRideRecordingIntent = new Intent(this, RideRecordingService.class);
 		mMappingService = new MappingService(this);
-		if (mRideRecorderService != null) {
-			if (mRideRecorderService.isRecording()) {
-				mRideRecorderService.restoreRecording();
-			}
-		}
 	}
 
 	@Override
@@ -73,16 +79,15 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
 			mDrawerLayout.closeDrawer(GravityCompat.START);
 		} else {
-			if (mRideRecorderService.isRecording()) {
+			if (isMyServiceRunning(RideRecordingService.class)) {
 				new MaterialDialog.Builder(this)
-						.title("Are you sure?")
-						.content("You are about to quit the app, but there is still a recording running.")
-						.positiveText("Quit anyway.")
-						.negativeText("Take me back!")
+						.title(R.string.dialog_quit_while_recording_title)
+						.content(R.string.dialog_quit_while_recording_content)
+						.positiveText(R.string.dialog_quit_while_recording_positive_button)
+						.negativeText(R.string.dialog_quit_while_recording_negative_button)
 						.onPositive(new MaterialDialog.SingleButtonCallback() {
 							@Override
 							public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-								mRideRecorderService.toggleRecording();
 								DashboardActivity.super.onBackPressed();
 							}
 						})
@@ -133,9 +138,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
 			public void onGlobalLayout() {
-				Log.d("ParentSize", "HEIGHT: " + pxToDp(mDashboardLayout.getHeight()) + ", WIDTH: " + mDashboardLayout.getWidth());
-				Log.d("ContentSize", "HEIGHT: " + pxToDp(mContentHolder.getHeight()) + ", WIDTH: " + mContentHolder.getWidth());
-				Log.d("ChartSize", "HEIGHT: " + pxToDp(mDecoView.getHeight()) + ", WIDTH: " + mDecoView.getWidth());
 				ViewGroup.LayoutParams parentParams = mDashboardLayout.getLayoutParams();
 				parentParams.height = mDashboardLayout.getHeight() + mDecoView.getHeight();
 				mDashboardLayout.requestLayout();
@@ -160,7 +162,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 	}
 
 	private void logoutApp() {
-		Log.d("APP", "logout hit");
 		FirebaseAuth.getInstance().signOut();
 		finish();
 	}
@@ -193,4 +194,16 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 			}
 		});
 	}
+
+	@SuppressWarnings("deprecation")
+    private boolean isMyServiceRunning(Class<?> serviceClass){
+		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+			if (serviceClass.getName().equals(service.service.getClassName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

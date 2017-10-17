@@ -16,5 +16,13 @@
     <string name="unknown_error">Something went wrong, please try again later.</string>
     <string name="unknown_sign_in_response">Something went wrong, please contact the developer.</string>
     <string name="notification_id">6575424</string>
+    <string name="recording_notification_title">Recording...</string>
+    <string name="recording_notification_text">A ride is currently being recorded in the background. Click on me to go back to the app.</string>
+    <string name="auth_tos_url">www.google.com</string>
+    <string name="auth_privacypolicy_url">www.google.nl</string>
+    <string name="dialog_quit_while_recording_title">Are you sure?</string>
+    <string name="dialog_quit_while_recording_content">You are about to quit the app, but there is still a recording running.</string>
+    <string name="dialog_quit_while_recording_positive_button">Quit anyway.</string>
+    <string name="dialog_quit_while_recording_negative_button">Take me back!</string>
 
 </resources>
