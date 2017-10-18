@@ -24,5 +24,7 @@
     <string name="dialog_quit_while_recording_content">You are about to quit the app, but there is still a recording running.</string>
     <string name="dialog_quit_while_recording_positive_button">Quit anyway.</string>
     <string name="dialog_quit_while_recording_negative_button">Take me back!</string>
+    <string name="permission_ride_title">We need some permissions to record your ride.</string>
+    <string name="permission_ride_button">Fix it.</string>
 
 </resources>

@@ -1,11 +1,12 @@
 package nl.easthome.ebikereader;
 
-import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,15 +14,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.hookedonplay.decoviewlib.DecoView;
@@ -34,12 +32,12 @@ import butterknife.OnClick;
 import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Services.MappingService;
-import nl.easthome.ebikereader.Services.RideRecorderService;
 import nl.easthome.ebikereader.Services.RideRecordingService;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 	private MappingService mMappingService;
-	private Intent mRideRecordingIntent;
+    private DashboardActivity.RideRecordingServiceConnection mRideRecordingServiceConnection;
+
 	@BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
 	@BindView(R.id.nav_view) NavigationView mNavigationView;
 	@BindView(R.id.toolbar) Toolbar mToolbar;
@@ -48,20 +46,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 	@BindView(R.id.dashboard_content_holder) RelativeLayout mContentHolder;
     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
 	@OnClick(R.id.fab) public void onRightFabButtonPress() {
-
-        Log.d("SERVICE", String.valueOf(isMyServiceRunning(RideRecordingService.class)));
-
-        if (!isMyServiceRunning(RideRecorderService.class)){
-            populatePieChart();
-            startService(mRideRecordingIntent);
-            mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
-        }
-        else {
-            stopService(mRideRecordingIntent);
-            mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
-        }
-
-
+        mRideRecordingServiceConnection.mRideRecordingService.startRecording(this);
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,31 +55,38 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		ButterKnife.bind(this);
 		onCreateSetupNav();
 		applyViewSizeChanges();
-		mRideRecordingIntent = new Intent(this, RideRecordingService.class);
-		mMappingService = new MappingService(this);
+        mRideRecordingServiceConnection = new RideRecordingServiceConnection();
+        bindService(new Intent(this, RideRecordingService.class), mRideRecordingServiceConnection, Context.BIND_AUTO_CREATE);
+        mMappingService = new MappingService(this);
 	}
 
-	@Override
+    @Override
+    protected void onDestroy() {
+        unbindService(mRideRecordingServiceConnection);
+        super.onDestroy();
+    }
+
+    @Override
 	public void onBackPressed() {
 		if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
 			mDrawerLayout.closeDrawer(GravityCompat.START);
 		} else {
-			if (isMyServiceRunning(RideRecordingService.class)) {
-				new MaterialDialog.Builder(this)
-						.title(R.string.dialog_quit_while_recording_title)
-						.content(R.string.dialog_quit_while_recording_content)
-						.positiveText(R.string.dialog_quit_while_recording_positive_button)
-						.negativeText(R.string.dialog_quit_while_recording_negative_button)
-						.onPositive(new MaterialDialog.SingleButtonCallback() {
-							@Override
-							public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-								DashboardActivity.super.onBackPressed();
-							}
-						})
-						.show();
-			} else {
-				DashboardActivity.super.onBackPressed();
-			}
+//			if (isMyServiceRunning(RideRecordingService.class)) {
+//				new MaterialDialog.Builder(this)
+//						.title(R.string.dialog_quit_while_recording_title)
+//						.content(R.string.dialog_quit_while_recording_content)
+//						.positiveText(R.string.dialog_quit_while_recording_positive_button)
+//						.negativeText(R.string.dialog_quit_while_recording_negative_button)
+//						.onPositive(new MaterialDialog.SingleButtonCallback() {
+//							@Override
+//							public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//								DashboardActivity.super.onBackPressed();
+//							}
+//						})
+//						.show();
+//			} else {
+//				DashboardActivity.super.onBackPressed();
+//			}
 		}
 	}
 
@@ -195,15 +187,31 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		});
 	}
 
-	@SuppressWarnings("deprecation")
-    private boolean isMyServiceRunning(Class<?> serviceClass){
-		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-		for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-			if (serviceClass.getName().equals(service.service.getClassName())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public LinearLayout getRootView() {
+        return mDashboardLayout;
+    }
+
+
+    private class RideRecordingServiceConnection implements ServiceConnection {
+        RideRecordingService mRideRecordingService;
+        boolean mIsServiceBound = false;
+
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            RideRecordingService.RideRecordingBinder binder = (RideRecordingService.RideRecordingBinder) service;
+            mRideRecordingService = binder.getService();
+            mIsServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mRideRecordingServiceConnection = null;
+            mIsServiceBound = false;
+        }
+    }
+
+
+
 
 }
