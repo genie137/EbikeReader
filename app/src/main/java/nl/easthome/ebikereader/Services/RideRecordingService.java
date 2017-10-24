@@ -21,7 +21,6 @@ import com.google.android.gms.location.LocationServices;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
@@ -34,6 +33,7 @@ import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.R;
 
 public class RideRecordingService extends Service {
+    protected static boolean mArePermissionsGranted = false;
     private static final String mLogTag =  "RideRecordingService";
 	private int mNotificationID = R.string.notification_id;
     private LocationRequest mLocationRequest = new LocationRequest().setInterval(5000).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -60,7 +60,6 @@ public class RideRecordingService extends Service {
 	}
     @Nullable @Override public IBinder onBind(Intent intent) {
         Log.d(mLogTag,"OnBind");
-        startForeground(mNotificationID, showNotification());
         return mBinder;
     }
     private Notification showNotification() {
@@ -82,10 +81,17 @@ public class RideRecordingService extends Service {
      * @return true if started correctly
      */
 	public boolean startRecording(DashboardActivity activity) {
+        mActivity = activity;
         if (!mIsRecording){
-            mActivity = activity;
             startRecordingActivities();
-            return true;
+            if (mArePermissionsGranted){
+                startForeground(mNotificationID, showNotification());
+                return true;
+            }
+            else {
+                stopRecordingActivities();
+                return false;
+            }
         }
         else {
             return false;
@@ -100,6 +106,7 @@ public class RideRecordingService extends Service {
         if (mIsRecording){
             stopRecordingActivities();
             mActivity = null;
+            stopForeground(true);
             return true;
         }
         else {
@@ -108,56 +115,53 @@ public class RideRecordingService extends Service {
     }
 
     private void startRecordingActivities(){
-        try {
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mActivity);
-            if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Dexter.withActivity(mActivity)
-                        .withPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-                        .withListener(new CompositeMultiplePermissionsListener(
-                                SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
-                                        .with(mActivity.getRootView(), R.string.permission_ride_title)
-                                        .withOpenSettingsButton(R.string.permission_ride_button)
-                                        .build(),
-                                new MultiplePermissionsListener() {
-                                    @Override
-                                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                                        if (report.areAllPermissionsGranted()) {
-                                            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-                                        } else if (report.isAnyPermissionPermanentlyDenied()) {
-                                            List<PermissionDeniedResponse> deniedPermissions = report.getDeniedPermissionResponses();
-
-                                            if (deniedPermissions.size() == 1) {
-//                                                throw new PermissionPermanentlyDeniedException(deniedPermissions.get(0));
-                                            } else {
-//                                                throw new MultiplePermissionsPermanentlyDeniedException(deniedPermissions);
-                                            }
-                                        }
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mActivity);
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Dexter.withActivity(mActivity)
+                    .withPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+                    .withListener(new CompositeMultiplePermissionsListener(
+                            SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
+                                    .with(mActivity.getRootView(), R.string.permission_ride_title)
+                                    .withOpenSettingsButton(R.string.permission_ride_button)
+                                    .build(),
+                            new MultiplePermissionsListener() {
+                                @Override
+                                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                    if (report.areAllPermissionsGranted()) {
+                                        mArePermissionsGranted = true;
                                     }
+                                }
+                                @Override
+                                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                    token.continuePermissionRequest();
+                                }
+                            }))
+                    .check();
+        } else {
+            mArePermissionsGranted =true;
+        }
 
-                                    @Override
-                                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                                        token.continuePermissionRequest();
-                                    }
-                                }))
-                        .check();
-            } else {
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-            }
-
+        if (mArePermissionsGranted) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
             mRide = new Ride();
             mRide.startRide();
             mIsRecording = true;
             Log.d(mLogTag, "RecordingStart");
-        }catch (Exception e){
-            Log.d(mLogTag, "exception");
-            e.printStackTrace();
         }
     }
 
     private void stopRecordingActivities(){
-        mRide.stopRide();
+        if (mRide != null){
+            mRide.stopRide();
+        }
+
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         mIsRecording = false;
         Log.d(mLogTag, "RecordingStop");
+    }
+
+    public boolean isRecording(){
+        return mIsRecording;
     }
 
 	public class RideRecordingBinder extends Binder {
@@ -165,7 +169,6 @@ public class RideRecordingService extends Service {
             return RideRecordingService.this;
         }
     }
-
     public class RideRecordingLocationCallback extends LocationCallback {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -173,5 +176,7 @@ public class RideRecordingService extends Service {
             super.onLocationResult(locationResult);
         }
     }
+
+
 
 }

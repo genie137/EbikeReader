@@ -22,15 +22,6 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/frameLayout">
-
-        <include layout="@layout/content_dashboard"/>
-
-    </FrameLayout>
-
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -42,7 +33,18 @@
         app:layout_anchor="@+id/frameLayout"
         app:layout_anchorGravity="bottom|center_horizontal"
         android:src="@drawable/ic_play_circle_outline_white_36dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/content_dashboard"/>
+
+    </FrameLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

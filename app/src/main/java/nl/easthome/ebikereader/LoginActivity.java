@@ -46,16 +46,18 @@ public class LoginActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
 		Fabric.with(this, new Crashlytics());
 		FirebaseApp.initializeApp(this);
-		ButterKnife.bind(this);
+
 		setupNotificationChannel();
 
 		FirebaseAuth auth = FirebaseAuth.getInstance();
 		if (auth.getCurrentUser() != null) {
 			startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 		}
+
+		setContentView(R.layout.activity_login);
+		ButterKnife.bind(this);
 	}
 
 	private void setupNotificationChannel() {

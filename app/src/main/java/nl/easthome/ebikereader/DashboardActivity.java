@@ -7,19 +7,21 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.hookedonplay.decoviewlib.DecoView;
@@ -29,8 +31,6 @@ import com.hookedonplay.decoviewlib.events.DecoEvent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import nl.easthome.ebikereader.Objects.Ride;
-import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Services.MappingService;
 import nl.easthome.ebikereader.Services.RideRecordingService;
 
@@ -46,7 +46,18 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 	@BindView(R.id.dashboard_content_holder) RelativeLayout mContentHolder;
     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
 	@OnClick(R.id.fab) public void onRightFabButtonPress() {
-        mRideRecordingServiceConnection.mRideRecordingService.startRecording(this);
+		RideRecordingService mRRS = mRideRecordingServiceConnection.mRideRecordingService;
+
+		if (mRRS.isRecording()) {
+			mRRS.stopRecording();
+			mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+		}
+		else {
+			mRRS.startRecording(this);
+			mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
+		}
+
+
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,22 +82,22 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
 			mDrawerLayout.closeDrawer(GravityCompat.START);
 		} else {
-//			if (isMyServiceRunning(RideRecordingService.class)) {
-//				new MaterialDialog.Builder(this)
-//						.title(R.string.dialog_quit_while_recording_title)
-//						.content(R.string.dialog_quit_while_recording_content)
-//						.positiveText(R.string.dialog_quit_while_recording_positive_button)
-//						.negativeText(R.string.dialog_quit_while_recording_negative_button)
-//						.onPositive(new MaterialDialog.SingleButtonCallback() {
-//							@Override
-//							public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//								DashboardActivity.super.onBackPressed();
-//							}
-//						})
-//						.show();
-//			} else {
-//				DashboardActivity.super.onBackPressed();
-//			}
+			if (mRideRecordingServiceConnection.mRideRecordingService.isRecording()) {
+				new MaterialDialog.Builder(this)
+						.title(R.string.dialog_quit_while_recording_title)
+						.content(R.string.dialog_quit_while_recording_content)
+						.positiveText(R.string.dialog_quit_while_recording_positive_button)
+						.negativeText(R.string.dialog_quit_while_recording_negative_button)
+						.onPositive(new MaterialDialog.SingleButtonCallback() {
+							@Override
+							public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+								finish();
+							}
+						})
+						.show();
+			} else {
+				finish();
+			}
 		}
 	}
 
@@ -95,9 +106,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		super.onPause();
 	}
 
-	@SuppressWarnings("StatementWithEmptyBody")
-	@Override
-	public boolean onNavigationItemSelected(MenuItem item) {
+	@SuppressWarnings("StatementWithEmptyBody") @Override public boolean onNavigationItemSelected(MenuItem item) {
 		// Handle navigation view item clicks here.
 		int id = item.getItemId();
 
@@ -116,7 +125,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		mDrawerLayout.closeDrawer(GravityCompat.START);
 		return true;
 	}
-
 	private void populatePieChart() {
 		SeriesItem seriesItem1 = new SeriesItem.Builder(Color.argb(255, 64, 196, 0)).setRange(0, 100, 0).setLineWidth(80f).build();
 		int series1Index = mDecoView.addSeries(seriesItem1);
@@ -124,7 +132,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		mDecoView.addEvent(new DecoEvent.Builder(100).setIndex(series1Index).setDelay(8000).build());
 		mDecoView.addEvent(new DecoEvent.Builder(10).setIndex(series1Index).setDelay(12000).build());
 	}
-
 	private void applyViewSizeChanges() {
 		ViewTreeObserver vto = mDecoView.getViewTreeObserver();
 		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -144,7 +151,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 			}
 		});
 	}
-
 	private void onCreateSetupNav() {
 		setSupportActionBar(mToolbar);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -152,46 +158,13 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		toggle.syncState();
 		mNavigationView.setNavigationItemSelectedListener(this);
 	}
-
 	private void logoutApp() {
 		FirebaseAuth.getInstance().signOut();
 		finish();
 	}
-
-	private int pxToDp(int px){
-		DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
-		int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-		return dp;
-	}
-	public int dpToPx(int dp) {
-		DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
-		int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-		return px;
-	}
-
-	public void updateViews(final RideMeasurement measurement) {
-		this.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mMappingService.addPointToMap(measurement.getLocation());
-			}
-		});
-	}
-
-	public void restoreViews(final Ride ride) {
-		this.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mMappingService.restoreAllPointsOnMap(ride.getRideMeasurements());
-			}
-		});
-	}
-
     public LinearLayout getRootView() {
         return mDashboardLayout;
     }
-
-
     private class RideRecordingServiceConnection implements ServiceConnection {
         RideRecordingService mRideRecordingService;
         boolean mIsServiceBound = false;
