@@ -20,5 +20,20 @@
     <string name="dialog_quit_while_recording_negative_button">Take me back!</string>
     <string name="permission_ride_title">We need some permissions to record your ride, select Permissions in the next screen.</string>
     <string name="permission_ride_button">Fix it.</string>
+    <string name="intro_screen_welcome_title">Welcome to the Ebike Reader app.</string>
+    <string name="intro_screen_welcome_description">To start we need to setup a few things first.</string>
+    <string name="intro_screen_gpsperm_title">Permission Request</string>
+    <string name="intro_screen_gpsperm_description">To record a ride we need to use your GPS. Can we?</string>
+    <string name="intro_screen_login_title">Login</string>
+    <string name="intro_screen_login_description">We save your rides online, we need to know who rides are being recorded. Press Done to login.</string>
+    <string name="intro_screen_antsupport_title">Ant Support</string>
+    <string name="intro_screen_antsupport_description">To properly support all functionality of the application, we need to check if your device supports this protocol. Ant+ has the means to connect to fitness/sport devices.</string>
+    <string name="intro_dialog_antsupport_title">Ant Support</string>
+    <string name="intro_dialog_antsupport_positive_content">Your device does support ant+!</string>
+    <string name="intro_dialog_antsupport_positive_button_text">Nice!</string>
+    <string name="intro_dialog_antsupport_negative_content">Unfortunately your device does not support the ANT+ protocol. You cannot use the app.</string>
+    <string name="intro_dialog_antsupport_negative_finddevice_button_text">Find a device</string>
+    <string name="intro_dialog_antsupport_negative_exit_button_text">Exit app</string>
+    <string name="intro_dialog_antsupport_negative_finddevice_link">https://www.thisisant.com/consumer/ant-101/ant-in-phones</string>
 
 </resources>
