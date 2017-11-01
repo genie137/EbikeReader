@@ -106,19 +106,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		super.onPause();
 	}
 
-	@SuppressWarnings("StatementWithEmptyBody") @Override public boolean onNavigationItemSelected(MenuItem item) {
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
 		// Handle navigation view item clicks here.
 		int id = item.getItemId();
 
-		if (id == R.id.nav_camera) {
-			// Handle the camera action
-		} else if (id == R.id.nav_gallery) {
-
-		} else if (id == R.id.nav_slideshow) {
-
-		} else if (id == R.id.nav_manage) {
-
-		} else if (id == R.id.nav_logout) {
+		if (id == R.id.nav_ant_sensors) {
+		    startActivity(new Intent(this, AntSensorActivity.class));
+        } else if (id == R.id.nav_logout) {
 			logoutApp();
 		}
 
@@ -165,6 +160,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     public LinearLayout getRootView() {
         return mDashboardLayout;
     }
+
+
+
+
+
     private class RideRecordingServiceConnection implements ServiceConnection {
         RideRecordingService mRideRecordingService;
         boolean mIsServiceBound = false;

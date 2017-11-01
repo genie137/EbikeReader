@@ -10,10 +10,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.dsi.ant.AntSupportChecker;
 import com.firebase.ui.auth.AuthUI;
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
@@ -33,7 +33,6 @@ public class IntroActivity extends AppIntro {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         showSkipButton(false);
-        setWizardMode(true);
         setBackButtonVisibilityWithDone(true);
         askForPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},2);
         createSlides();
@@ -59,8 +58,8 @@ public class IntroActivity extends AppIntro {
         spGpsPermSlide.setBgColor(ContextCompat.getColor(this, R.color.intro_screen_welcome_slide));
         addSlide(AppIntroFragment.newInstance(spGpsPermSlide));
         SliderPage spBodyMeasurementSlide = new SliderPage();
-        spBodyMeasurementSlide.setTitle("Body Measurements");
-        spBodyMeasurementSlide.setDescription("To improve measurements, we want to know more about you! Please fill in the data in the next window.");
+        spBodyMeasurementSlide.setTitle(getString(R.string.intro_screen_bodymeasurements_title));
+        spBodyMeasurementSlide.setDescription(getString(R.string.intro_screen_bodymeasurements_description));
         spBodyMeasurementSlide.setImageDrawable(R.drawable.ic_fitness_center);
         spBodyMeasurementSlide.setBgColor(ContextCompat.getColor(this, R.color.intro_screen_welcome_slide));
         addSlide(AppIntroFragment.newInstance(spBodyMeasurementSlide));
@@ -112,7 +111,7 @@ public class IntroActivity extends AppIntro {
             if (slides.get(1).equals(oldFragment) && slides.get(2).equals(newFragment)) {
                 checkAntSupport();
             }
-            if (slides.get(3).equals(oldFragment) && slides.get(4).equals(newFragment))
+            else if (slides.get(3).equals(oldFragment) && slides.get(4).equals(newFragment))
                 askBodyMeasurements();
             }
         super.onSlideChanged(oldFragment, newFragment);
@@ -120,23 +119,33 @@ public class IntroActivity extends AppIntro {
 
     private void askBodyMeasurements() {
         new MaterialDialog.Builder(this)
-                .title("test")
-                .positiveText("Done")
+                .title(R.string.intro_dialog_bodymeasurements_title)
+                .positiveText(R.string.intro_dialog_bodymeasurements_positive_button)
                 .customView(R.layout.measurement_dialog, true)
+                .cancelable(false)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         ConstraintLayout layout = (ConstraintLayout) dialog.getCustomView();
                         EditText weightInput = layout.findViewById(R.id.weight_input);
                         EditText heightInput = layout.findViewById(R.id.height_input);
-                        userMeasurements = new UserMeasurements(heightInput.getText().toString(), weightInput.getText().toString());
+
+                        if (weightInput.getText().toString().equals("") || heightInput.getText().toString().equals("")){
+                            Toast.makeText(IntroActivity.this, R.string.intro_dialog_bodymeasurements_empty_fields_toast, Toast.LENGTH_SHORT).show();
+                            askBodyMeasurements();
+                        }
+                        else {
+                            userMeasurements = new UserMeasurements(heightInput.getText().toString(), weightInput.getText().toString());
+                        }
                     }
                 })
                 .show();
     }
 
     private void checkAntSupport() {
-        if (AntSupportChecker.hasAntFeature(this)) {
+        //TODO add ant support check
+
+        if (true) {
             new MaterialDialog.Builder(this)
                     .title(R.string.intro_dialog_antsupport_title)
                     .content(R.string.intro_dialog_antsupport_positive_content)

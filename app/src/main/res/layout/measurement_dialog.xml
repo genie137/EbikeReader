@@ -38,6 +38,14 @@
                 tools:layout_editor_absoluteX="181dp"
                 tools:layout_editor_absoluteY="16dp"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="kg"
+                android:textAlignment="center"
+                android:textSize="18sp"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -52,9 +60,7 @@
                 android:layout_weight="1"
                 android:text="Height"
                 android:textAlignment="center"
-                android:textSize="18sp"
-                tools:layout_editor_absoluteX="48dp"
-                tools:layout_editor_absoluteY="29dp"/>
+                android:textSize="18sp"/>
 
             <EditText
                 android:id="@+id/height_input"
@@ -62,9 +68,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="numberDecimal"
-                tools:layout_editor_absoluteX="181dp"
-                tools:layout_editor_absoluteY="16dp"/>
+                android:inputType="number"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="cm"
+                android:textAlignment="center"
+                android:textSize="18sp"/>
 
         </LinearLayout>
 
