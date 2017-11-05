@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,10 +17,13 @@ import com.firebase.ui.auth.AuthUI;
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 import com.github.paolorotolo.appintro.model.SliderPage;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Arrays;
 import java.util.List;
 
+import nl.easthome.antpluslibary.AntSupportChecker;
+import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Objects.UserMeasurements;
 
 public class IntroActivity extends AppIntro {
@@ -69,13 +71,11 @@ public class IntroActivity extends AppIntro {
         spLoginSlide.setImageDrawable(R.drawable.ic_info_outline);
         spLoginSlide.setBgColor(ContextCompat.getColor(this, R.color.intro_screen_welcome_slide));
         addSlide(AppIntroFragment.newInstance(spLoginSlide));
-
     }
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
-        Log.d("Measurements", userMeasurements.toString());
         startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
                         .setAvailableProviders(
@@ -93,16 +93,15 @@ public class IntroActivity extends AppIntro {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
-            //IdpResponse response = IdpResponse.fromResultIntent(data);
-
-            if (resultCode == RESULT_OK) {
-                startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                return;
-            }
+        if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
+            FirebaseSaver.saveUserMeasurements(FirebaseAuth.getInstance().getUid(), userMeasurements);
+            startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            return;
+        }
+        else{
+            //TODO
         }
     }
-
 
     @Override
     public void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
@@ -143,35 +142,111 @@ public class IntroActivity extends AppIntro {
     }
 
     private void checkAntSupport() {
-        //TODO add ant support check
-
-        if (true) {
-            new MaterialDialog.Builder(this)
-                    .title(R.string.intro_dialog_antsupport_title)
-                    .content(R.string.intro_dialog_antsupport_positive_content)
-                    .positiveText(R.string.intro_dialog_antsupport_positive_button_text)
-                    .show();
-        }
-        else {
-            new MaterialDialog.Builder(this)
-                    .title(R.string.intro_dialog_antsupport_title)
-                    .content(R.string.intro_dialog_antsupport_negative_content)
-                    .positiveText(R.string.intro_dialog_antsupport_negative_finddevice_button_text)
-                    .negativeText(R.string.intro_dialog_antsupport_negative_exit_button_text)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            Intent i = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.intro_dialog_antsupport_negative_finddevice_link)));
-                            startActivity(i);
-                            finish();
-                        }
-                    })
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            finish();
-                        }
-                    }).show();
+        switch (AntSupportChecker.getAntSupportedState(this)){
+            case ANT_NO_CHIP_OR_USB:
+                new MaterialDialog.Builder(this)
+                        .title(R.string.intro_dialog_antsupport_title)
+                        .content(R.string.intro_dialog_antsupport_negative_content)
+                        .positiveText(R.string.intro_dialog_antsupport_negative_finddevice_button_text)
+                        .negativeText(R.string.intro_dialog_antsupport_negative_exit_button_text)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Intent i = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.intro_dialog_antsupport_negative_finddevice_link)));
+                                startActivity(i);
+                                finish();
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                finish();
+                            }
+                        }).show();
+                break;
+            case ANT_SUPPORTED_BUT_NO_RADIO:
+                new MaterialDialog.Builder(this)
+                        .title(R.string.dialog_antcheck_ant_service_missing_title)
+                        .content(R.string.dialog_antcheck_ant_service_missing_content)
+                        .positiveText(R.string.dialog_antcheck_button_download_service)
+                        .neutralText(R.string.dialog_antcheck_button_exit_app)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Intent i = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.ant_service_app_market_link) ));
+                                startActivity(i);
+                                finish();
+                            }
+                        })
+                        .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                finish();
+                            }
+                        })
+                        .show();
+                break;
+            case ANT_SUPPORTED_BUT_NO_PLUGIN:
+                new MaterialDialog.Builder(this)
+                        .title(R.string.dialog_antcheck_ant_plugin_missing_title)
+                        .content(R.string.dialog_antcheck_ant_plugin_missing_content)
+                        .negativeText(R.string.dialog_antcheck_button_download_plugin)
+                        .neutralText(R.string.dialog_antcheck_button_exit_app)
+                        .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                finish();
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Intent i = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.ant_plugin_app_market_link) ));
+                                startActivity(i);
+                                finish();
+                            }
+                        }).show();
+                break;
+            case ANT_SUPPORTED_BUT_NO_RADIO_AND_PLUGIN:
+                new MaterialDialog.Builder(this)
+                        .title(R.string.dialog_antcheck_ant_service_and_plugin_missing_title)
+                        .content(R.string.dialog_antcheck_ant_service_and_plugin_missing_content)
+                        .positiveText(R.string.dialog_antcheck_button_download_service)
+                        .negativeText(R.string.dialog_antcheck_button_download_plugin)
+                        .neutralText(R.string.dialog_antcheck_button_exit_app)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Intent i = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.ant_service_app_market_link) ));
+                                startActivity(i);
+                                finish();
+                            }
+                        })
+                        .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                finish();
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Intent i = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(R.string.ant_plugin_app_market_link) ));
+                                startActivity(i);
+                                finish();
+                            }
+                        }).show();
+                break;
+            case ANT_SUPPORTED:
+                new MaterialDialog.Builder(this)
+                        .title(R.string.intro_dialog_antsupport_title)
+                        .content(R.string.intro_dialog_antsupport_positive_content)
+                        .positiveText(R.string.intro_dialog_antsupport_positive_button_text)
+                        .show();
+                break;
+            default:
+                break;
         }
     }
+
 }

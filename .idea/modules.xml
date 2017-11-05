@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/EbikeReader.iml" filepath="$PROJECT_DIR$/EbikeReader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/antpluslibary/antpluslibary.iml" filepath="$PROJECT_DIR$/antpluslibary/antpluslibary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

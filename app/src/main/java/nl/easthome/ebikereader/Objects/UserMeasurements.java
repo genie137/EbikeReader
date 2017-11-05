@@ -1,8 +1,6 @@
 package nl.easthome.ebikereader.Objects;
-import io.realm.RealmObject;
 
-
-public class UserMeasurements extends RealmObject {
+public class UserMeasurements {
     private String UserHeight;
     private String UserWeight;
 
@@ -21,5 +19,21 @@ public class UserMeasurements extends RealmObject {
                 "UserHeight='" + UserHeight + '\'' +
                 ", UserWeight='" + UserWeight + '\'' +
                 '}';
+    }
+
+    public String getUserHeight() {
+        return UserHeight;
+    }
+
+    public void setUserHeight(String userHeight) {
+        UserHeight = userHeight;
+    }
+
+    public String getUserWeight() {
+        return UserWeight;
+    }
+
+    public void setUserWeight(String userWeight) {
+        UserWeight = userWeight;
     }
 }
