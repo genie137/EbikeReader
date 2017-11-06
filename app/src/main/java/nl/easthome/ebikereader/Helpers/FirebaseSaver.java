@@ -1,5 +1,6 @@
 package nl.easthome.ebikereader.Helpers;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import nl.easthome.ebikereader.Objects.UserMeasurements;
 /**
@@ -8,18 +9,19 @@ import nl.easthome.ebikereader.Objects.UserMeasurements;
 
 public class FirebaseSaver {
 
-    private static final String FIREBASE_USER_DIRECTION = "users";
-    private static final String FIREBASE_USER_BODY_SETTINGS_DIRECTION = "users/body";
+    private static final String FIREBASE_USER_DIRECTORY = "users";
+    private static final String FIREBASE_USER_BODY_SETTINGS_DIRECTORY = FIREBASE_USER_DIRECTORY + "/body/";
 
 
 
-    public static void saveUserMeasurements(String uid, UserMeasurements userMeasurements){
-        FirebaseDatabase.getInstance().getReference(FIREBASE_USER_BODY_SETTINGS_DIRECTION);
+    public static void setUserMeasurements(String uid, UserMeasurements userMeasurements){
+        String ref = FIREBASE_USER_BODY_SETTINGS_DIRECTORY + uid;
+        FirebaseDatabase.getInstance().getReference(ref).setValue(userMeasurements);
     }
 
-    public static void getUserMeasurements(String uid) {
-        FirebaseDatabase.getInstance().getReference(FIREBASE_USER_DIRECTION).child(uid);
+    public static void getUserMeasurements(String uid, ValueEventListener valueEventListener) {
+        String ref = FIREBASE_USER_BODY_SETTINGS_DIRECTORY + uid;
+        FirebaseDatabase.getInstance().getReference(ref).addListenerForSingleValueEvent(valueEventListener);
     }
-
 
 }

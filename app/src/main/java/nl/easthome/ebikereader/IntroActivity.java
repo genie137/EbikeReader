@@ -94,7 +94,7 @@ public class IntroActivity extends AppIntro {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
-            FirebaseSaver.saveUserMeasurements(FirebaseAuth.getInstance().getUid(), userMeasurements);
+            FirebaseSaver.setUserMeasurements(FirebaseAuth.getInstance().getUid(), userMeasurements);
             startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             return;
         }
