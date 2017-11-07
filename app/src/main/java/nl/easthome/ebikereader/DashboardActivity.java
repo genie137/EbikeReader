@@ -64,6 +64,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_dashboard);
 		ButterKnife.bind(this);
+
+
 		onCreateSetupNav();
 		applyViewSizeChanges();
         mRideRecordingServiceConnection = new RideRecordingServiceConnection();

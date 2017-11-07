@@ -3,10 +3,57 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/device_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
+
+    <RelativeLayout
+        android:paddingTop="4dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name"/>
+        >
+
+        <TextView
+            android:id="@+id/device_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            android:text="HeartRate"
+            android:textColor="@android:color/black"
+            android:textSize="20dp"
+            android:textStyle="bold"/>
+
+        <TextView
+
+            android:id="@+id/device_id"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/device_type"
+            android:text="DeviceID"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="15dp"
+            android:textStyle="italic"/>
+
+        <Switch
+            android:id="@+id/device_connection_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:splitTrack="false"/>
+
+    </RelativeLayout>
+
+
+
 
 </LinearLayout>

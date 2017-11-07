@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.Arrays;
 import java.util.List;
 
-import nl.easthome.antpluslibary.AntSupportChecker;
+import nl.easthome.antpluslibary.AntPlusSupportChecker;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Objects.UserMeasurements;
 
@@ -36,7 +36,7 @@ public class IntroActivity extends AppIntro {
         super.onCreate(savedInstanceState);
         showSkipButton(false);
         setBackButtonVisibilityWithDone(true);
-        askForPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},2);
+        askForPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},3);
         createSlides();
     }
 
@@ -142,7 +142,7 @@ public class IntroActivity extends AppIntro {
     }
 
     private void checkAntSupport() {
-        switch (AntSupportChecker.getAntSupportedState(this)){
+        switch (AntPlusSupportChecker.getAntSupportedState(this)){
             case ANT_NO_CHIP_OR_USB:
                 new MaterialDialog.Builder(this)
                         .title(R.string.intro_dialog_antsupport_title)

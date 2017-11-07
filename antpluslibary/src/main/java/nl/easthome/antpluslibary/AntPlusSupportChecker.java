@@ -11,11 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 /**
  * Created by Joris Oosterhuis on 11/2/2017.
- * Based upon android_antlib_4-12-0.jar AntSupportChecker class.
+ * Based upon android_antlib_4-12-0.jar AntPlusSupportChecker class.
  * https://www.thisisant.com/developer/ant/ant-in-android
  */
 
-public class AntSupportChecker {
+public class AntPlusSupportChecker {
 
     private static final String ANT_LIBRARY_NAME = "com.dsi.ant.antradio_library";
     private static final String ANT_RADIO_PACKAGE_NAME = "com.dsi.ant.service.socket";
