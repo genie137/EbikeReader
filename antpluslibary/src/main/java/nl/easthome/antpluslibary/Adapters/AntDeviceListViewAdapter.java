@@ -6,9 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,75 +33,72 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<MultiDeviceSearchResu
         }
 
 
-        TextView device_type = convertView.findViewById(R.id.device_type);
+        final TextView device_type = convertView.findViewById(R.id.device_type);
         TextView device_id = convertView.findViewById(R.id.device_id);
-        final Switch device_switch = convertView.findViewById(R.id.device_connection_toggle);
+        final Button device_button = convertView.findViewById(R.id.device_connection_toggle);
         final ImageView device_state_image= convertView.findViewById(R.id.device_image);
 
         device_type.setText(device.mDevice.getAntDeviceType().toString());
         device_id.setText(device.mDevice.getDeviceDisplayName());
-        device_switch.setChecked(device.mDevice.isAlreadyConnected());
 
         switch (new AntPlusDeviceConnector(getContext()).getDeviceState(device.mDevice)){
             case NEW:
                 device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_new_sensor));
-                device_switch.setChecked(false);
+                device_button.setText("Pair");
                 break;
             case CONNECTED:
                 device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_sensor_connected));
-                device_switch.setChecked(true);
+                device_button.setText("Unpair");
                 break;
             case MISSING:
-                device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_sensor_error));
-                device_switch.setEnabled(false);
+                device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_help_outline_blue_600_48dp));
+                device_button.setEnabled(false);
                 break;
         }
 
-        CompoundButton.OnCheckedChangeListener mOnCheckedChangeListner = new CompoundButton.OnCheckedChangeListener() {
+        device_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+            public void onClick(View v) {
+                Button button = (Button) v;
+                String text = button.getText().toString();
+
+                if (text.equals("Pair")){
                     AntPlusDeviceConnector.AntPlusSensorDeviceSaveResult result = new AntPlusDeviceConnector(getContext()).saveSensorForType(device.mDevice.getAntDeviceType(), device.mDevice.getAntDeviceNumber());
-                    System.out.println(result);
                     switch (result){
                         case NEW_SENSOR_SAVED:
                             Toast.makeText(getContext(), device.mDevice.getAntDeviceType() + " has been added!", Toast.LENGTH_LONG).show();
                             device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_sensor_connected));
+                            device_button.setText("Unpair");
                             break;
                         case REPLACED_OLD_SENSOR:
                             Toast.makeText(getContext(), device.mDevice.getAntDeviceType() + " has been replaced!", Toast.LENGTH_LONG).show();
                             device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_sensor_connected));
+                            device_button.setText("Unpair");
                             break;
                         case NOT_SUPPORTED_SENSOR:
                             Toast.makeText(getContext(), device.mDevice.getAntDeviceType() + " is not supported in this app.", Toast.LENGTH_LONG).show();
                             device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_sensor_error));
-                            device_switch.setOnCheckedChangeListener(null);
-                            buttonView.setChecked(false);
-                            device_switch.setOnCheckedChangeListener(this);
-
                             break;
                         case ERROR:
                             Toast.makeText(getContext(), "Error?", Toast.LENGTH_LONG).show();
-                            device_switch.setOnCheckedChangeListener(null);
-                            buttonView.setChecked(false);
-                            device_switch.setOnCheckedChangeListener(this);
                             break;
                     }
                 }
                 else {
                     boolean result = new AntPlusDeviceConnector(getContext()).removeSensorForType(device.mDevice.getAntDeviceType());
                     if (result) {
-                        Toast.makeText(getContext(), device.mDevice.getAntDeviceType() + " has been removed!", Toast.LENGTH_LONG).show();
-                        device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_new_sensor));
+                        device_button.setText("Pair");
                     }
                     else {
-                        Toast.makeText(getContext(), "No " + device.mDevice.getAntDeviceType() + " to be removed!", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        };
 
-        device_switch.setOnCheckedChangeListener(mOnCheckedChangeListner);
+                    }
+
+                }
+
+
+            }
+        });
         return convertView;
     }
+
 }

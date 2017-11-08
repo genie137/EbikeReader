@@ -41,7 +41,7 @@
             android:textSize="15dp"
             android:textStyle="italic"/>
 
-        <Switch
+        <Button
             android:id="@+id/device_connection_toggle"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
@@ -49,6 +49,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
+            android:text="Pair"
             android:splitTrack="false"/>
 
     </RelativeLayout>
