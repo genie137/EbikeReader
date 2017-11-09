@@ -3,9 +3,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
-import com.dsi.ant.plugins.antplus.pccbase.MultiDeviceSearch;
-
-import java.util.ArrayList;
 
 public class AntPlusDeviceConnector {
     Context mActivity;
@@ -22,7 +19,7 @@ public class AntPlusDeviceConnector {
             return false;
         }
         else {
-            sharedPreferences.edit().putInt(deviceType.toString(), 0);
+            sharedPreferences.edit().putInt(deviceType.toString(), 0).apply();
             return true;
         }
     }
@@ -47,31 +44,17 @@ public class AntPlusDeviceConnector {
 
     }
 
-    public AntPlusSensorDeviceState getDeviceState(MultiDeviceSearch.MultiDeviceSearchResult mDevice) {
+    public int getDeviceIdForType(DeviceType type){
+        SharedPreferences sharedPreferences = mActivity.getSharedPreferences(mActivity.getPackageName(), 0);
 
-        } else {
-            int typeID = mActivity.getSharedPreferences(mActivity.getPackageName(),0).getInt(deviceType.toString(), 0);
-            if (typeID == mDevice.getAntDeviceNumber()){
-                return AntPlusSensorDeviceState.CONNECTED;
-            }
-            else {
-                return AntPlusSensorDeviceState.NEW;
-            }
-        }
+        return sharedPreferences.getInt(type.toString(), 0);
+    }
+
 
     public enum AntPlusSensorDeviceSaveResult{
         NEW_SENSOR_SAVED,
         REPLACED_OLD_SENSOR,
-        NOT_SUPPORTED_SENSOR,
         ERROR
     }
-
-    public enum AntPlusSensorDeviceState{
-        NEW,
-        CONNECTED,
-        MISSING,
-        NOT_SUPPORTED
-    }
-
 
 }

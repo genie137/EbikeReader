@@ -30,6 +30,7 @@ import java.util.List;
 
 import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Objects.Ride;
+import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.R;
 
 public class RideRecordingService extends Service {
@@ -43,6 +44,7 @@ public class RideRecordingService extends Service {
     private FusedLocationProviderClient mFusedLocationClient;
     private RideRecordingLocationCallback mLocationCallback;
     private DashboardActivity mActivity;
+    private MappingService mMappingService;
 
     public RideRecordingService() {
     }
@@ -80,8 +82,9 @@ public class RideRecordingService extends Service {
      * Method for binded clients, starts the recording.
      * @return true if started correctly
      */
-	public boolean startRecording(DashboardActivity activity) {
+	public boolean startRecording(DashboardActivity activity, MappingService mappingService) {
         mActivity = activity;
+        mMappingService = mappingService;
         if (!mIsRecording){
             startRecordingActivities();
             if (mArePermissionsGranted){
@@ -154,6 +157,9 @@ public class RideRecordingService extends Service {
         if (mRide != null){
             mRide.stopRide();
         }
+        if (mMappingService != null){
+            mMappingService.removePolyLine();
+        }
 
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         mIsRecording = false;
@@ -164,15 +170,21 @@ public class RideRecordingService extends Service {
         return mIsRecording;
     }
 
-	public class RideRecordingBinder extends Binder {
+
+    public class RideRecordingBinder extends Binder {
         public RideRecordingService getService() {
             return RideRecordingService.this;
         }
     }
+
     public class RideRecordingLocationCallback extends LocationCallback {
         @Override
         public void onLocationResult(LocationResult locationResult) {
+            if (mMappingService != null){
+                mMappingService.addPointToMap(locationResult.getLastLocation());
+            }
             Log.d(mLogTag, "onLocationResult");
+            mRide.addRideMeasurement(new RideMeasurement(locationResult.getLastLocation()));
             super.onLocationResult(locationResult);
         }
     }

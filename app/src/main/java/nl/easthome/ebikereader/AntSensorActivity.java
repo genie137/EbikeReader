@@ -8,10 +8,10 @@ import android.widget.ProgressBar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import nl.easthome.antpluslibary.AntPlusDeviceScanner;
+import nl.easthome.antpluslibary.AntPlusSensorScanner;
 
 public class AntSensorActivity extends AppCompatActivity {
-    AntPlusDeviceScanner mAntPlusDeviceScanner;
+    AntPlusSensorScanner mAntPlusSensorScanner;
     @BindView(R.id.ant_device_progress_bar) ProgressBar mProgressBar;
     @BindView(R.id.ant_device_listView) ListView mListView;
 
@@ -25,8 +25,8 @@ public class AntSensorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.activity_title_antsensor));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mAntPlusDeviceScanner = new AntPlusDeviceScanner(this, mListView);
-        boolean goodStart = mAntPlusDeviceScanner.startFindDevices();
+        mAntPlusSensorScanner = new AntPlusSensorScanner(this, mListView);
+        boolean goodStart = mAntPlusSensorScanner.startFindDevices();
         if (!goodStart) {
             mProgressBar.setIndeterminate(false);
         }
@@ -35,7 +35,7 @@ public class AntSensorActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mAntPlusDeviceScanner.stopFindDevices();
+        mAntPlusSensorScanner.stopFindDevices();
         super.onDestroy();
     }
 }

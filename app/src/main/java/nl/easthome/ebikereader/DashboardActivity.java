@@ -53,7 +53,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 			mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
 		}
 		else {
-			mRRS.startRecording(this);
+			mRRS.startRecording(this, mMappingService);
+			populatePieChart();
 			mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
 		}
 
@@ -64,11 +65,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_dashboard);
 		ButterKnife.bind(this);
-
-
 		onCreateSetupNav();
 		applyViewSizeChanges();
-        mRideRecordingServiceConnection = new RideRecordingServiceConnection();
+        mRideRecordingServiceConnection = new RideRecordingServiceConnection(mMappingService);
         bindService(new Intent(this, RideRecordingService.class), mRideRecordingServiceConnection, Context.BIND_AUTO_CREATE);
         mMappingService = new MappingService(this);
 	}
@@ -117,6 +116,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		    startActivity(new Intent(this, AntSensorActivity.class));
         } else if (id == R.id.nav_logout) {
 			logoutApp();
+			//TODO remove user specific firebase data
 		}
 
 		mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -163,13 +163,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         return mDashboardLayout;
     }
 
-
-
-
-
     private class RideRecordingServiceConnection implements ServiceConnection {
         RideRecordingService mRideRecordingService;
         boolean mIsServiceBound = false;
+        MappingService mMappingService;
+
+        public RideRecordingServiceConnection(MappingService mappingService) {
+            mMappingService = mappingService;
+        }
 
 
         @Override

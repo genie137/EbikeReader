@@ -1,6 +1,7 @@
 package nl.easthome.ebikereader.Services;
 
 import android.location.Location;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -8,12 +9,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import nl.easthome.ebikereader.DashboardActivity;
-import nl.easthome.ebikereader.Objects.RideMeasurement;
-import nl.easthome.ebikereader.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.easthome.ebikereader.DashboardActivity;
+import nl.easthome.ebikereader.Objects.RideMeasurement;
+import nl.easthome.ebikereader.R;
 
 public class MappingService implements OnMapReadyCallback {
 	private boolean mIsMapReady;
@@ -70,6 +72,12 @@ public class MappingService implements OnMapReadyCallback {
 		}
 		else {
 			return;
+		}
+	}
+
+	public void removePolyLine(){
+		if (mPolyline != null){
+			mPolyline.remove();
 		}
 	}
 }
