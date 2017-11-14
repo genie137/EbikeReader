@@ -23,10 +23,10 @@
     <string name="intro_screen_welcome_title">Welcome to the Ebike Reader app.</string>
     <string name="intro_screen_welcome_description">To start we need to setup a few things first.</string>
     <string name="intro_screen_gpsperm_title">Permission Request</string>
-    <string name="intro_screen_gpsperm_description">To record a ride we need to use your GPS. Can we?</string>
+    <string name="intro_screen_gpsperm_description">We want to use the gps to record where you are while riding. But we need your permission first. Can we do that?</string>
     <string name="intro_screen_login_title">Login</string>
     <string name="intro_screen_login_description">We save your rides online, we need to know who rides are being recorded. Press Done to login.</string>
-    <string name="intro_screen_antsupport_title">Ant Support</string>
+    <string name="intro_screen_antsupport_title">Ant+ Support</string>
     <string name="intro_screen_antsupport_description">To properly support all functionality of the application, we need to check if your device supports this protocol. Ant+ has the means to connect to fitness/sport devices.</string>
     <string name="intro_dialog_antsupport_title">Ant Support</string>
     <string name="intro_dialog_antsupport_positive_content">Your device does support ant+!</string>
@@ -40,7 +40,7 @@
     <string name="intro_dialog_bodymeasurements_positive_button">Done</string>
     <string name="intro_dialog_bodymeasurements_empty_fields_toast">You can\'t leave the fields empty!</string>
     <string name="intro_screen_bodymeasurements_title">Body Measurements</string>
-    <string name="intro_screen_bodymeasurements_description">To improve measurements, we want to know more about you! Please fill in the data in the next window. Dont worry, you can change them in settings.</string>
+    <string name="intro_screen_bodymeasurements_description">To improve measurements, we want to know more about you! \n Please fill in the data in the next window. \n You can change the information later in the settings.</string>
     <string name="title_activity_ant_sensor_activty">Ant+ Sensors</string>
     <string name="title_activity_ant_sensor">AntSensorActivity</string>
     <string name="activity_title_antsensor">Ant+ Sensors</string>
@@ -55,5 +55,10 @@
     <string name="dialog_antcheck_ant_plugin_missing_content">Your device contains an ANT+ chip but you need to install the Plugin App.</string>
     <string name="dialog_antcheck_ant_service_missing_title">Ant+ Service App Missing</string>
     <string name="dialog_antcheck_ant_service_missing_content">Your device contains an ANT+ chip but you need to install the Service App.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="intro_screen_bike_title">Bike Information</string>
+    <string name="intro_screen_bike_description">To put the readings into context we like to know what bike you have. \n You can change the information later in the settings.</string>
 
 </resources>

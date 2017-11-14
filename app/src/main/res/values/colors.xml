@@ -8,5 +8,6 @@
     <color name="appNameColor">#000000</color>
     <color name="intro_login_fields">#B0BEC5</color>
     <color name="intro_screen_welcome_slide">#ff669900</color>
+    <color name="white_text">#ffffff</color>
 </resources>
 

@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
 		FirebaseAuth auth = FirebaseAuth.getInstance();
 		if (auth.getCurrentUser() == null) {
-            startActivity(new Intent(MainActivity.this, IntroActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            startActivity(new Intent(this, IntroActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
         }
         else{

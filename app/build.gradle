@@ -77,6 +77,9 @@ dependencies {
     implementation files('libs/antpluginlib_3-5-0.jar')
     implementation files('libs/fit_14.10.jar')
     implementation project(':antpluslibary')
+    compile 'com.github.ishaan1995:ButtonProgressBar:1.0'
+
+
 }
 
 

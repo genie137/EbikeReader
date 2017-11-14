@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/intro_screen_welcome_slide"
+    android:rowCount="4"
+    android:columnCount="3"
+    >
+
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:ignore="MissingConstraints">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Bike Model"
+                android:textAlignment="center"
+                android:textColor="@color/white_text"
+                android:textSize="18sp"
+                tools:layout_editor_absoluteX="48dp"
+                tools:layout_editor_absoluteY="29dp"/>
+
+            <EditText
+                android:id="@+id/model_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="EX: 'Stromer St2 Sport 45km'"
+                android:layout_weight="1"
+                android:ems="10"
+                android:textColor="@color/white_text"
+                android:inputType="text"
+                tools:layout_editor_absoluteX="181dp"
+                tools:layout_editor_absoluteY="16dp"/>
+
+
+        </LinearLayout>
+s
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="352dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="Km Range"
+                android:textAlignment="center"
+                android:textColor="@color/white_text"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/km_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:hint="Km per charge"
+                android:textColor="@color/white_text"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="km"
+                android:textAlignment="center"
+                android:textColor="@color/white_text"
+                android:textSize="18sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Battery Watt"
+                android:textAlignment="center"
+                android:textColor="@color/white_text"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/battery_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Max wattage"
+                android:inputType="number"
+                android:textColor="@color/white_text"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Wh"
+                android:textAlignment="center"
+                android:textColor="@color/white_text"
+                android:textSize="18sp"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Max Speed"
+                android:textAlignment="center"
+                android:textColor="@color/white_text"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/maxspeed_input"
+                android:layout_width="478dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Max speed"
+                android:inputType="number"
+                android:textColor="@color/white_text"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="km/h"
+                android:textAlignment="center"
+                android:textColor="@color/white_text"
+                android:textSize="18sp"/>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</GridLayout>
