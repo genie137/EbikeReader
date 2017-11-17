@@ -1,1 +1,1 @@
-include ':app', ':antpluslibary'
+include ':app', ':antpluslibary', ':antpluginlib_3-5-0'

@@ -23,23 +23,23 @@ public class AntPlusSensor
         mAntAddType = antAddType;
     }
 
-    public DeviceType getmSensorType() {
+    public DeviceType getSensorType() {
         return mSensorType;
     }
 
-    public int getmDeviceNumber() {
+    public int getDeviceNumber() {
         return mDeviceNumber;
     }
 
-    public String getmName() {
+    public String getName() {
         return mName;
     }
 
-    public AntAddType getmAntAddType() {
+    public AntAddType getAntAddType() {
         return mAntAddType;
     }
 
-    public void setmAntAddType(AntAddType mAntAddType) {
+    public void setAntAddType(AntAddType mAntAddType) {
         this.mAntAddType = mAntAddType;
     }
 

@@ -70,16 +70,14 @@ dependencies {
     //https://github.com/Clans/FloatingActionButton
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.google.android.gms:play-services-maps:11.4.2'
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.0@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }
     compile 'com.github.apl-devs:appintro:v4.2.2'
-    implementation files('libs/antpluginlib_3-5-0.jar')
-    implementation files('libs/fit_14.10.jar')
-    implementation project(':antpluslibary')
     compile 'com.github.ishaan1995:ButtonProgressBar:1.0'
 
-
+    compile project(path: ':antpluslibary')
+    compile project(path: ':antpluginlib_3-5-0')
 }
 
 

@@ -31,6 +31,8 @@ import com.hookedonplay.decoviewlib.events.DecoEvent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
+import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
 import nl.easthome.ebikereader.Services.MappingService;
 import nl.easthome.ebikereader.Services.RideRecordingService;
 
@@ -53,13 +55,40 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 			mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
 		}
 		else {
-			mRRS.startRecording(this, mMappingService);
+			try {
+				mRRS.startRecording(this, mMappingService);
+			} catch (NotImplementedException nie) {
+				nie.printStackTrace();
+			} catch (NoDeviceConfiguredException ndce) {
+                showNoDeviceConfiguredExceptionDialog(ndce.getMessage());
+			}
 			populatePieChart();
 			mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
 		}
-
-
 	}
+
+	private void showNoDeviceConfiguredExceptionDialog(String message){
+		new MaterialDialog.Builder(this)
+				.title("Missing Sensor")
+				.content("We cant start recording because we need a sensor which you haven't paired yet.  \n "+ message)
+				.positiveText("Pair Sensor")
+				.negativeText("Dismiss")
+				.cancelable(false)
+				.onPositive(new MaterialDialog.SingleButtonCallback() {
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						Intent i = new Intent(DashboardActivity.this, AntSensorActivity.class);
+						startActivity(i);
+					}
+				})
+				.onNegative(new MaterialDialog.SingleButtonCallback() {
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						dialog.dismiss();
+					}
+				}).show();
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -164,30 +193,28 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
     private class RideRecordingServiceConnection implements ServiceConnection {
-        RideRecordingService mRideRecordingService;
-        boolean mIsServiceBound = false;
-        MappingService mMappingService;
+		RideRecordingService mRideRecordingService;
+		boolean mIsServiceBound = false;
+		MappingService mMappingService;
 
-        public RideRecordingServiceConnection(MappingService mappingService) {
-            mMappingService = mappingService;
-        }
-
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            RideRecordingService.RideRecordingBinder binder = (RideRecordingService.RideRecordingBinder) service;
-            mRideRecordingService = binder.getService();
-            mIsServiceBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mRideRecordingServiceConnection = null;
-            mIsServiceBound = false;
-        }
-    }
+		public RideRecordingServiceConnection(MappingService mappingService) {
+			mMappingService = mappingService;
+		}
 
 
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			RideRecordingService.RideRecordingBinder binder = (RideRecordingService.RideRecordingBinder) service;
+			mRideRecordingService = binder.getService();
+			mIsServiceBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mRideRecordingServiceConnection = null;
+			mIsServiceBound = false;
+		}
+	}
 
 
 }

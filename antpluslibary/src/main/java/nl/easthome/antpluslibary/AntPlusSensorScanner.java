@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 import nl.easthome.antpluslibary.Adapters.AntDeviceListViewAdapter;
+import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Objects.AntPlusSensor;
 
 public class AntPlusSensorScanner {
@@ -31,7 +32,7 @@ public class AntPlusSensorScanner {
         mListView = listView;
         mDeviceConnector = new AntPlusDeviceConnector(mActivity);
         mDeviceSet.add(DeviceType.BIKE_POWER);
-        mDeviceSet.add(DeviceType.BIKE_SPDCAD);
+        mDeviceSet.add(DeviceType.BIKE_CADENCE);
         mDeviceSet.add(DeviceType.BIKE_SPD);
         mDeviceSet.add(DeviceType.HEARTRATE);
         mSensors = new ArrayList<>();
@@ -54,14 +55,17 @@ public class AntPlusSensorScanner {
     private void addPreviouslyConnectedDevices() {
         for(DeviceType deviceType: mDeviceSet) {
             final DeviceType deviceType1 = deviceType;
-            final int id = mDeviceConnector.getDeviceIdForType(deviceType);
-            if (id != 0){
+            final int id;
+            try {
+                id = mDeviceConnector.getDeviceIdForType(deviceType);
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mAntDeviceListViewAdapter.add(new AntPlusSensor(deviceType1, id, "Device: " + id, AntPlusSensor.AntAddType.EXISTING_AND_MISSING));
                     }
                 });
+            } catch (NoDeviceConfiguredException e) {
+
             }
         }
     }
@@ -88,8 +92,8 @@ public class AntPlusSensorScanner {
             boolean itemAlreadyInList = false;
 
             for (AntPlusSensor sensor: mSensors){
-                if (multiDeviceSearchResult.getAntDeviceNumber() == sensor.getmDeviceNumber()){
-                    sensor.setmAntAddType(AntPlusSensor.AntAddType.EXISTING_AND_FOUND);
+                if (multiDeviceSearchResult.getAntDeviceNumber() == sensor.getDeviceNumber()){
+                    sensor.setAntAddType(AntPlusSensor.AntAddType.EXISTING_AND_FOUND);
                     itemAlreadyInList = true;
                     mActivity.runOnUiThread(new Runnable() {
                         @Override

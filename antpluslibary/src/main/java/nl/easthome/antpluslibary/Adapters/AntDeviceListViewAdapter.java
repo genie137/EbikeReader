@@ -19,11 +19,12 @@ import nl.easthome.antpluslibary.R;
 
 
 public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
-
+    private Activity mActivity;
     final AntDeviceListViewAdapter antDeviceListViewAdapter = this;
 
     public AntDeviceListViewAdapter(@NonNull Activity context, @NonNull ArrayList<AntPlusSensor> objects) {
         super(context, 0, objects);
+        mActivity = context;
     }
 
     @NonNull
@@ -40,10 +41,10 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
         final Button device_button = convertView.findViewById(R.id.device_connection_toggle);
         final ImageView device_state_image= convertView.findViewById(R.id.device_image);
 
-        device_type.setText(device.getmSensorType().toString());
-        device_id.setText(device.getmName());
+        device_type.setText(device.getSensorType().toString());
+        device_id.setText(device.getName());
 
-        switch (device.getmAntAddType()){
+        switch (device.getAntAddType()){
             case NEW:
                 device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_new_sensor));
                 device_button.setText("Pair");
@@ -64,15 +65,15 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
                 String text = device_button.getText().toString();
 
                 if (text.equals("Pair")){
-                    AntPlusDeviceConnector.AntPlusSensorDeviceSaveResult result = new AntPlusDeviceConnector(getContext()).saveSensorForType(device.getmSensorType(), device.getmDeviceNumber());
+                    AntPlusDeviceConnector.AntPlusSensorDeviceSaveResult result = new AntPlusDeviceConnector(mActivity).saveSensorForType(device.getSensorType(), device.getDeviceNumber());
                     switch (result){
                         case NEW_SENSOR_SAVED:
-                            Toast.makeText(getContext(), device.getmSensorType() + " has been added!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), device.getSensorType() + " has been added!", Toast.LENGTH_LONG).show();
                             device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_sensor_connected));
                             device_button.setText("Unpair");
                             break;
                         case REPLACED_OLD_SENSOR:
-                            Toast.makeText(getContext(), device.getmSensorType() + " has been replaced!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), device.getSensorType() + " has been replaced!", Toast.LENGTH_LONG).show();
                             device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_sensor_connected));
                             device_button.setText("Unpair");
                             break;
@@ -82,11 +83,11 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
                     }
                 }
                 else {
-                    if (device.getmAntAddType().equals(AntPlusSensor.AntAddType.EXISTING_AND_MISSING)) {
+                    if (device.getAntAddType().equals(AntPlusSensor.AntAddType.EXISTING_AND_MISSING)) {
                         antDeviceListViewAdapter.remove(device);
                     }
 
-                    boolean result = new AntPlusDeviceConnector(getContext()).removeSensorForType(device.getmSensorType());
+                    boolean result = new AntPlusDeviceConnector(mActivity).removeSensorForType(device.getSensorType());
                     if (result) {
                         device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_new_sensor));
                         device_button.setText("Pair");

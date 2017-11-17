@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -26,8 +27,13 @@ import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import nl.easthome.antpluslibary.AntPlusDeviceConnector;
+import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
+import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
+import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
 import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
@@ -43,6 +49,7 @@ public class RideRecordingService extends Service {
     private Ride mRide;
     private FusedLocationProviderClient mFusedLocationClient;
     private RideRecordingLocationCallback mLocationCallback;
+    private ArrayList<AntPlusSensorConnection> mAntPlusSensorList = new ArrayList<>();
     private DashboardActivity mActivity;
     private MappingService mMappingService;
 
@@ -82,7 +89,7 @@ public class RideRecordingService extends Service {
      * Method for binded clients, starts the recording.
      * @return true if started correctly
      */
-	public boolean startRecording(DashboardActivity activity, MappingService mappingService) {
+	public boolean startRecording(DashboardActivity activity, MappingService mappingService) throws NoDeviceConfiguredException, NotImplementedException {
         mActivity = activity;
         mMappingService = mappingService;
         if (!mIsRecording){
@@ -117,7 +124,7 @@ public class RideRecordingService extends Service {
         }
     }
 
-    private void startRecordingActivities(){
+    private void startRecordingActivities() throws NoDeviceConfiguredException, NotImplementedException {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mActivity);
         if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Dexter.withActivity(mActivity)
@@ -145,22 +152,46 @@ public class RideRecordingService extends Service {
         }
 
         if (mArePermissionsGranted) {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
-            mRide = new Ride();
-            mRide.startRide();
-            mIsRecording = true;
-            Log.d(mLogTag, "RecordingStart");
+            try {
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+                startSensors();
+                mRide = new Ride();
+                mRide.startRide();
+                mIsRecording = true;
+                Log.d(mLogTag, "RecordingStart");
+            } catch (Exception e){
+                e.printStackTrace();
+                stopRecordingActivities();
+                throw e;
+            }
+
         }
     }
+
+    private void startSensors() throws NotImplementedException, NoDeviceConfiguredException {
+            AntPlusDeviceConnector mDeviceConnector = new AntPlusDeviceConnector(mActivity);
+
+            mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_POWER));
+            mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_CADENCE));
+            mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_SPD));
+            mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.HEARTRATE));
+    }
+
+    private void stopRecordingSensors() {
+
+    }
+
 
     private void stopRecordingActivities(){
         if (mRide != null){
             mRide.stopRide();
+
         }
         if (mMappingService != null){
             mMappingService.removePolyLine();
         }
 
+        stopRecordingSensors();
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         mIsRecording = false;
         Log.d(mLogTag, "RecordingStop");
@@ -188,7 +219,5 @@ public class RideRecordingService extends Service {
             super.onLocationResult(locationResult);
         }
     }
-
-
 
 }

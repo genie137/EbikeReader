@@ -1,6 +1,8 @@
 package nl.easthome.ebikereader;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 
 import com.github.paolorotolo.appintro.AppIntro;
 
@@ -31,5 +33,9 @@ public class IntroActivity extends AppIntro {
             addSlide(new BikeInfoSlideFragment());
         }
 
-
+    @Override
+    public void onDonePressed(Fragment currentFragment) {
+        startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        finish();
     }
+}
