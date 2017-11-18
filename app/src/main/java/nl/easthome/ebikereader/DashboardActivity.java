@@ -39,6 +39,7 @@ import nl.easthome.ebikereader.Services.RideRecordingService;
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 	private MappingService mMappingService;
     private DashboardActivity.RideRecordingServiceConnection mRideRecordingServiceConnection;
+    private Intent mRideRecordingIntent;
 
 	@BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
 	@BindView(R.id.nav_view) NavigationView mNavigationView;
@@ -67,28 +68,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		}
 	}
 
-	private void showNoDeviceConfiguredExceptionDialog(String message){
-		new MaterialDialog.Builder(this)
-				.title("Missing Sensor")
-				.content("We cant start recording because we need a sensor which you haven't paired yet.  \n "+ message)
-				.positiveText("Pair Sensor")
-				.negativeText("Dismiss")
-				.cancelable(false)
-				.onPositive(new MaterialDialog.SingleButtonCallback() {
-					@Override
-					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-						Intent i = new Intent(DashboardActivity.this, AntSensorActivity.class);
-						startActivity(i);
-					}
-				})
-				.onNegative(new MaterialDialog.SingleButtonCallback() {
-					@Override
-					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-						dialog.dismiss();
-					}
-				}).show();
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -96,14 +75,43 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		ButterKnife.bind(this);
 		onCreateSetupNav();
 		applyViewSizeChanges();
-        mRideRecordingServiceConnection = new RideRecordingServiceConnection(mMappingService);
-        bindService(new Intent(this, RideRecordingService.class), mRideRecordingServiceConnection, Context.BIND_AUTO_CREATE);
         mMappingService = new MappingService(this);
+        mRideRecordingServiceConnection = new RideRecordingServiceConnection(mMappingService);
+        mRideRecordingIntent = new Intent(this, RideRecordingService.class);
 	}
 
     @Override
-    protected void onDestroy() {
+    protected void onStart() {
+        bindService(mRideRecordingIntent, mRideRecordingServiceConnection, Context.BIND_AUTO_CREATE);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
         unbindService(mRideRecordingServiceConnection);
+        super.onStop();
+    }
+
+    @Override
+	protected void onSaveInstanceState(Bundle outState) {
+		//TODO save info on dashboard leave
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		//TODO restore info on dashboard reentry
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+
+
+
+	@Override
+    protected void onDestroy() {
+        if (!mRideRecordingServiceConnection.mRideRecordingService.isRecording()){
+            stopService(mRideRecordingIntent);
+        }
+
         super.onDestroy();
     }
 
@@ -151,6 +159,28 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		mDrawerLayout.closeDrawer(GravityCompat.START);
 		return true;
 	}
+
+    private void showNoDeviceConfiguredExceptionDialog(String message){
+        new MaterialDialog.Builder(this)
+                .title("Missing Sensor")
+                .content("We cant start recording because we need a sensor which you haven't paired yet.  \n "+ message)
+                .positiveText("Pair Sensor")
+                .negativeText("Dismiss")
+                .cancelable(false)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Intent i = new Intent(DashboardActivity.this, AntSensorActivity.class);
+                        startActivity(i);
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
 	private void populatePieChart() {
 		SeriesItem seriesItem1 = new SeriesItem.Builder(Color.argb(255, 64, 196, 0)).setRange(0, 100, 0).setLineWidth(80f).build();
 		int series1Index = mDecoView.addSeries(seriesItem1);

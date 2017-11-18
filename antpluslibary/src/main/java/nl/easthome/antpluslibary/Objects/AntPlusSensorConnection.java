@@ -16,9 +16,16 @@ public class AntPlusSensorConnection<T extends AntPluginPcc> {
 
     public AntPlusSensorConnection(Activity activity) {
         mActivity = activity;
-        mSensorResultReceiver = new SensorResultReceiver<T>(this);
+        mSensorResultReceiver = new SensorResultReceiver<>(this);
         mSensorStateChangeReceiver = new SensorStateChangeChangeReceiver(this);
     }
+
+
+
+
+
+
+
 
     public SensorResultReceiver getSensorResultReceiver() {
         return mSensorResultReceiver;
@@ -38,5 +45,9 @@ public class AntPlusSensorConnection<T extends AntPluginPcc> {
 
     public T getResultConnection() {
         return resultConnection;
+    }
+
+    public PccReleaseHandle<T> getReleaseHandle() {
+        return mReleaseHandle;
     }
 }

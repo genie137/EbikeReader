@@ -24,7 +24,6 @@ public class SensorResultReceiver<T extends AntPluginPcc> implements AntPluginPc
         }
 
 
-
         System.out.println("access: "+ requestAccessResult.toString() + ", result: "+ result + ", devicestate: " + deviceState.toString());
         switch (requestAccessResult){
             case SUCCESS:

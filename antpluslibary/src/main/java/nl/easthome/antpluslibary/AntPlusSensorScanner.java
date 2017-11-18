@@ -2,49 +2,54 @@ package nl.easthome.antpluslibary;
 
 import android.app.Activity;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.dsi.ant.plugins.antplus.pcc.MultiDeviceSearch;
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
-import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 
 import nl.easthome.antpluslibary.Adapters.AntDeviceListViewAdapter;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
+import nl.easthome.antpluslibary.Implementations.MdsSearchCallback;
 import nl.easthome.antpluslibary.Objects.AntPlusSensor;
 
 public class AntPlusSensorScanner {
     private Activity mActivity;
     private ListView mListView;
+    private MdsSearchCallback mMdsSearchCallbacks;
     private AntDeviceListViewAdapter mAntDeviceListViewAdapter;
-    private EnumSet<DeviceType> mDeviceSet = EnumSet.noneOf(DeviceType.class);
-    private MdsSearchCallbacks mMdsSearchCallbacks;
+    private EnumSet<DeviceType> mDeviceSet;
     private MultiDeviceSearch mMultiDeviceSearch;
-    private AntPlusDeviceConnector mDeviceConnector;
+    private AntPlusDeviceManager mDeviceConnector;
     private ArrayList<AntPlusSensor> mSensors;
 
 
-
-    public AntPlusSensorScanner(Activity activity, ListView listView) {
+    /**
+     * Object that facilitates the scanning of Ant+ sensors.
+     * @param activity The activity from which the scanning was started.
+     * @param listView The ListView in which the results are to be displayed.
+     * @param deviceTypes An EnumSet which contains all devices that need to be found by the scanner.
+     */
+    public AntPlusSensorScanner(Activity activity, ListView listView, EnumSet<DeviceType> deviceTypes) {
         mActivity = activity;
         mListView = listView;
-        mDeviceConnector = new AntPlusDeviceConnector(mActivity);
-        mDeviceSet.add(DeviceType.BIKE_POWER);
-        mDeviceSet.add(DeviceType.BIKE_CADENCE);
-        mDeviceSet.add(DeviceType.BIKE_SPD);
-        mDeviceSet.add(DeviceType.HEARTRATE);
+        mDeviceConnector = new AntPlusDeviceManager(mActivity);
+        mDeviceSet = deviceTypes;
         mSensors = new ArrayList<>();
 
     }
 
+    /**
+     * Starts the search for nearby Ant+ sensors.
+     * @return True if started without exceptions.
+     */
     public boolean startFindDevices(){
         try{
             mAntDeviceListViewAdapter = new AntDeviceListViewAdapter(mActivity, mSensors);
             addPreviouslyConnectedDevices();
             mListView.setAdapter(mAntDeviceListViewAdapter);
-            mMdsSearchCallbacks = new MdsSearchCallbacks();
+            mMdsSearchCallbacks = new MdsSearchCallback(mActivity, mSensors, mAntDeviceListViewAdapter);
             mMultiDeviceSearch = new MultiDeviceSearch(mActivity, mDeviceSet, mMdsSearchCallbacks, null);
             return true;
         }catch (Exception e) {
@@ -52,6 +57,10 @@ public class AntPlusSensorScanner {
         }
     }
 
+    /**
+     * Adds previously saved devices if they exist, to the array attached to the ListViewAdapter.
+     * That is the same array as mSensors.
+     */
     private void addPreviouslyConnectedDevices() {
         for(DeviceType deviceType: mDeviceSet) {
             final DeviceType deviceType1 = deviceType;
@@ -70,54 +79,28 @@ public class AntPlusSensorScanner {
         }
     }
 
+    /**
+     * Stops the search for nearby Ant+ Sensors
+     */
     public void stopFindDevices(){
         mMultiDeviceSearch.close();
     }
 
-
-    public class MdsSearchCallbacks implements MultiDeviceSearch.SearchCallbacks{
-        @Override
-        public void onSearchStarted(MultiDeviceSearch.RssiSupport rssiSupport) {
-            if(rssiSupport == MultiDeviceSearch.RssiSupport.UNAVAILABLE)
-            {
-                Toast.makeText(mActivity, "Rssi information not available.", Toast.LENGTH_SHORT).show();
-            } else if(rssiSupport == MultiDeviceSearch.RssiSupport.UNKNOWN_OLDSERVICE)
-            {
-                Toast.makeText(mActivity, "Rssi might be supported. Please upgrade the plugin service.", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onDeviceFound(com.dsi.ant.plugins.antplus.pccbase.MultiDeviceSearch.MultiDeviceSearchResult multiDeviceSearchResult) {
-            boolean itemAlreadyInList = false;
-
-            for (AntPlusSensor sensor: mSensors){
-                if (multiDeviceSearchResult.getAntDeviceNumber() == sensor.getDeviceNumber()){
-                    sensor.setAntAddType(AntPlusSensor.AntAddType.EXISTING_AND_FOUND);
-                    itemAlreadyInList = true;
-                    mActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAntDeviceListViewAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            }
-
-            if (!itemAlreadyInList){
-                final AntPlusSensor foundSensor = new AntPlusSensor(multiDeviceSearchResult, AntPlusSensor.AntAddType.NEW);
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAntDeviceListViewAdapter.add(foundSensor);
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void onSearchStopped(RequestAccessResult requestAccessResult) {
-
-        }
+    /**
+     * Returns an empty EnumSet of the deviceTypes.
+     * DeviceTypes need to be added with .add().
+     * Easy method to help with the construction of the AntPlusSensorScanner.
+     */
+    public static EnumSet<DeviceType> getEmptyDeviceTypeSet(){
+        return EnumSet.noneOf(DeviceType.class);
     }
+
+    /**
+     * Returns an EnumSet with all of the deviceTypes.
+     * Easy method to help with the construction of the AntPlusSensorScanner.
+     */
+    public static EnumSet<DeviceType> getAllDeviceTypeSet(){
+        return EnumSet.allOf(DeviceType.class);
+    }
+
 }

@@ -37,8 +37,6 @@ public class AntPlusSupportChecker {
     }
 
 
-
-
     private static AntSupportState hasAntPackages(Context context) {
         PackageManager packageManager = context.getPackageManager();
         boolean hasRadio;

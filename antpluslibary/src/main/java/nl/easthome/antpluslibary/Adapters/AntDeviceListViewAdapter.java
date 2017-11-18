@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import nl.easthome.antpluslibary.AntPlusDeviceConnector;
+import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Objects.AntPlusSensor;
 import nl.easthome.antpluslibary.R;
 
@@ -65,7 +65,7 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
                 String text = device_button.getText().toString();
 
                 if (text.equals("Pair")){
-                    AntPlusDeviceConnector.AntPlusSensorDeviceSaveResult result = new AntPlusDeviceConnector(mActivity).saveSensorForType(device.getSensorType(), device.getDeviceNumber());
+                    AntPlusDeviceManager.AntPlusSensorDeviceSaveResult result = new AntPlusDeviceManager(mActivity).saveSensorForType(device.getSensorType(), device.getDeviceNumber());
                     switch (result){
                         case NEW_SENSOR_SAVED:
                             Toast.makeText(getContext(), device.getSensorType() + " has been added!", Toast.LENGTH_LONG).show();
@@ -87,7 +87,7 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
                         antDeviceListViewAdapter.remove(device);
                     }
 
-                    boolean result = new AntPlusDeviceConnector(mActivity).removeSensorForType(device.getSensorType());
+                    boolean result = new AntPlusDeviceManager(mActivity).removeSensorForType(device.getSensorType());
                     if (result) {
                         device_state_image.setImageDrawable(getContext().getDrawable(R.drawable.ic_new_sensor));
                         device_button.setText("Pair");

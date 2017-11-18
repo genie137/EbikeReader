@@ -30,7 +30,7 @@ import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsLi
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.easthome.antpluslibary.AntPlusDeviceConnector;
+import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
@@ -63,6 +63,7 @@ public class RideRecordingService extends Service {
         Log.d(mLogTag,"OnStartCommand");
         return START_NOT_STICKY;
     }
+
     @Override public void onDestroy() {
         Log.d(mLogTag,"OnDestroy");
 		stopForeground(true);
@@ -71,6 +72,21 @@ public class RideRecordingService extends Service {
         Log.d(mLogTag,"OnBind");
         return mBinder;
     }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.d(mLogTag,"OnRebind");
+        super.onRebind(intent);
+    }
+
+    @Override public boolean onUnbind(Intent intent) {
+        Log.d(mLogTag,"OnUnbind");
+        if (!mIsRecording){
+            stopSelf();
+        }
+        return true;
+    }
+
     private Notification showNotification() {
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, mNotificationID, new Intent(this, DashboardActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getResources().getString(R.string.notification_id_channel));
@@ -169,7 +185,7 @@ public class RideRecordingService extends Service {
     }
 
     private void startSensors() throws NotImplementedException, NoDeviceConfiguredException {
-            AntPlusDeviceConnector mDeviceConnector = new AntPlusDeviceConnector(mActivity);
+            AntPlusDeviceManager mDeviceConnector = new AntPlusDeviceManager(mActivity);
 
             mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_POWER));
             mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_CADENCE));
@@ -178,9 +194,8 @@ public class RideRecordingService extends Service {
     }
 
     private void stopRecordingSensors() {
-
+        //TODO stop the sensors from recording
     }
-
 
     private void stopRecordingActivities(){
         if (mRide != null){
@@ -200,7 +215,6 @@ public class RideRecordingService extends Service {
     public boolean isRecording(){
         return mIsRecording;
     }
-
 
     public class RideRecordingBinder extends Binder {
         public RideRecordingService getService() {
