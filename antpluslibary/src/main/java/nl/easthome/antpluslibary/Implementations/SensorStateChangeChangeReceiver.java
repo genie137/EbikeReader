@@ -13,6 +13,7 @@ public class SensorStateChangeChangeReceiver<T extends AntPluginPcc> implements 
 
     @Override
     public void onDeviceStateChange(DeviceState deviceState) {
+        mAntPlusSensorConnection.setDeviceState(deviceState);
         switch (deviceState){
             case DEAD:
                 break;

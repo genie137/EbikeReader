@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
+import android.os.Build;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -97,6 +98,10 @@ public class AntPlusSupportChecker {
         }
 
         return antSupported;
+    }
+
+    public static boolean isDeviceEmulator(){
+        return Build.FINGERPRINT.contains("generic_x86");
     }
 
     private static boolean isBuiltIn(ServiceInfo serviceInterfaceInfo) throws IllegalArgumentException {

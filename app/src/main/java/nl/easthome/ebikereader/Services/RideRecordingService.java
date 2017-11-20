@@ -15,80 +15,70 @@ import android.util.Log;
 
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.CompositeMultiplePermissionsListener;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
 import nl.easthome.ebikereader.DashboardActivity;
+import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
 import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.R;
+import nl.easthome.antpluslibary.Sensors.CadenceSensor;
+import nl.easthome.antpluslibary.Sensors.HeartSensor;
+import nl.easthome.antpluslibary.Sensors.PowerSensor;
+import nl.easthome.antpluslibary.Sensors.SpeedSensor;
 
 public class RideRecordingService extends Service {
-    protected static boolean mArePermissionsGranted = false;
-    private static final String mLogTag =  "RideRecordingService";
+    private static int mNumberOfBoundClients = 0;
+    private static final String LOGTAG =  "RideRecordingService";
 	private int mNotificationID = R.string.notification_id;
     private LocationRequest mLocationRequest = new LocationRequest().setInterval(5000).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     private IBinder mBinder = new RideRecordingBinder();
-    private boolean mIsRecording = false;
+    private static boolean mIsRecording = false;
     private Ride mRide;
     private FusedLocationProviderClient mFusedLocationClient;
-    private RideRecordingLocationCallback mLocationCallback;
     private ArrayList<AntPlusSensorConnection> mAntPlusSensorList = new ArrayList<>();
     private DashboardActivity mActivity;
-    private MappingService mMappingService;
+    private RideRecordingMappingHelper mRideRecordingMappingHelper;
 
     public RideRecordingService() {
     }
     @Override public void onCreate() {
-        Log.d(mLogTag,"OnCreate");
-        mLocationCallback = new RideRecordingLocationCallback();
+        Log.d(LOGTAG,"OnCreate");
 	}
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(mLogTag,"OnStartCommand");
-        return START_NOT_STICKY;
+        Log.d(LOGTAG,"OnStartCommand");
+        return START_STICKY;
     }
-
     @Override public void onDestroy() {
-        Log.d(mLogTag,"OnDestroy");
-		stopForeground(true);
+        Log.d(LOGTAG,"OnDestroy");
+        if (isRecording()){
+            stopRecording();
+            stopForeground(true);
+        }
 	}
     @Nullable @Override public IBinder onBind(Intent intent) {
-        Log.d(mLogTag,"OnBind");
+        mNumberOfBoundClients++;
+        Log.d(LOGTAG,"OnBind " + String.valueOf(mNumberOfBoundClients));
         return mBinder;
     }
-
-    @Override
-    public void onRebind(Intent intent) {
-        Log.d(mLogTag,"OnRebind");
+    @Override public void onRebind(Intent intent) {
+        Log.d(LOGTAG,"OnRebind");
         super.onRebind(intent);
     }
-
     @Override public boolean onUnbind(Intent intent) {
-        Log.d(mLogTag,"OnUnbind");
-        if (!mIsRecording){
-            stopSelf();
-        }
+        Log.d(LOGTAG,"OnUnbind");
+        mNumberOfBoundClients--;
         return true;
     }
-
     private Notification showNotification() {
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, mNotificationID, new Intent(this, DashboardActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, mNotificationID, new Intent(this, DashboardActivity.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), PendingIntent.FLAG_UPDATE_CURRENT);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getResources().getString(R.string.notification_id_channel));
 		Notification notification = builder
 				.setContentTitle(getString(R.string.recording_notification_title))
@@ -105,23 +95,21 @@ public class RideRecordingService extends Service {
      * Method for binded clients, starts the recording.
      * @return true if started correctly
      */
-	public boolean startRecording(DashboardActivity activity, MappingService mappingService) throws NoDeviceConfiguredException, NotImplementedException {
+	public boolean startRecording(DashboardActivity activity) throws NoDeviceConfiguredException, NotImplementedException, SecurityException {
         mActivity = activity;
-        mMappingService = mappingService;
         if (!mIsRecording){
+            setUpGuiComponents();
             startRecordingActivities();
-            if (mArePermissionsGranted){
-                startForeground(mNotificationID, showNotification());
-                return true;
+            startForeground(mNotificationID, showNotification());
+            return true;
             }
-            else {
-                stopRecordingActivities();
-                return false;
-            }
-        }
         else {
             return false;
         }
+    }
+
+    private void setUpGuiComponents() {
+        mRideRecordingMappingHelper = new RideRecordingMappingHelper(mActivity, this);
     }
 
     /**
@@ -140,57 +128,33 @@ public class RideRecordingService extends Service {
         }
     }
 
-    private void startRecordingActivities() throws NoDeviceConfiguredException, NotImplementedException {
+    private void startRecordingActivities() throws NoDeviceConfiguredException, NotImplementedException, SecurityException {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mActivity);
         if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Dexter.withActivity(mActivity)
-                    .withPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-                    .withListener(new CompositeMultiplePermissionsListener(
-                            SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
-                                    .with(mActivity.getRootView(), R.string.permission_ride_title)
-                                    .withOpenSettingsButton(R.string.permission_ride_button)
-                                    .build(),
-                            new MultiplePermissionsListener() {
-                                @Override
-                                public void onPermissionsChecked(MultiplePermissionsReport report) {
-                                    if (report.areAllPermissionsGranted()) {
-                                        mArePermissionsGranted = true;
-                                    }
-                                }
-                                @Override
-                                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                                    token.continuePermissionRequest();
-                                }
-                            }))
-                    .check();
+            throw new SecurityException("No permission for location was given.");
         } else {
-            mArePermissionsGranted =true;
-        }
-
-        if (mArePermissionsGranted) {
             try {
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mRideRecordingMappingHelper, null);
                 startSensors();
                 mRide = new Ride();
                 mRide.startRide();
                 mIsRecording = true;
-                Log.d(mLogTag, "RecordingStart");
+                Log.d(LOGTAG, "RecordingStart");
             } catch (Exception e){
                 e.printStackTrace();
                 stopRecordingActivities();
                 throw e;
             }
-
         }
     }
 
     private void startSensors() throws NotImplementedException, NoDeviceConfiguredException {
-            AntPlusDeviceManager mDeviceConnector = new AntPlusDeviceManager(mActivity);
+        AntPlusDeviceManager mDeviceConnector = new AntPlusDeviceManager(mActivity);
 
-            mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_POWER));
-            mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_CADENCE));
-            mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_SPD));
-            mAntPlusSensorList.add(mDeviceConnector.getConnectionFromSavedDevice(DeviceType.HEARTRATE));
+        mAntPlusSensorList.add(new PowerSensor(this, mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_POWER)));
+        mAntPlusSensorList.add(new CadenceSensor(this, mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_CADENCE)));
+        mAntPlusSensorList.add(new SpeedSensor(this, mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_SPD)));
+        mAntPlusSensorList.add(new HeartSensor(this, mDeviceConnector.getConnectionFromSavedDevice(DeviceType.HEARTRATE)));
     }
 
     private void stopRecordingSensors() {
@@ -202,35 +166,33 @@ public class RideRecordingService extends Service {
             mRide.stopRide();
 
         }
-        if (mMappingService != null){
-            mMappingService.removePolyLine();
-        }
+//        if (mRideRecordingMappingHelper != null){
+//            mRideRecordingMappingHelper.removePolyLine();
+//        }
 
         stopRecordingSensors();
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        mFusedLocationClient.removeLocationUpdates(mRideRecordingMappingHelper);
         mIsRecording = false;
-        Log.d(mLogTag, "RecordingStop");
+        Log.d(LOGTAG, "RecordingStop");
     }
 
     public boolean isRecording(){
         return mIsRecording;
     }
 
+    public void addRideMeasurement(RideMeasurement rideMeasurement, long timestamp) {
+        timestamp = timestamp/1000;
+
+        Log.d(LOGTAG, "MeasurementTime: " + String.valueOf(timestamp));
+//        for (AntPlusSensorConnection sensor : mAntPlusSensorList) {
+//
+//        }
+        mRide.addRideMeasurement(rideMeasurement);
+    }
+
     public class RideRecordingBinder extends Binder {
         public RideRecordingService getService() {
             return RideRecordingService.this;
-        }
-    }
-
-    public class RideRecordingLocationCallback extends LocationCallback {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            if (mMappingService != null){
-                mMappingService.addPointToMap(locationResult.getLastLocation());
-            }
-            Log.d(mLogTag, "onLocationResult");
-            mRide.addRideMeasurement(new RideMeasurement(locationResult.getLastLocation()));
-            super.onLocationResult(locationResult);
         }
     }
 

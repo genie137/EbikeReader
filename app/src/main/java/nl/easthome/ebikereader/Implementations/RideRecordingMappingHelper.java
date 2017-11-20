@@ -1,7 +1,9 @@
-package nl.easthome.ebikereader.Services;
+package nl.easthome.ebikereader.Implementations;
 
 import android.location.Location;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -16,8 +18,11 @@ import java.util.List;
 import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.R;
+import nl.easthome.ebikereader.Services.RideRecordingService;
 
-public class MappingService implements OnMapReadyCallback {
+public class RideRecordingMappingHelper extends LocationCallback implements OnMapReadyCallback {
+	private static final String LOGTAG = "RideRecordingMapping";
+	private RideRecordingService mRideRecordingService;
 	private boolean mIsMapReady;
 	private DashboardActivity mActivity;
 	private SupportMapFragment mMapFragment;
@@ -25,8 +30,9 @@ public class MappingService implements OnMapReadyCallback {
 	private Polyline mPolyline;
 
 
-	public MappingService(DashboardActivity activity) {
+	public RideRecordingMappingHelper(DashboardActivity activity, RideRecordingService rideRecordingService) {
 		mActivity = activity;
+		mRideRecordingService = rideRecordingService;
 		mIsMapReady = false;
 		mMapFragment = (SupportMapFragment) mActivity.getSupportFragmentManager().findFragmentById(R.id.map);
 		mMapFragment.getMapAsync(this);
@@ -79,5 +85,12 @@ public class MappingService implements OnMapReadyCallback {
 		if (mPolyline != null){
 			mPolyline.remove();
 		}
+	}
+
+	@Override
+	public void onLocationResult(LocationResult locationResult) {
+		addPointToMap(locationResult.getLastLocation());
+		mRideRecordingService.addRideMeasurement(new RideMeasurement(locationResult.getLastLocation()), locationResult.getLastLocation().getTime());
+		super.onLocationResult(locationResult);
 	}
 }

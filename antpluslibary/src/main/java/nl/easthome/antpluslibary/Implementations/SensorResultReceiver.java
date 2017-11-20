@@ -28,6 +28,7 @@ public class SensorResultReceiver<T extends AntPluginPcc> implements AntPluginPc
         switch (requestAccessResult){
             case SUCCESS:
                 mAntPlusSensorConnection.setResultConnection(t);
+                mAntPlusSensorConnection.setDeviceState(deviceState);
                 break;
             case USER_CANCELLED:
                 break;
