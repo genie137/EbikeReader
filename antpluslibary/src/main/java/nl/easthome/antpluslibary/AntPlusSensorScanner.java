@@ -21,7 +21,7 @@ public class AntPlusSensorScanner {
     private AntDeviceListViewAdapter mAntDeviceListViewAdapter;
     private EnumSet<DeviceType> mDeviceSet;
     private MultiDeviceSearch mMultiDeviceSearch;
-    private AntPlusDeviceManager mDeviceConnector;
+    private AntPlusDeviceManager mDeviceManager;
     private ArrayList<AntPlusSensor> mSensors;
 
 
@@ -34,10 +34,27 @@ public class AntPlusSensorScanner {
     public AntPlusSensorScanner(Activity activity, ListView listView, EnumSet<DeviceType> deviceTypes) {
         mActivity = activity;
         mListView = listView;
-        mDeviceConnector = new AntPlusDeviceManager(mActivity);
+        mDeviceManager = new AntPlusDeviceManager(mActivity);
         mDeviceSet = deviceTypes;
         mSensors = new ArrayList<>();
 
+    }
+
+    /**
+     * Returns an empty EnumSet of the deviceTypes.
+     * DeviceTypes need to be added with .add().
+     * Easy method to help with the construction of the AntPlusSensorScanner.
+     */
+    public static EnumSet<DeviceType> getEmptyDeviceTypeSet() {
+        return EnumSet.noneOf(DeviceType.class);
+    }
+
+    /**
+     * Returns an EnumSet with all of the deviceTypes.
+     * Easy method to help with the construction of the AntPlusSensorScanner.
+     */
+    public static EnumSet<DeviceType> getAllDeviceTypeSet() {
+        return EnumSet.allOf(DeviceType.class);
     }
 
     /**
@@ -66,7 +83,7 @@ public class AntPlusSensorScanner {
             final DeviceType deviceType1 = deviceType;
             final int id;
             try {
-                id = mDeviceConnector.getDeviceIdForType(deviceType);
+                id = mDeviceManager.getDeviceIdForType(deviceType);
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -84,23 +101,6 @@ public class AntPlusSensorScanner {
      */
     public void stopFindDevices(){
         mMultiDeviceSearch.close();
-    }
-
-    /**
-     * Returns an empty EnumSet of the deviceTypes.
-     * DeviceTypes need to be added with .add().
-     * Easy method to help with the construction of the AntPlusSensorScanner.
-     */
-    public static EnumSet<DeviceType> getEmptyDeviceTypeSet(){
-        return EnumSet.noneOf(DeviceType.class);
-    }
-
-    /**
-     * Returns an EnumSet with all of the deviceTypes.
-     * Easy method to help with the construction of the AntPlusSensorScanner.
-     */
-    public static EnumSet<DeviceType> getAllDeviceTypeSet(){
-        return EnumSet.allOf(DeviceType.class);
     }
 
 }

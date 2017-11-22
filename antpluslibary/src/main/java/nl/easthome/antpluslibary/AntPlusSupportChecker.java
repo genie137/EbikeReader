@@ -21,7 +21,6 @@ public class AntPlusSupportChecker {
     private static final String ANT_LIBRARY_NAME = "com.dsi.ant.antradio_library";
     private static final String ANT_RADIO_PACKAGE_NAME = "com.dsi.ant.service.socket";
     private static final String ANT_PLUGIN_PACKAGE_NAME = "com.dsi.ant.plugins.antplus";
-
     private static final String INTENT_ACTION_QUERY_SERVICE_INFO = "com.dsi.ant.intent.request.SERVICE_INFO";
     private static final String META_DATA_ANT_CHIP_SERVICE_INTERFACE_TYPE_TAG = "ANT_AdapterType";
     private static final String META_DATA_ANT_HARDWARE_TYPES_TAG = "ANT_HardwareType";

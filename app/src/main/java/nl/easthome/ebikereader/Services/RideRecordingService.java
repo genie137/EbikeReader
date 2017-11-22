@@ -24,23 +24,23 @@ import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
+import nl.easthome.antpluslibary.Sensors.AntPlusCadenceSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusHeartSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
 import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
 import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.R;
-import nl.easthome.antpluslibary.Sensors.CadenceSensor;
-import nl.easthome.antpluslibary.Sensors.HeartSensor;
-import nl.easthome.antpluslibary.Sensors.PowerSensor;
-import nl.easthome.antpluslibary.Sensors.SpeedSensor;
 
 public class RideRecordingService extends Service {
-    private static int mNumberOfBoundClients = 0;
     private static final String LOGTAG =  "RideRecordingService";
-	private int mNotificationID = R.string.notification_id;
+    private static int mNumberOfBoundClients = 0;
+    private static boolean mIsRecording = false;
+    private int mNotificationID = R.string.notification_id;
     private LocationRequest mLocationRequest = new LocationRequest().setInterval(5000).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     private IBinder mBinder = new RideRecordingBinder();
-    private static boolean mIsRecording = false;
     private Ride mRide;
     private FusedLocationProviderClient mFusedLocationClient;
     private ArrayList<AntPlusSensorConnection> mAntPlusSensorList = new ArrayList<>();
@@ -68,15 +68,19 @@ public class RideRecordingService extends Service {
         Log.d(LOGTAG,"OnBind " + String.valueOf(mNumberOfBoundClients));
         return mBinder;
     }
-    @Override public void onRebind(Intent intent) {
-        Log.d(LOGTAG,"OnRebind");
-        super.onRebind(intent);
-    }
+
     @Override public boolean onUnbind(Intent intent) {
         Log.d(LOGTAG,"OnUnbind");
         mNumberOfBoundClients--;
         return true;
     }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.d(LOGTAG, "OnRebind");
+        super.onRebind(intent);
+    }
+
     private Notification showNotification() {
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, mNotificationID, new Intent(this, DashboardActivity.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), PendingIntent.FLAG_UPDATE_CURRENT);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getResources().getString(R.string.notification_id_channel));
@@ -151,10 +155,10 @@ public class RideRecordingService extends Service {
     private void startSensors() throws NotImplementedException, NoDeviceConfiguredException {
         AntPlusDeviceManager mDeviceConnector = new AntPlusDeviceManager(mActivity);
 
-        mAntPlusSensorList.add(new PowerSensor(this, mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_POWER)));
-        mAntPlusSensorList.add(new CadenceSensor(this, mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_CADENCE)));
-        mAntPlusSensorList.add(new SpeedSensor(this, mDeviceConnector.getConnectionFromSavedDevice(DeviceType.BIKE_SPD)));
-        mAntPlusSensorList.add(new HeartSensor(this, mDeviceConnector.getConnectionFromSavedDevice(DeviceType.HEARTRATE)));
+        mAntPlusSensorList.add(new AntPlusPowerSensor(this, mDeviceConnector.initConnectionToDeviceType(DeviceType.BIKE_POWER)));
+        mAntPlusSensorList.add(new AntPlusCadenceSensor(this, mDeviceConnector.initConnectionToDeviceType(DeviceType.BIKE_CADENCE)));
+        mAntPlusSensorList.add(new AntPlusSpeedSensor(this, mDeviceConnector.initConnectionToDeviceType(DeviceType.BIKE_SPD)));
+        mAntPlusSensorList.add(new AntPlusHeartSensor(this, mDeviceConnector.initConnectionToDeviceType(DeviceType.HEARTRATE)));
     }
 
     private void stopRecordingSensors() {

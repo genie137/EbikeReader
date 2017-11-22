@@ -8,19 +8,25 @@ import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeSpeedDistancePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
 
-import java.util.ArrayList;
-
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
-import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
+import nl.easthome.antpluslibary.Objects.AntPlusSensorList;
+import nl.easthome.antpluslibary.Sensors.AntPlusCadenceSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusHeartSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
 
 public class AntPlusDeviceManager {
-    private Activity mActivity;
-    private static ArrayList<AntPlusSensorConnection> mConnectedSensors = new ArrayList<>();
     private static final int PROXIMITY = 10;
+    private static AntPlusSensorList mAntPlusSensorList = new AntPlusSensorList();
+    private Activity mActivity;
 
     public AntPlusDeviceManager(Activity activity) {
         mActivity = activity;
+    }
+
+    public static AntPlusSensorList getAntPlusSensorList() {
+        return mAntPlusSensorList;
     }
 
     public boolean removeSensorForType(DeviceType deviceType){
@@ -68,28 +74,28 @@ public class AntPlusDeviceManager {
         return result;
     }
 
-    public AntPlusSensorConnection getConnectionFromSavedDevice(DeviceType type) throws NotImplementedException, NoDeviceConfiguredException {
+    public AntPlusSensorList initConnectionToDeviceType(DeviceType type) throws NotImplementedException, NoDeviceConfiguredException {
         switch (type){
             case BIKE_POWER:
-                AntPlusSensorConnection<AntPlusBikePowerPcc> conn = new AntPlusSensorConnection<>();
-                conn.setReleaseHandle(AntPlusBikePowerPcc.requestAccess(mActivity, getDeviceIdForType(type), PROXIMITY, conn.getSensorResultReceiver(), conn.getSensorStateChangeReceiver()));
-                mConnectedSensors.add(conn);
-                return conn;
+                AntPlusPowerSensor antPlusPowerSensor = new AntPlusPowerSensor();
+                antPlusPowerSensor.setReleaseHandle(AntPlusBikePowerPcc.requestAccess(mActivity, getDeviceIdForType(type), PROXIMITY, antPlusPowerSensor.getSensorResultReceiver(), antPlusPowerSensor.getSensorStateChangeReceiver()));
+                mAntPlusSensorList.setAntPlusPowerSensor(antPlusPowerSensor);
+                break;
             case HEARTRATE:
-                AntPlusSensorConnection<AntPlusHeartRatePcc> conn1 = new AntPlusSensorConnection<>();
-                conn1.setReleaseHandle(AntPlusHeartRatePcc.requestAccess(mActivity, getDeviceIdForType(type), PROXIMITY, conn1.getSensorResultReceiver(), conn1.getSensorStateChangeReceiver()));
-                mConnectedSensors.add(conn1);
-                return conn1;
+                AntPlusHeartSensor antPlusHeartSensor = new AntPlusHeartSensor();
+                antPlusHeartSensor.setReleaseHandle(AntPlusHeartRatePcc.requestAccess(mActivity, getDeviceIdForType(type), PROXIMITY, antPlusHeartSensor.getSensorResultReceiver(), antPlusHeartSensor.getSensorStateChangeReceiver()));
+                mAntPlusSensorList.setAntPlusHeartSensor(antPlusHeartSensor);
+                break;
             case BIKE_CADENCE:
-                AntPlusSensorConnection<AntPlusBikeCadencePcc> conn2 = new AntPlusSensorConnection<>();
-                conn2.setReleaseHandle(AntPlusBikeCadencePcc.requestAccess(mActivity, getDeviceIdForType(type), PROXIMITY, false, conn2.getSensorResultReceiver(), conn2.getSensorStateChangeReceiver()));
-                mConnectedSensors.add(conn2);
-                return conn2;
+                AntPlusCadenceSensor antPlusCadenceSensor = new AntPlusCadenceSensor();
+                antPlusCadenceSensor.setReleaseHandle(AntPlusBikeCadencePcc.requestAccess(mActivity, getDeviceIdForType(type), PROXIMITY, false, antPlusCadenceSensor.getSensorResultReceiver(), antPlusCadenceSensor.getSensorStateChangeReceiver()));
+                mAntPlusSensorList.setAntPlusCadenceSensor(antPlusCadenceSensor);
+                break;
             case BIKE_SPD:
-                AntPlusSensorConnection<AntPlusBikeSpeedDistancePcc> conn3 = new AntPlusSensorConnection<>();
-                conn3.setReleaseHandle(AntPlusBikeSpeedDistancePcc.requestAccess(mActivity, getDeviceIdForType(type), PROXIMITY, false, conn3.getSensorResultReceiver(), conn3.getSensorStateChangeReceiver()));
-                mConnectedSensors.add(conn3);
-                return conn3;
+                AntPlusSpeedSensor antPlusSpeedSensor = new AntPlusSpeedSensor();
+                antPlusSpeedSensor.setReleaseHandle(AntPlusBikeSpeedDistancePcc.requestAccess(mActivity, getDeviceIdForType(type), PROXIMITY, false, antPlusSpeedSensor.getSensorResultReceiver(), antPlusSpeedSensor.getSensorStateChangeReceiver()));
+                mAntPlusSensorList.setAntPlusSpeedSensor(antPlusSpeedSensor);
+                break;
             case BIKE_SPDCAD:
                 throw new NotImplementedException();
             case CONTROLLABLE_DEVICE:
@@ -111,10 +117,7 @@ public class AntPlusDeviceManager {
             default:
                 throw new NotImplementedException();
         }
-    }
-
-    public static ArrayList<AntPlusSensorConnection> getConnectedSensors() {
-        return mConnectedSensors;
+        return mAntPlusSensorList;
     }
 
     public enum AntPlusSensorDeviceSaveResult{
