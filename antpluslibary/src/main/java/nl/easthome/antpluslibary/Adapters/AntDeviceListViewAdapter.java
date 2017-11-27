@@ -14,15 +14,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import nl.easthome.antpluslibary.AntPlusDeviceManager;
-import nl.easthome.antpluslibary.Objects.AntPlusSensor;
+import nl.easthome.antpluslibary.Objects.AntPlusFoundSensor;
 import nl.easthome.antpluslibary.R;
 
 
-public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
-    private Activity mActivity;
+public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusFoundSensor> {
     final AntDeviceListViewAdapter antDeviceListViewAdapter = this;
+    private Activity mActivity;
 
-    public AntDeviceListViewAdapter(@NonNull Activity context, @NonNull ArrayList<AntPlusSensor> objects) {
+    public AntDeviceListViewAdapter(@NonNull Activity context, @NonNull ArrayList<AntPlusFoundSensor> objects) {
         super(context, 0, objects);
         mActivity = context;
     }
@@ -30,7 +30,7 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final AntPlusSensor device = getItem(position);
+        final AntPlusFoundSensor device = getItem(position);
         if (convertView == null){
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_ant_device, parent, false);
         }
@@ -83,7 +83,7 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusSensor>{
                     }
                 }
                 else {
-                    if (device.getAntAddType().equals(AntPlusSensor.AntAddType.EXISTING_AND_MISSING)) {
+                    if (device.getAntAddType().equals(AntPlusFoundSensor.AntAddType.EXISTING_AND_MISSING)) {
                         antDeviceListViewAdapter.remove(device);
                     }
 

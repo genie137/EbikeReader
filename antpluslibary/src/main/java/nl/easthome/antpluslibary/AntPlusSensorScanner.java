@@ -12,7 +12,7 @@ import java.util.EnumSet;
 import nl.easthome.antpluslibary.Adapters.AntDeviceListViewAdapter;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Implementations.MdsSearchCallback;
-import nl.easthome.antpluslibary.Objects.AntPlusSensor;
+import nl.easthome.antpluslibary.Objects.AntPlusFoundSensor;
 
 public class AntPlusSensorScanner {
     private Activity mActivity;
@@ -22,7 +22,7 @@ public class AntPlusSensorScanner {
     private EnumSet<DeviceType> mDeviceSet;
     private MultiDeviceSearch mMultiDeviceSearch;
     private AntPlusDeviceManager mDeviceManager;
-    private ArrayList<AntPlusSensor> mSensors;
+    private ArrayList<AntPlusFoundSensor> mSensors;
 
 
     /**
@@ -87,7 +87,7 @@ public class AntPlusSensorScanner {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAntDeviceListViewAdapter.add(new AntPlusSensor(deviceType1, id, "Device: " + id, AntPlusSensor.AntAddType.EXISTING_AND_MISSING));
+                        mAntDeviceListViewAdapter.add(new AntPlusFoundSensor(deviceType1, id, "Device: " + id, AntPlusFoundSensor.AntAddType.EXISTING_AND_MISSING));
                     }
                 });
             } catch (NoDeviceConfiguredException e) {

@@ -13,26 +13,25 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 
 import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
-import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
-import nl.easthome.antpluslibary.Sensors.AntPlusCadenceSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusHeartSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
+import nl.easthome.antpluslibary.Objects.AntPlusSensorList;
 import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
 import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.R;
+import nl.easthome.ebikereader.Sensors.EBikeCadenceSensorImplementation;
+import nl.easthome.ebikereader.Sensors.EBikeHeartSensorImplementation;
+import nl.easthome.ebikereader.Sensors.EBikePowerSensorImplementation;
+import nl.easthome.ebikereader.Sensors.EBikeSpeedSensorImplementation;
 
 public class RideRecordingService extends Service {
     private static final String LOGTAG =  "RideRecordingService";
@@ -43,7 +42,7 @@ public class RideRecordingService extends Service {
     private IBinder mBinder = new RideRecordingBinder();
     private Ride mRide;
     private FusedLocationProviderClient mFusedLocationClient;
-    private ArrayList<AntPlusSensorConnection> mAntPlusSensorList = new ArrayList<>();
+    private AntPlusSensorList mAntPlusSensorList = new AntPlusSensorList();
     private DashboardActivity mActivity;
     private RideRecordingMappingHelper mRideRecordingMappingHelper;
 
@@ -154,11 +153,10 @@ public class RideRecordingService extends Service {
 
     private void startSensors() throws NotImplementedException, NoDeviceConfiguredException {
         AntPlusDeviceManager mDeviceConnector = new AntPlusDeviceManager(mActivity);
-
-        mAntPlusSensorList.add(new AntPlusPowerSensor(this, mDeviceConnector.initConnectionToDeviceType(DeviceType.BIKE_POWER)));
-        mAntPlusSensorList.add(new AntPlusCadenceSensor(this, mDeviceConnector.initConnectionToDeviceType(DeviceType.BIKE_CADENCE)));
-        mAntPlusSensorList.add(new AntPlusSpeedSensor(this, mDeviceConnector.initConnectionToDeviceType(DeviceType.BIKE_SPD)));
-        mAntPlusSensorList.add(new AntPlusHeartSensor(this, mDeviceConnector.initConnectionToDeviceType(DeviceType.HEARTRATE)));
+        mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
+        mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
+        mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
+        mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(207))));
     }
 
     private void stopRecordingSensors() {

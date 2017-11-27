@@ -1,23 +1,19 @@
 package nl.easthome.antpluslibary.Sensors;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeSpeedDistancePcc;
 
-import java.util.ArrayList;
-
+import nl.easthome.antpluslibary.Interfaces.ISensorHandler;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
+import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 
-public class AntPlusSpeedSensor extends AntPlusSensorConnection<AntPlusBikeSpeedDistancePcc> {
-    private static final String LOGTAG = "AntPlusSpeedSensor";
+public class AntPlusSpeedSensor extends AntPlusSensorConnection<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> {
+    private ISensorHandler mSensorHandler;
 
-    public AntPlusSpeedSensor() {
+    public AntPlusSpeedSensor(ISensorHandler<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> sensorHandler) {
+        this.mSensorHandler = sensorHandler;
     }
 
     @Override
     protected void subscribeToEvents(AntPlusBikeSpeedDistancePcc sensor) {
-
-    }
-
-    @Override
-    public ArrayList<String> getSensorDataAtTimestamp(long timestamp) {
-        return null;
+        mSensorHandler.subscribeToEvents(sensor);
     }
 }

@@ -6,9 +6,9 @@ import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
 import nl.easthome.antpluslibary.SensorData.AntPlusHeartSensorData;
 
 public class AntPlusHeartSensor extends AntPlusSensorConnection<AntPlusHeartRatePcc, AntPlusHeartSensorData> {
-    private ISensorHandler<AntPlusHeartRatePcc> mSensorHandler;
+    private ISensorHandler<AntPlusHeartRatePcc, AntPlusHeartSensorData> mSensorHandler;
 
-    public AntPlusHeartSensor(ISensorHandler<AntPlusHeartRatePcc> sensorHandler) {
+    public AntPlusHeartSensor(ISensorHandler<AntPlusHeartRatePcc, AntPlusHeartSensorData> sensorHandler) {
         this.mSensorHandler = sensorHandler;
     }
 

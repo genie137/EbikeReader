@@ -1,8 +1,10 @@
 package nl.easthome.antpluslibary.Interfaces;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
 
-public interface ISensorHandler<Sensor extends AntPluginPcc> {
+import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 
-    void subscribeToEvents(Sensor sensorConnection);
+public interface ISensorHandler<Sensor extends AntPluginPcc, Data extends AntPlusSensorData> {
+
+    Data subscribeToEvents(Sensor sensorConnection);
 
 }

@@ -8,16 +8,16 @@ import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
 import java.util.ArrayList;
 
 import nl.easthome.antpluslibary.Adapters.AntDeviceListViewAdapter;
-import nl.easthome.antpluslibary.Objects.AntPlusSensor;
+import nl.easthome.antpluslibary.Objects.AntPlusFoundSensor;
 
 
 public class MdsSearchCallback implements MultiDeviceSearch.SearchCallbacks {
     private Activity mActivity;
-    private ArrayList<AntPlusSensor> mSensors;
+    private ArrayList<AntPlusFoundSensor> mSensors;
     private AntDeviceListViewAdapter mListViewAdapter;
 
 
-    public MdsSearchCallback(Activity activity, ArrayList<AntPlusSensor> sensors, AntDeviceListViewAdapter adapter) {
+    public MdsSearchCallback(Activity activity, ArrayList<AntPlusFoundSensor> sensors, AntDeviceListViewAdapter adapter) {
         mActivity = activity;
         mSensors = sensors;
         mListViewAdapter = adapter;
@@ -38,9 +38,9 @@ public class MdsSearchCallback implements MultiDeviceSearch.SearchCallbacks {
     public void onDeviceFound(com.dsi.ant.plugins.antplus.pccbase.MultiDeviceSearch.MultiDeviceSearchResult multiDeviceSearchResult) {
         boolean itemAlreadyInList = false;
 
-        for (AntPlusSensor sensor: mSensors){
+        for (AntPlusFoundSensor sensor : mSensors) {
             if (multiDeviceSearchResult.getAntDeviceNumber() == sensor.getDeviceNumber()){
-                sensor.setAntAddType(AntPlusSensor.AntAddType.EXISTING_AND_FOUND);
+                sensor.setAntAddType(AntPlusFoundSensor.AntAddType.EXISTING_AND_FOUND);
                 itemAlreadyInList = true;
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
@@ -52,7 +52,7 @@ public class MdsSearchCallback implements MultiDeviceSearch.SearchCallbacks {
         }
 
         if (!itemAlreadyInList){
-            final AntPlusSensor foundSensor = new AntPlusSensor(multiDeviceSearchResult, AntPlusSensor.AntAddType.NEW);
+            final AntPlusFoundSensor foundSensor = new AntPlusFoundSensor(multiDeviceSearchResult, AntPlusFoundSensor.AntAddType.NEW);
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

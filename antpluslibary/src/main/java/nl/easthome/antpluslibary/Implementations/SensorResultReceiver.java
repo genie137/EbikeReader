@@ -4,12 +4,13 @@ import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
 
 import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
+import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 
 
-public class SensorResultReceiver<T extends AntPluginPcc> implements AntPluginPcc.IPluginAccessResultReceiver<T>{
-    AntPlusSensorConnection<T> mAntPlusSensorConnection;
+public class SensorResultReceiver<T extends AntPluginPcc, T1 extends AntPlusSensorData> implements AntPluginPcc.IPluginAccessResultReceiver<T> {
+    AntPlusSensorConnection<T, T1> mAntPlusSensorConnection;
 
-    public SensorResultReceiver(AntPlusSensorConnection<T> antPlusSensorConnection) {
+    public SensorResultReceiver(AntPlusSensorConnection<T, T1> antPlusSensorConnection) {
         mAntPlusSensorConnection = antPlusSensorConnection;
     }
 
