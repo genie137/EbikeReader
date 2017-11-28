@@ -3,31 +3,31 @@ import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
 import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 
-import java.util.ArrayDeque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import nl.easthome.antpluslibary.Implementations.SensorResultReceiver;
 import nl.easthome.antpluslibary.Implementations.SensorStateChangeChangeReceiver;
 
-public abstract class AntPlusSensorConnection<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> {
+public abstract class AntPlusConnectedSensor<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> {
     private DeviceState deviceState = DeviceState.SEARCHING;
 
     private PccReleaseHandle<SensorPcc> mReleaseHandle;
     private SensorResultReceiver mSensorResultReceiver;
-    private SensorStateChangeChangeReceiver mSensorStateChangeReceiver;
+    private SensorStateChangeChangeReceiver<SensorPcc, SensorData> mSensorStateChangeReceiver;
     private SensorPcc resultConnection;
-    private ArrayDeque<SensorData> mSensorData;
+    private ConcurrentLinkedDeque<SensorData> mSensorData;
 
-    public AntPlusSensorConnection() {
+    protected AntPlusConnectedSensor() {
         mSensorResultReceiver = new SensorResultReceiver<>(this);
-        mSensorStateChangeReceiver = new SensorStateChangeChangeReceiver(this);
-        mSensorData = new ArrayDeque<>(50);
+        mSensorStateChangeReceiver = new SensorStateChangeChangeReceiver<>(this);
+        mSensorData = new ConcurrentLinkedDeque<>();
     }
 
     public SensorResultReceiver getSensorResultReceiver() {
         return mSensorResultReceiver;
     }
 
-    public SensorStateChangeChangeReceiver getSensorStateChangeReceiver() {
+    public SensorStateChangeChangeReceiver<SensorPcc, SensorData> getSensorStateChangeReceiver() {
         return mSensorStateChangeReceiver;
     }
 
@@ -36,24 +36,24 @@ public abstract class AntPlusSensorConnection<SensorPcc extends AntPluginPcc, Se
     }
 
     public void setResultConnection(SensorPcc resultConnection) {
-        this.resultConnection = resultConnection;
         if (deviceState == DeviceState.TRACKING) {
+            this.resultConnection = resultConnection;
             subscribeToEvents(resultConnection);
         }
     }
 
     protected abstract void subscribeToEvents(SensorPcc sensor);
 
-    public void addSensorDataToQueue(SensorData newData) {
-        mSensorData.addFirst(newData);
-    }
 
-    public SensorData getLastSensorData(long timestamp) {
+    public SensorData getLastSensorData() {
         if (mSensorData.size() > 0) {
-            return mSensorData.getFirst();
-        } else {
-            return null;
+            for (SensorData sensorData : mSensorData) {
+                if (sensorData.isDatasetComplete()) {
+                    return sensorData;
+                }
+            }
         }
+        return null;
     }
 
     public PccReleaseHandle<SensorPcc> getReleaseHandle() {
@@ -70,5 +70,9 @@ public abstract class AntPlusSensorConnection<SensorPcc extends AntPluginPcc, Se
 
     public void setDeviceState(DeviceState newDeviceState) {
         this.deviceState = newDeviceState;
+    }
+
+    public ConcurrentLinkedDeque<SensorData> getSensorDataDeque() {
+        return mSensorData;
     }
 }

@@ -66,7 +66,7 @@ public class AntPlusDeviceManager {
 
     }
 
-    public int getDeviceIdForType(DeviceType type) throws NoDeviceConfiguredException {
+    private int getDeviceIdForType(DeviceType type) throws NoDeviceConfiguredException {
         SharedPreferences sharedPreferences = mActivity.getSharedPreferences(mActivity.getPackageName(), 0);
 
         int result = sharedPreferences.getInt(type.toString(), 0);
@@ -78,9 +78,11 @@ public class AntPlusDeviceManager {
         return result;
     }
 
+
     public AntPlusPowerSensor initConnectionToPowerSensor(ISensorHandler<AntPlusBikePowerPcc, AntPlusPowerSensorData> sensorHandler) throws NoDeviceConfiguredException {
         AntPlusPowerSensor antPlusPowerSensor = new AntPlusPowerSensor(sensorHandler);
         antPlusPowerSensor.setReleaseHandle(AntPlusBikePowerPcc.requestAccess(mActivity, getDeviceIdForType(DeviceType.BIKE_POWER), PROXIMITY, antPlusPowerSensor.getSensorResultReceiver(), antPlusPowerSensor.getSensorStateChangeReceiver()));
+        sensorHandler.setDataDeque(antPlusPowerSensor.getSensorDataDeque());
         mAntPlusSensorList.setAntPlusPowerSensor(antPlusPowerSensor);
         return antPlusPowerSensor;
     }
@@ -88,6 +90,7 @@ public class AntPlusDeviceManager {
     public AntPlusHeartSensor initConnectionToHeartRateSensor(ISensorHandler<AntPlusHeartRatePcc, AntPlusHeartSensorData> sensorHandler) throws NoDeviceConfiguredException {
         AntPlusHeartSensor antPlusHeartSensor = new AntPlusHeartSensor(sensorHandler);
         antPlusHeartSensor.setReleaseHandle(AntPlusHeartRatePcc.requestAccess(mActivity, getDeviceIdForType(DeviceType.HEARTRATE), PROXIMITY, antPlusHeartSensor.getSensorResultReceiver(), antPlusHeartSensor.getSensorStateChangeReceiver()));
+        sensorHandler.setDataDeque(antPlusHeartSensor.getSensorDataDeque());
         mAntPlusSensorList.setAntPlusHeartSensor(antPlusHeartSensor);
         return antPlusHeartSensor;
     }
@@ -95,6 +98,7 @@ public class AntPlusDeviceManager {
     public AntPlusCadenceSensor initConnectionToCadenceSensor(ISensorHandler<AntPlusBikeCadencePcc, AntPlusCadenceSensorData> sensorHandler) throws NoDeviceConfiguredException {
         AntPlusCadenceSensor antPlusCadenceSensor = new AntPlusCadenceSensor(sensorHandler);
         antPlusCadenceSensor.setReleaseHandle(AntPlusBikeCadencePcc.requestAccess(mActivity, getDeviceIdForType(DeviceType.BIKE_CADENCE), PROXIMITY, false, antPlusCadenceSensor.getSensorResultReceiver(), antPlusCadenceSensor.getSensorStateChangeReceiver()));
+        sensorHandler.setDataDeque(antPlusCadenceSensor.getSensorDataDeque());
         mAntPlusSensorList.setAntPlusCadenceSensor(antPlusCadenceSensor);
         return antPlusCadenceSensor;
     }
@@ -102,8 +106,28 @@ public class AntPlusDeviceManager {
     public AntPlusSpeedSensor initConnectionToSpeedSensor(ISensorHandler<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> sensorHandler) throws NoDeviceConfiguredException {
         AntPlusSpeedSensor antPlusSpeedSensor = new AntPlusSpeedSensor(sensorHandler);
         antPlusSpeedSensor.setReleaseHandle(AntPlusBikeSpeedDistancePcc.requestAccess(mActivity, getDeviceIdForType(DeviceType.BIKE_SPD), PROXIMITY, false, antPlusSpeedSensor.getSensorResultReceiver(), antPlusSpeedSensor.getSensorStateChangeReceiver()));
+        sensorHandler.setDataDeque(antPlusSpeedSensor.getSensorDataDeque());
         mAntPlusSensorList.setAntPlusSpeedSensor(antPlusSpeedSensor);
         return antPlusSpeedSensor;
+    }
+
+    public void disconnectAllSensors() {
+        AntPlusBikePowerPcc powerSensor = mAntPlusSensorList.getAntPlusPowerSensor().getResultConnection();
+        if (powerSensor != null) {
+            powerSensor.releaseAccess();
+        }
+        AntPlusBikeCadencePcc cadenceSensor = mAntPlusSensorList.getAntPlusCadenceSensor().getResultConnection();
+        if (cadenceSensor != null) {
+            cadenceSensor.releaseAccess();
+        }
+        AntPlusHeartRatePcc heartSensor = mAntPlusSensorList.getAntPlusHeartSensor().getResultConnection();
+        if (heartSensor != null) {
+            heartSensor.releaseAccess();
+        }
+        AntPlusBikeSpeedDistancePcc speedSensor = mAntPlusSensorList.getAntPlusSpeedSensor().getResultConnection();
+        if (speedSensor != null) {
+            speedSensor.releaseAccess();
+        }
     }
 
     public enum AntPlusSensorDeviceSaveResult{

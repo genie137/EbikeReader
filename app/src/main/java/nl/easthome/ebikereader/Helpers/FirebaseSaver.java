@@ -17,7 +17,7 @@ public class FirebaseSaver {
         FirebaseDatabase.getInstance().getReference(ref).setValue(userMeasurements);
     }
     public static void addRideMeasurement(String rideID, RideMeasurement rideMeasurement){
-        String ref = FIREBASE_RIDES_DIRECTORY + "/" + rideID + "/" + Long.toString(System.currentTimeMillis());
+        String ref = FIREBASE_RIDES_DIRECTORY + "/" + rideID + "/" + Long.toString(SystemTime.getSystemTimestamp());
         FirebaseDatabase.getInstance().getReference(ref).setValue(rideMeasurement);
     }
 

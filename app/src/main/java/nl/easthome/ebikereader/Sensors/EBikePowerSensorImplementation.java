@@ -4,10 +4,14 @@ import com.dsi.ant.plugins.antplus.pcc.AntPlusBikePowerPcc;
 import nl.easthome.antpluslibary.Interfaces.ISensorHandler;
 import nl.easthome.antpluslibary.SensorData.AntPlusPowerSensorData;
 
-public class EBikePowerSensorImplementation implements ISensorHandler<AntPlusBikePowerPcc, AntPlusPowerSensorData> {
+public class EBikePowerSensorImplementation extends ISensorHandler<AntPlusBikePowerPcc, AntPlusPowerSensorData> {
+
+    public EBikePowerSensorImplementation() {
+
+    }
 
     @Override
-    public AntPlusPowerSensorData subscribeToEvents(AntPlusBikePowerPcc sensorConnection) {
-        return null;
+    public void subscribeToEvents(AntPlusBikePowerPcc sensorConnection) {
+
     }
 }

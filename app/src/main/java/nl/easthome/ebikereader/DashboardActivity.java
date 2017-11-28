@@ -36,10 +36,6 @@ import nl.easthome.ebikereader.Services.RideRecordingService;
 
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 	private static final String LOGTAG = "DashboardActivity";
-    private RideRecordingServiceConnection mRideRecordingServiceConnection;
-    private Intent mRideRecordingIntent;
-    private RideRecordingService mRideRecordingService;
-
 	@BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
 	@BindView(R.id.nav_view) NavigationView mNavigationView;
 	@BindView(R.id.toolbar) Toolbar mToolbar;
@@ -47,6 +43,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 	@BindView(R.id.dynamicArcView) DecoView mDecoView;
 	@BindView(R.id.dashboard_content_holder) RelativeLayout mContentHolder;
     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
+    private RideRecordingServiceConnection mRideRecordingServiceConnection;
+    private Intent mRideRecordingIntent;
+    private RideRecordingService mRideRecordingService;
+
 	@OnClick(R.id.fab) public void onRightFabButtonPress() {
 		mRideRecordingService = mRideRecordingServiceConnection.getRideRecordingService();
 
@@ -56,22 +56,24 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		}
 		else {
 			try {
-                mRideRecordingService.startRecording(this);
-			} catch (NotImplementedException nie) {
-				nie.printStackTrace();
-			} catch (NoDeviceConfiguredException ndce) {
+                if (!mRideRecordingService.startRecording(this)) {
+                    mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+                }
+            } catch (NotImplementedException | SecurityException nie) {
+                nie.printStackTrace();
+            } catch (NoDeviceConfiguredException ndce) {
                 showNoDeviceConfiguredExceptionDialog(ndce.getMessage());
-			} catch (SecurityException se){
-			    se.printStackTrace();
             }
-			populatePieChart();
-			mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
-		}
-	}
-	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Log.d(LOGTAG, "onCreate");
-		setContentView(R.layout.activity_dashboard);
+            populatePieChart();
+            mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(LOGTAG, "onCreate");
+        setContentView(R.layout.activity_dashboard);
 		ButterKnife.bind(this);
 		onCreateSetupNav();
 		applyViewSizeChanges();
@@ -117,8 +119,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Log.d(LOGTAG, "onRestart");
         super.onRestart();
     }
-    @Override public boolean onNavigationItemSelected(MenuItem item) {
-		int id = item.getItemId();
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
 
 		if (id == R.id.nav_ant_sensors) {
 		    startActivity(new Intent(this, AntSensorActivity.class));

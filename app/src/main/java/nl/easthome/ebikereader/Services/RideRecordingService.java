@@ -24,6 +24,7 @@ import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorList;
 import nl.easthome.ebikereader.DashboardActivity;
+import nl.easthome.ebikereader.Helpers.SystemTime;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
 import nl.easthome.ebikereader.Objects.Ride;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
@@ -45,6 +46,7 @@ public class RideRecordingService extends Service {
     private AntPlusSensorList mAntPlusSensorList = new AntPlusSensorList();
     private DashboardActivity mActivity;
     private RideRecordingMappingHelper mRideRecordingMappingHelper;
+    private AntPlusDeviceManager mDeviceConnector;
 
     public RideRecordingService() {
     }
@@ -88,8 +90,8 @@ public class RideRecordingService extends Service {
 				.setContentText(getString(R.string.recording_notification_text))
 				.setContentIntent(pendingIntent)
 				.setSmallIcon(R.drawable.ic_action_record)
-				.setWhen(System.currentTimeMillis())
-				.build();
+                .setWhen(SystemTime.getSystemTimestamp())
+                .build();
         notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 		return notification;
 	}
@@ -117,17 +119,12 @@ public class RideRecordingService extends Service {
 
     /**
      * Method for binded clients, stops the recording.
-     * @return true if stopped correctly
      */
-    public boolean stopRecording() {
+    public void stopRecording() {
         if (mIsRecording){
             stopRecordingActivities();
             mActivity = null;
             stopForeground(true);
-            return true;
-        }
-        else {
-            return false;
         }
     }
 
@@ -152,15 +149,15 @@ public class RideRecordingService extends Service {
     }
 
     private void startSensors() throws NotImplementedException, NoDeviceConfiguredException {
-        AntPlusDeviceManager mDeviceConnector = new AntPlusDeviceManager(mActivity);
+        mDeviceConnector = new AntPlusDeviceManager(mActivity);
         mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
         mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
         mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
-        mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(207))));
+        mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(2.07))));
     }
 
-    private void stopRecordingSensors() {
-        //TODO stop the sensors from recording
+    private void stopSensors() {
+        mDeviceConnector.disconnectAllSensors();
     }
 
     private void stopRecordingActivities(){
@@ -172,7 +169,7 @@ public class RideRecordingService extends Service {
 //            mRideRecordingMappingHelper.removePolyLine();
 //        }
 
-        stopRecordingSensors();
+        stopSensors();
         mFusedLocationClient.removeLocationUpdates(mRideRecordingMappingHelper);
         mIsRecording = false;
         Log.d(LOGTAG, "RecordingStop");
@@ -183,12 +180,9 @@ public class RideRecordingService extends Service {
     }
 
     public void addRideMeasurement(RideMeasurement rideMeasurement, long timestamp) {
-        timestamp = timestamp/1000;
-
-        Log.d(LOGTAG, "MeasurementTime: " + String.valueOf(timestamp));
-//        for (AntPlusSensorConnection sensor : mAntPlusSensorList) {
-//
-//        }
+        rideMeasurement.setSpeedSensorData(mAntPlusSensorList.getAntPlusSpeedSensor().getLastSensorData());
+        rideMeasurement.setCadenceSensorData(mAntPlusSensorList.getAntPlusCadenceSensor().getLastSensorData());
+        Log.d(LOGTAG, "New measurement added at timestamp: " + String.valueOf(timestamp));
         mRide.addRideMeasurement(rideMeasurement);
     }
 

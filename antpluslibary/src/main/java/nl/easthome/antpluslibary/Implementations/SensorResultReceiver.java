@@ -3,15 +3,15 @@ import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
 
-import nl.easthome.antpluslibary.Objects.AntPlusSensorConnection;
+import nl.easthome.antpluslibary.Objects.AntPlusConnectedSensor;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 
 
 public class SensorResultReceiver<T extends AntPluginPcc, T1 extends AntPlusSensorData> implements AntPluginPcc.IPluginAccessResultReceiver<T> {
-    AntPlusSensorConnection<T, T1> mAntPlusSensorConnection;
+    private AntPlusConnectedSensor<T, T1> mAntPlusConnectedSensor;
 
-    public SensorResultReceiver(AntPlusSensorConnection<T, T1> antPlusSensorConnection) {
-        mAntPlusSensorConnection = antPlusSensorConnection;
+    public SensorResultReceiver(AntPlusConnectedSensor<T, T1> antPlusConnectedSensor) {
+        mAntPlusConnectedSensor = antPlusConnectedSensor;
     }
 
     @Override
@@ -28,8 +28,8 @@ public class SensorResultReceiver<T extends AntPluginPcc, T1 extends AntPlusSens
         System.out.println("access: "+ requestAccessResult.toString() + ", result: "+ result + ", devicestate: " + deviceState.toString());
         switch (requestAccessResult){
             case SUCCESS:
-                mAntPlusSensorConnection.setDeviceState(deviceState);
-                mAntPlusSensorConnection.setResultConnection(t);
+                mAntPlusConnectedSensor.setDeviceState(deviceState);
+                mAntPlusConnectedSensor.setResultConnection(t);
                 break;
             case USER_CANCELLED:
                 break;

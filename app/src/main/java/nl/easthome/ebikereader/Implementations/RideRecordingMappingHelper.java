@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.easthome.ebikereader.DashboardActivity;
+import nl.easthome.ebikereader.Helpers.SystemTime;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.R;
 import nl.easthome.ebikereader.Services.RideRecordingService;
@@ -44,7 +45,7 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
 		mIsMapReady = true;
 	}
 
-	public void addPointToMap(Location location) {
+	private void addPointToMap(Location location) {
 		if (mIsMapReady && mGoogleMap != null) {
 			LatLng newPoint = new LatLng(location.getLatitude(), location.getLongitude());
 
@@ -57,8 +58,6 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
 				mPolyline.setPoints(points);
 			}
 			mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPoint, 16));
-		} else {
-			return;
 		}
 	}
 
@@ -76,9 +75,6 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
 			RideMeasurement lastMeasurement = rideMeasurements.get(rideMeasurements.size() - 1);
 			mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastMeasurement.getLocation().getLatitude(), lastMeasurement.getLocation().getLongitude()), 16));
 		}
-		else {
-			return;
-		}
 	}
 
 	public void removePolyLine(){
@@ -90,7 +86,7 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
 	@Override
 	public void onLocationResult(LocationResult locationResult) {
 		addPointToMap(locationResult.getLastLocation());
-		mRideRecordingService.addRideMeasurement(new RideMeasurement(locationResult.getLastLocation()), locationResult.getLastLocation().getTime());
+		mRideRecordingService.addRideMeasurement(new RideMeasurement(locationResult.getLastLocation()), SystemTime.getSystemTimestamp());
 		super.onLocationResult(locationResult);
 	}
 }

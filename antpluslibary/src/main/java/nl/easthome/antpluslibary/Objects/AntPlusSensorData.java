@@ -1,15 +1,18 @@
 package nl.easthome.antpluslibary.Objects;
 
-public class AntPlusSensorData {
+import com.google.firebase.database.Exclude;
+public abstract class AntPlusSensorData {
 
-    private long timestamp;
+    @Exclude
+    protected boolean isDatasetComplete = false;
 
-    public AntPlusSensorData(long timestamp) {
-        this.timestamp = timestamp;
+    protected AntPlusSensorData() {
     }
 
+    protected abstract void verifyDatasetCompleted();
 
-    public long getTimestamp() {
-        return timestamp;
+    @Exclude
+    public boolean isDatasetComplete() {
+        return isDatasetComplete;
     }
 }
