@@ -65,12 +65,13 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     compile 'com.github.bmarrdev:android-DecoView-charting:v1.2'
     //noinspection GradleCompatible
-    compile 'com.google.android.gms:play-services-location:11.6.2'
+    compile 'com.google.firebase:firebase-core:11.4.2'
+    compile 'com.google.android.gms:play-services-location:11.4.2'
     compile 'com.karumi:dexter:4.1.0'
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
     //https://github.com/Clans/FloatingActionButton
     compile 'com.github.clans:fab:1.6.4'
-    compile 'com.google.android.gms:play-services-maps:11.6.2'
+    compile 'com.google.android.gms:play-services-maps:11.4.2'
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }

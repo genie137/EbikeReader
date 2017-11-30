@@ -83,9 +83,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 	@Override protected void onDestroy() {
 		Log.d(LOGTAG, "onDestroy");
-		if (!mRideRecordingService.isRecording()){
-            stopService(mRideRecordingIntent);
+        if (mRideRecordingService != null) {
+            if (!mRideRecordingService.isRecording()) {
+                stopService(mRideRecordingIntent);
+            }
         }
+
         unbindService(mRideRecordingServiceConnection);
         super.onDestroy();
     }
@@ -127,13 +130,76 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		if (id == R.id.nav_ant_sensors) {
 		    startActivity(new Intent(this, AntSensorActivity.class));
         } else if (id == R.id.nav_logout) {
-			logoutApp();
-			//TODO remove user specific firebase data
-		}
+            handleUserLogout();
+        }
 
 		mDrawerLayout.closeDrawer(GravityCompat.START);
 		return true;
 	}
+
+    private void handleUserLogout() {
+        final Context context = this;
+
+        new MaterialDialog.Builder(this)
+                .icon(getDrawable(R.drawable.ic_warning_orange))
+                .title("You are about to logout.")
+                .content("You can decide how we handle your data: \n 1. Remove only the data on your phone. \n 2. Remove the data on your phone and the server.")
+                .positiveText("1. REMOVE PHONEDATA")
+                .negativeText("2. REMOVE SERVERDATA")
+                .neutralText("Do not logout")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        new MaterialDialog.Builder(context)
+                                .icon(getDrawable(R.drawable.ic_warning_orange))
+                                .title("Are you sure?")
+                                .content("If you proceed you will remove ALL data from your phone, but leave the data on the server. \n So when you log back in you still have your rides.")
+                                .positiveText("LOGOUT")
+                                .negativeText("Go back")
+                                .cancelable(false)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        logoutApp(false);
+                                        finish();
+                                    }
+                                })
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+                    }
+                })
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        new MaterialDialog.Builder(context)
+                                .icon(getDrawable(R.drawable.ic_warning_orange))
+                                .title("Are you sure?")
+                                .content("If you proceed you will remove ALL data from your phone and the server. \n Next time you login, you will be treated as a new user.")
+                                .positiveText("LOGOUT")
+                                .negativeText("Go back")
+                                .cancelable(false)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        logoutApp(true);
+                                        finish();
+                                    }
+                                })
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+                    }
+                })
+                .show();
+    }
+
     private void showNoDeviceConfiguredExceptionDialog(String message){
         new MaterialDialog.Builder(this)
                 .title("Missing Sensor")
@@ -188,9 +254,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		toggle.syncState();
 		mNavigationView.setNavigationItemSelectedListener(this);
 	}
-	private void logoutApp() {
-		FirebaseAuth.getInstance().signOut();
-		finish();
+
+    private void logoutApp(boolean removeServerData) {
+        FirebaseAuth.getInstance().signOut();
+        finish();
 	}
     public LinearLayout getRootView() {
         return mDashboardLayout;

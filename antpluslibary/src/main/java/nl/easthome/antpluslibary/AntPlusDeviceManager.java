@@ -66,7 +66,7 @@ public class AntPlusDeviceManager {
 
     }
 
-    private int getDeviceIdForType(DeviceType type) throws NoDeviceConfiguredException {
+    public int getDeviceIdForType(DeviceType type) throws NoDeviceConfiguredException {
         SharedPreferences sharedPreferences = mActivity.getSharedPreferences(mActivity.getPackageName(), 0);
 
         int result = sharedPreferences.getInt(type.toString(), 0);
