@@ -136,7 +136,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		mDrawerLayout.closeDrawer(GravityCompat.START);
 		return true;
 	}
-
     private void handleUserLogout() {
         final Context context = this;
 
@@ -199,7 +198,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 })
                 .show();
     }
-
     private void showNoDeviceConfiguredExceptionDialog(String message){
         new MaterialDialog.Builder(this)
                 .title("Missing Sensor")
@@ -254,7 +252,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 		toggle.syncState();
 		mNavigationView.setNavigationItemSelectedListener(this);
 	}
-
     private void logoutApp(boolean removeServerData) {
         FirebaseAuth.getInstance().signOut();
         finish();

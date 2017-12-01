@@ -55,8 +55,6 @@
     <string name="dialog_antcheck_ant_plugin_missing_content">Your device contains an ANT+ chip but you need to install the Plugin App.</string>
     <string name="dialog_antcheck_ant_service_missing_title">Ant+ Service App Missing</string>
     <string name="dialog_antcheck_ant_service_missing_content">Your device contains an ANT+ chip but you need to install the Service App.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="intro_screen_bike_title">Bike Information</string>
     <string name="intro_screen_bike_description">To put the readings into context we like to know what bike you have. \n You can change the information later in the settings.</string>
