@@ -1,29 +1,37 @@
 package nl.easthome.ebikereader.Objects;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+
+import nl.easthome.ebikereader.Helpers.FirebaseSaver;
+import nl.easthome.ebikereader.Helpers.SystemTime;
 
 public class Ride {
 
-	private String mRideId;
-	private long mRideStart;
-	private long mRideEnd;
+	private static String mRideId;
+	private static long mRideStart;
+	private static long mRideEnd;
+	private static ArrayList<RideMeasurement> mRideMeasurement;
 
 	public Ride() {
-
+		mRideMeasurement = new ArrayList<>();
 	}
 
 	public void startRide() {
-		mRideStart = System.currentTimeMillis();
-		mRideEnd = 0;
-		mRideId = FirebaseDatabase.getInstance().getReference("rides").push().getKey();
-		FirebaseDatabase.getInstance().getReference("rides").child(mRideId).setValue(this);
-
-	}
+        mRideStart = SystemTime.getSystemTimestamp();
+        mRideEnd = 0;
+        mRideId = FirebaseDatabase.getInstance().getReference("rides").push().getKey();
+        //TODO optimize saving
+        FirebaseDatabase.getInstance().getReference("rides").child(mRideId).setValue(this);
+        FirebaseSaver.addRideToUser(mRideId, FirebaseAuth.getInstance().getUid());
+    }
 
 	public void stopRide() {
-		mRideEnd = System.currentTimeMillis();
-		FirebaseDatabase.getInstance().getReference("rides").child(mRideId).child("rideEnd").setValue(mRideEnd);
-	}
+        mRideEnd = SystemTime.getSystemTimestamp();
+        FirebaseDatabase.getInstance().getReference("rides").child(mRideId).child("rideEnd").setValue(mRideEnd);
+    }
 
 	public String getRideId() {
 		return mRideId;
@@ -37,7 +45,12 @@ public class Ride {
 		return mRideEnd;
 	}
 
-	public void addMeasurement(RideMeasurement measurement) {
-		FirebaseDatabase.getInstance().getReference("rides").child(mRideId).child("measurements").child(Long.toString(System.currentTimeMillis())).setValue(measurement);
+	public ArrayList<RideMeasurement> getRideMeasurements() {
+		return mRideMeasurement;
+	}
+
+	public void addRideMeasurement(RideMeasurement rideMeasurement) {
+		mRideMeasurement.add(rideMeasurement);
+		FirebaseSaver.addRideMeasurement(mRideId, rideMeasurement);
 	}
 }
