@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import nl.easthome.ebikereader.R;
 
+//TODO implement saving items to firebase
 public class BikeInfoSlideFragment extends Fragment {
 
 

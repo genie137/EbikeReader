@@ -26,9 +26,12 @@ import static android.app.Activity.RESULT_OK;
 
 public class LoginSlideFragment extends Fragment implements ISlidePolicy{
     private static final int RC_SIGN_IN = 9001;
+    @BindView(R.id.loginButton) Button mLoginButton;
     private boolean loginState = false;
 
-    @BindView(R.id.loginButton) Button mLoginButton;
+    public LoginSlideFragment() {
+    }
+
     @OnClick(R.id.loginButton) public void loginButtonPressed(){
         mLoginButton.setText("Working...");
         mLoginButton.setEnabled(false);
@@ -46,18 +49,7 @@ public class LoginSlideFragment extends Fragment implements ISlidePolicy{
                 RC_SIGN_IN);
     }
 
-    public LoginSlideFragment() {
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login_slide, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-    }
-
-
+    //Todo move text to strings.xml
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -78,10 +70,18 @@ public class LoginSlideFragment extends Fragment implements ISlidePolicy{
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_login_slide, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
     public boolean isPolicyRespected() {
         return loginState;
     }
 
+    //Todo move text to strings.xml
     @Override
     public void onUserIllegallyRequestedNextPage() {
         Toast.makeText(getContext(), "Please login before continuing.", Toast.LENGTH_LONG).show();

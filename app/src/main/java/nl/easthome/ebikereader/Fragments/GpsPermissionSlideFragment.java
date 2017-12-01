@@ -31,13 +31,13 @@ import nl.easthome.ebikereader.R;
 public class GpsPermissionSlideFragment extends Fragment implements ISlidePolicy {
     boolean isPermissionGiven = false;
     @BindView(R.id.gpsPermissionButton) Button mGpsButton;
-    @OnClick(R.id.gpsPermissionButton) public void onGpsButtonPress(){
-        askPermissions();
-    }
 
     public GpsPermissionSlideFragment() {
     }
 
+    @OnClick(R.id.gpsPermissionButton) public void onGpsButtonPress(){
+        askPermissions();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +46,7 @@ public class GpsPermissionSlideFragment extends Fragment implements ISlidePolicy
         return view;
     }
 
+    //TODO move text to strings.xml
     private void askPermissions() {
         mGpsButton.setEnabled(false);
         mGpsButton.setText("Working...");
@@ -102,6 +103,7 @@ public class GpsPermissionSlideFragment extends Fragment implements ISlidePolicy
         return isPermissionGiven;
     }
 
+    //TODO move text to strings.xml
     @Override
     public void onUserIllegallyRequestedNextPage() {
         Toast.makeText(getContext(), "Please accept the permission before continuing.", Toast.LENGTH_LONG).show();

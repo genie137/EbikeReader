@@ -23,24 +23,24 @@ import nl.easthome.antpluslibary.AntPlusSupportChecker;
 import nl.easthome.ebikereader.R;
 
 public class AntPlusSupportSlideFragment extends Fragment implements ISlidePolicy {
-    private boolean isAntCheckDone = false;
     @BindView(R.id.antCheckButton) Button mAntCheckButton;
-    @OnClick(R.id.antCheckButton) public void onAntCheckButtonClick(){
-        checkAntSupport();
-    }
+    private boolean isAntCheckDone = false;
 
     public AntPlusSupportSlideFragment() {
     }
 
+    @OnClick(R.id.antCheckButton) public void onAntCheckButtonClick(){
+        checkAntSupport();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_ant_plus_support_slide, container, false);
         ButterKnife.bind(this, v);
-
         return v;
     }
 
+    //TODO move text to strings.xml
     private void checkAntSupport() {
         if (AntPlusSupportChecker.isDeviceEmulator()) {
             new MaterialDialog.Builder(getContext())
@@ -64,8 +64,7 @@ public class AntPlusSupportSlideFragment extends Fragment implements ISlidePolic
                             getActivity().finish();
                         }
                     }).show();
-        }
-        else {
+        } else {
             switch (AntPlusSupportChecker.getAntSupportedState(getContext())) {
                 case ANT_NO_CHIP_OR_USB:
                     new MaterialDialog.Builder(getContext())
@@ -188,6 +187,7 @@ public class AntPlusSupportSlideFragment extends Fragment implements ISlidePolic
         return isAntCheckDone;
     }
 
+    //TODO move text to strings.xml
     @Override
     public void onUserIllegallyRequestedNextPage() {
         Toast.makeText(getContext(), "Please check Ant+ support before continuing.", Toast.LENGTH_LONG).show();

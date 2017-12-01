@@ -1,4 +1,5 @@
 package nl.easthome.ebikereader.Helpers;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -31,4 +32,8 @@ public class FirebaseSaver {
         FirebaseDatabase.getInstance().getReference(ref).addListenerForSingleValueEvent(valueEventListener);
     }
 
+    public static void removeUserData(String uid, DatabaseReference.CompletionListener completionListener) {
+        String ref = FIREBASE_USER_DIRECTORY + "/" + uid;
+        FirebaseDatabase.getInstance().getReference(ref).removeValue(completionListener);
+    }
 }

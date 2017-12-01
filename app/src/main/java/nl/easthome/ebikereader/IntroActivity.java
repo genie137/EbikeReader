@@ -23,19 +23,19 @@ public class IntroActivity extends AppIntro {
             createSlides();
         }
 
-        private void createSlides() {
-            setOffScreenPageLimit(10);
-            addSlide(new WelcomeSlideFragment());
-            addSlide(new AntPlusSupportSlideFragment());
-            addSlide(new LoginSlideFragment());
-            addSlide(new GpsPermissionSlideFragment());
-            addSlide(new BodyMeasurementSlideFragment());
-            addSlide(new BikeInfoSlideFragment());
-        }
-
     @Override
     public void onDonePressed(Fragment currentFragment) {
         startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }
+
+        private void createSlides() {
+            setOffScreenPageLimit(6);
+            addSlide(new WelcomeSlideFragment());
+            addSlide(new AntPlusSupportSlideFragment());
+            addSlide(new GpsPermissionSlideFragment());
+            addSlide(new LoginSlideFragment());
+            addSlide(new BodyMeasurementSlideFragment());
+            addSlide(new BikeInfoSlideFragment());
+        }
 }

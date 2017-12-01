@@ -16,32 +16,36 @@ import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity {
 
-	private static final String LOGTAG = "MainActivity" ;
+    /**
+     * Setup of application tools (Fabric, Firebase and Notifications)
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+        FirebaseApp.initializeApp(this);
+        setupNotificationChannel();
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Fabric.with(this, new Crashlytics());
-		FirebaseApp.initializeApp(this);
-		setupNotificationChannel();
-
-		FirebaseAuth auth = FirebaseAuth.getInstance();
-		if (auth.getCurrentUser() == null) {
+        //If the user has stored credentials (auth.getCurrentUser()) then start the DashboardActivity otherwise run the IntroActivity.
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
             startActivity(new Intent(this, IntroActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
+        } else {
+            startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         }
-        else{
-			startActivity(new Intent(this, DashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-		}
-	}
+    }
 
-	private void setupNotificationChannel() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			NotificationChannel mNotificationChannel = new NotificationChannel(getString(R.string.notification_id_channel), getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
-			mNotificationManager.createNotificationChannel(mNotificationChannel);
-		}
-	}
+    /**
+     * Setup the Notification Channel if the system is running Android Oreo.
+     */
+    private void setupNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel mNotificationChannel = new NotificationChannel(getString(R.string.notification_id_channel), getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
+            mNotificationManager.createNotificationChannel(mNotificationChannel);
+        }
+    }
 
 
 
