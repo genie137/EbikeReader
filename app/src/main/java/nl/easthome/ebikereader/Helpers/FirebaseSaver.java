@@ -3,37 +3,42 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import nl.easthome.ebikereader.Objects.RideMeasurement;
-import nl.easthome.ebikereader.Objects.UserMeasurements;
+import nl.easthome.ebikereader.Objects.RideRecording;
+import nl.easthome.ebikereader.Objects.UserDetails;
 
 public class FirebaseSaver {
 
     private static final String FIREBASE_USER_DIRECTORY = "users";
     private static final String FIREBASE_RIDES_DIRECTORY = "rides";
-    private static final String FIREBASE_BODY_DIRCTORY = "body";
+    private static final String FIREBASE_USER_DETAILS_DIRECTORY = "details";
 
-
-    public static void setUserMeasurements(String uid, UserMeasurements userMeasurements){
-        String ref = FIREBASE_USER_DIRECTORY + "/" + uid + "/" + FIREBASE_BODY_DIRCTORY;
-        FirebaseDatabase.getInstance().getReference(ref).setValue(userMeasurements);
-    }
-    public static void addRideMeasurement(String rideID, RideMeasurement rideMeasurement){
-        String ref = FIREBASE_RIDES_DIRECTORY + "/" + rideID + "/" + Long.toString(SystemTime.getSystemTimestamp());
-        FirebaseDatabase.getInstance().getReference(ref).setValue(rideMeasurement);
+    public static void setUserDetails(String uid, UserDetails userDetails) {
+        String ref = FIREBASE_USER_DIRECTORY + "/" + uid + "/" + FIREBASE_USER_DETAILS_DIRECTORY;
+        FirebaseDatabase.getInstance().getReference(ref).setValue(userDetails);
     }
 
-    public static void addRideToUser(String rideID, String uid){
-        String ref = FIREBASE_USER_DIRECTORY + "/" + uid + "/" +FIREBASE_RIDES_DIRECTORY;
-        FirebaseDatabase.getInstance().getReference(ref).push().setValue(rideID);
-    }
-
-    public static void getUserMeasurements(String uid, ValueEventListener valueEventListener) {
-        String ref = FIREBASE_USER_DIRECTORY + "/" + uid + "/" + FIREBASE_BODY_DIRCTORY;
+    public static void getUserDetails(String uid, ValueEventListener valueEventListener) {
+        String ref = FIREBASE_USER_DIRECTORY + "/" + uid + "/" + FIREBASE_USER_DETAILS_DIRECTORY;
         FirebaseDatabase.getInstance().getReference(ref).addListenerForSingleValueEvent(valueEventListener);
     }
 
     public static void removeUserData(String uid, DatabaseReference.CompletionListener completionListener) {
         String ref = FIREBASE_USER_DIRECTORY + "/" + uid;
         FirebaseDatabase.getInstance().getReference(ref).removeValue(completionListener);
+    }
+
+    public static String addNewRide(RideRecording rideRecording, String uid) {
+        String RefNewRideID = FIREBASE_RIDES_DIRECTORY;
+        String newRideId = FirebaseDatabase.getInstance().getReference(RefNewRideID).push().getKey();
+        String refRide = FIREBASE_RIDES_DIRECTORY + "/" + newRideId;
+        FirebaseDatabase.getInstance().getReference(refRide).setValue(rideRecording);
+        String refUser = FIREBASE_USER_DIRECTORY + "/" + uid + "/" + FIREBASE_RIDES_DIRECTORY;
+        FirebaseDatabase.getInstance().getReference(refUser).push().setValue(newRideId);
+        return newRideId;
+    }
+
+    public static void updateRideRecording(RideRecording rideRecording) {
+        String ref = FIREBASE_RIDES_DIRECTORY + "/" + rideRecording.getRideId();
+        FirebaseDatabase.getInstance().getReference(ref).setValue(rideRecording);
     }
 }

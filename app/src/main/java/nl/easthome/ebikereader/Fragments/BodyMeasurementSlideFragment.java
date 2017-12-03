@@ -11,6 +11,7 @@ import nl.easthome.ebikereader.IntroActivity;
 import nl.easthome.ebikereader.R;
 
 //TODO implement saving items to firebase
+//todo implement loding items from firebase
 public class BodyMeasurementSlideFragment extends Fragment {
     private IntroActivity mActivity;
 

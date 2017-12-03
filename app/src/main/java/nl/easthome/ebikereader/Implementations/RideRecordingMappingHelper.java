@@ -15,29 +15,25 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Helpers.SystemTime;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
-import nl.easthome.ebikereader.R;
 import nl.easthome.ebikereader.Services.RideRecordingService;
 
 public class RideRecordingMappingHelper extends LocationCallback implements OnMapReadyCallback {
 	private static final String LOGTAG = "RideRecordingMapping";
 	private RideRecordingService mRideRecordingService;
 	private boolean mIsMapReady;
-	private DashboardActivity mActivity;
 	private SupportMapFragment mMapFragment;
 	private GoogleMap mGoogleMap;
 	private Polyline mPolyline;
 
 
-	public RideRecordingMappingHelper(DashboardActivity activity, RideRecordingService rideRecordingService) {
-		mActivity = activity;
-		mRideRecordingService = rideRecordingService;
-		mIsMapReady = false;
-		mMapFragment = (SupportMapFragment) mActivity.getSupportFragmentManager().findFragmentById(R.id.map);
-		mMapFragment.getMapAsync(this);
-	}
+    public RideRecordingMappingHelper(SupportMapFragment mapFragment, RideRecordingService rideRecordingService) {
+        mRideRecordingService = rideRecordingService;
+        mIsMapReady = false;
+        mMapFragment = mapFragment;
+        mMapFragment.getMapAsync(this);
+    }
 
 	@Override
 	public void onMapReady(GoogleMap googleMap) {

@@ -15,13 +15,13 @@ import nl.easthome.ebikereader.Fragments.WelcomeSlideFragment;
 
 public class IntroActivity extends AppIntro {
 
-        @Override
-        protected void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            showSkipButton(false);
-            setBackButtonVisibilityWithDone(true);
-            createSlides();
-        }
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        showSkipButton(false);
+        setBackButtonVisibilityWithDone(true);
+        createSlides();
+    }
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
@@ -29,13 +29,13 @@ public class IntroActivity extends AppIntro {
         finish();
     }
 
-        private void createSlides() {
-            setOffScreenPageLimit(6);
-            addSlide(new WelcomeSlideFragment());
-            addSlide(new AntPlusSupportSlideFragment());
-            addSlide(new GpsPermissionSlideFragment());
-            addSlide(new LoginSlideFragment());
-            addSlide(new BodyMeasurementSlideFragment());
-            addSlide(new BikeInfoSlideFragment());
-        }
+    private void createSlides() {
+        setOffScreenPageLimit(6);
+        addSlide(new WelcomeSlideFragment());
+        addSlide(new AntPlusSupportSlideFragment());
+        addSlide(new GpsPermissionSlideFragment());
+        addSlide(new LoginSlideFragment());
+        addSlide(new BodyMeasurementSlideFragment());
+        addSlide(new BikeInfoSlideFragment());
+    }
 }
