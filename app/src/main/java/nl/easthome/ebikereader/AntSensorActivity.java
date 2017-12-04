@@ -38,4 +38,5 @@ public class AntSensorActivity extends AppCompatActivity {
         mAntPlusSensorScanner.stopFindDevices();
         super.onDestroy();
     }
+
 }

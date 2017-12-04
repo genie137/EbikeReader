@@ -113,10 +113,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         super.onDestroy();
     }
     @Override public void onBackPressed() {
+        //TODO BUG When back is pressed, app is not returned to previous activity
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            if (mRideRecordingService.isRecording()) {
+            if (mRideRecordingService != null && mRideRecordingService.isRecording()) {
                 new MaterialDialog.Builder(this)
                         .title(R.string.dialog_quit_while_recording_title)
                         .content(R.string.dialog_quit_while_recording_content)
@@ -125,15 +126,16 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                finish();
+                                DashboardActivity.super.onBackPressed();
                             }
                         })
                         .show();
             } else {
-                finish();
+                super.onBackPressed();
             }
         }
     }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

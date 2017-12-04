@@ -21,45 +21,60 @@
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.marcinmoskala.arcseekbar.ArcSeekBar
-        android:id="@+id/seekArc"
-        android:layout_width="match_parent"
-        android:layout_height="131dp"
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="67dp"
+        android:layout_gravity="top|center_horizontal"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:adjustViewBounds="false"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:src="@drawable/ic_play_circle_outline_white_36dp"
+        app:fab_colorNormal="?attr/colorPrimary"
+        app:layout_anchor="@+id/frameLayout"
+        app:layout_anchorGravity="right|center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="@+id/valueTables"
+        app:layout_constraintEnd_toEndOf="@+id/valueTables"/>
+
+    <com.philjay.valuebar.ValueBar
+        android:id="@+id/valueBar"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginStart="8dp"
-        app:enabled="false"
-        app:layout_anchor="@id/map"
-        app:layout_anchorGravity="bottom|center_horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.375"
         app:layout_constraintStart_toStartOf="parent"
-        app:progress="30"
-        app:progressBackgroundWidth="30dp"
-        app:progressColor="?attr/colorPrimary"
-        app:progressWidth="30dp"
-        app:roundEdges="true"/>
+        />
 
-
-    <GridLayout
-        android:layout_width="0dp"
-        android:layout_height="match_constraint"
+    <TableLayout
+        android:id="@+id/valueTables"
+        android:layout_width="match_parent"
+        android:layout_height="412dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/seekArc"
+
+        app:layout_constraintBottom_toTopOf="@+id/valueBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/map"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="1.0">
 
-    </GridLayout>
+
+    </TableLayout>
 
 
 </android.support.constraint.ConstraintLayout>

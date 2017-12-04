@@ -177,7 +177,10 @@ public class RideRecordingService extends Service {
         Log.d(LOGTAG, "New measurement added at timestamp: " + String.valueOf(timestamp));
         rideMeasurement.setSpeedSensorData(mAntPlusSensorList.getAntPlusSpeedSensor().getLastSensorData());
         rideMeasurement.setCadenceSensorData(mAntPlusSensorList.getAntPlusCadenceSensor().getLastSensorData());
+        rideMeasurement.setPowerSensorData(mAntPlusSensorList.getAntPlusPowerSensor().getLastSensorData());
+        rideMeasurement.setHeartSensorData(mAntPlusSensorList.getAntPlusHeartSensor().getLastSensorData());
         mRideRecording.addRideMeasurement(timestamp, rideMeasurement);
+        mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.NEW_MEASUREMENT, rideMeasurement);
     }
 
     public boolean checkLocationDeviceState() throws LocationIsDisabledException, NoLocationPermissionGiven {
