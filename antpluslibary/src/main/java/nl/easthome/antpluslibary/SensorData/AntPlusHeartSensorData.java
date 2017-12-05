@@ -9,4 +9,9 @@ public class AntPlusHeartSensorData extends AntPlusSensorData {
     protected void verifyDatasetCompleted() {
 
     }
+
+    @Override
+    public String toString() {
+        return "AntPlusHeartSensorData{}";
+    }
 }

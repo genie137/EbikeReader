@@ -6,14 +6,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
-import nl.easthome.ebikereader.IntroActivity;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import nl.easthome.ebikereader.R;
 
-//TODO implement saving items to firebase
 //todo implement loding items from firebase
 public class BodyMeasurementSlideFragment extends Fragment {
-    private IntroActivity mActivity;
+    @BindView(R.id.weight_input) EditText mUserWeight;
+    @BindView(R.id.height_input) EditText mUserHeight;
+
 
     public BodyMeasurementSlideFragment() {
     }
@@ -21,7 +24,17 @@ public class BodyMeasurementSlideFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_body_measurement_slide, container, false);
+
+        View v = inflater.inflate(R.layout.fragment_body_measurement_slide, container, false);
+        ButterKnife.bind(this, v);
+        return v;
     }
 
+    public double getUserWeight() {
+        return Double.parseDouble(mUserWeight.getText().toString());
+    }
+
+    public double getUserHeight() {
+        return Double.parseDouble(mUserHeight.getText().toString());
+    }
 }

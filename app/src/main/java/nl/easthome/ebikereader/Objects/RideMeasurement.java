@@ -57,4 +57,15 @@ public class RideMeasurement {
     public void setHeartSensorData(AntPlusHeartSensorData heartSensorData) {
         this.mHeartSensorData = heartSensorData;
     }
+
+    @Override
+    public String toString() {
+        return "RideMeasurement{" +
+                "mLocation=" + mLocation +
+                ", mSpeedSensorData=" + mSpeedSensorData +
+                ", mCadenceSensorData=" + mCadenceSensorData +
+                ", mPowerSensorData=" + mPowerSensorData +
+                ", mHeartSensorData=" + mHeartSensorData +
+                '}';
+    }
 }

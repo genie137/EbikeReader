@@ -35,4 +35,12 @@ public class AntPlusSpeedSensorData extends AntPlusSensorData {
         this.calcAccumulatedDistanceInMeters = Double.valueOf(calcAccumulatedDistanceInMeters.toPlainString());
         verifyDatasetCompleted();
     }
+
+    @Override
+    public String toString() {
+        return "AntPlusSpeedSensorData{" +
+                "speedInMeterPerSecond=" + speedInMeterPerSecond +
+                ", calcAccumulatedDistanceInMeters=" + calcAccumulatedDistanceInMeters +
+                '}';
+    }
 }

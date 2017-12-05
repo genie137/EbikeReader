@@ -26,4 +26,11 @@ public class AntPlusPowerSensorData extends AntPlusSensorData {
         System.out.println(calculatedPower);
         verifyDatasetCompleted();
     }
+
+    @Override
+    public String toString() {
+        return "AntPlusPowerSensorData{" +
+                "calculatedPower=" + calculatedPower +
+                '}';
+    }
 }

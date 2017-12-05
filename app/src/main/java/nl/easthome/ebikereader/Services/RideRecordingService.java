@@ -18,6 +18,10 @@ import android.util.Log;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 
@@ -29,11 +33,13 @@ import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
 import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
+import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Helpers.SystemTime;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
+import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
 import nl.easthome.ebikereader.Sensors.EBikeCadenceSensorImplementation;
 import nl.easthome.ebikereader.Sensors.EBikeHeartSensorImplementation;
@@ -117,12 +123,12 @@ public class RideRecordingService extends Service {
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mStartedFromActivity);
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mRideRecordingMappingHelper, null);
                 //3. Start Sensor Connection
-                //TODO wheel circumference passing to speedsensor
+
                 mDeviceConnector = new AntPlusDeviceManager(mStartedFromActivity);
                 mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
                 mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
                 mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
-                mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(2.07))));
+                mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(getWheelCircumference()))));
                 //4. Start Measurement Logging
                 mRideRecording = new RideRecording();
                 mRideRecording.startRide();
@@ -133,6 +139,7 @@ public class RideRecordingService extends Service {
                 Log.d(LOGTAG, "RecordingStart");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw e;
         } finally {
             if (!startupSucceeded) {
@@ -140,6 +147,25 @@ public class RideRecordingService extends Service {
             }
         }
 
+    }
+
+    private double getWheelCircumference() {
+        //TODO figure out a way to pass directly.
+        final UserDetails[] userDetails = new UserDetails[1];
+
+        FirebaseSaver.getUserDetails(FirebaseAuth.getInstance().getUid(), new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                userDetails[0] = dataSnapshot.getValue(UserDetails.class);
+                System.out.println(userDetails[0].toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return 2.07;
     }
 
     /**

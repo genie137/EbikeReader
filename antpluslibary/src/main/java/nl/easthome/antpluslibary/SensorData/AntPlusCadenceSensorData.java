@@ -34,4 +34,12 @@ public class AntPlusCadenceSensorData extends AntPlusSensorData {
         this.cumulativeResolutions = Long.valueOf(cumulativeResolutions).doubleValue();
         verifyDatasetCompleted();
     }
+
+    @Override
+    public String toString() {
+        return "AntPlusCadenceSensorData{" +
+                "calculatedCadence=" + calculatedCadence +
+                ", cumulativeResolutions=" + cumulativeResolutions +
+                '}';
+    }
 }

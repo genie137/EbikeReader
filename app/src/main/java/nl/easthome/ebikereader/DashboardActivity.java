@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -51,6 +52,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.dashboard_layout) ConstraintLayout mDashboardLayout;
     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
+    @BindView(R.id.dashboard_measurementtext) TextView mMeasurementText;
+    @BindView(R.id.dashboard_statustext) TextView mStatusText;
     private RideRecordingGuiUpdater mRideRecordingGuiUpdater;
     private RideRecordingServiceConnection mRideRecordingServiceConnection;
     private Intent mRideRecordingIntent;
@@ -221,13 +224,31 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     public class RideRecordingGuiUpdater implements IRideRecordingGuiUpdate {
         @Override
-        public void onNewRequestedGuiUpdate(DashboardGuiUpdateStates updateState, RideMeasurement rideMeasurement) {
+        public void onNewRequestedGuiUpdate(DashboardGuiUpdateStates updateState, final RideMeasurement rideMeasurement) {
             switch (updateState) {
                 case STARTED_RECORDING:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mStatusText.setText("STATUS: Started Recording");
+                        }
+                    });
                     break;
                 case STOPPED_RECORDING:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mStatusText.setText("STATUS: Stopped Recording");
+                        }
+                    });
                     break;
                 case NEW_MEASUREMENT:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mMeasurementText.setText(rideMeasurement.toString());
+                        }
+                    });
                     break;
             }
         }
