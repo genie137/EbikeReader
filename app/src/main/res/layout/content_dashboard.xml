@@ -69,6 +69,7 @@
 
         app:layout_constraintBottom_toTopOf="@+id/valueBar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/map"
         app:layout_constraintVertical_bias="1.0">
@@ -78,24 +79,142 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:text="STATUS: NOT RECORDING"
             android:textAlignment="center"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:layout_editor_absoluteX="0dp"/>
 
         <TextView
-            android:id="@+id/dashboard_measurementtext"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:text="..."
-            android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dashboard_statustext"
-            tools:layout_editor_absoluteX="0dp"/>
+            android:id="@+id/realtime_speed_kmh"
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="4dp"
+            android:gravity="center"
+            android:text="999"
+            android:textColor="#000000"
+            android:textSize="60dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="31dp"/>
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:gravity="center"
+            android:text="km/h"
+            android:textColor="#000000"
+            android:textSize="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/realtime_speed_kmh"/>
+
+        <TextView
+            android:id="@+id/realtime_power"
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="24dp"
+            android:gravity="center"
+            android:text="999"
+            android:textColor="#000000"
+            android:textSize="60dp"
+
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/realtime_speed_kmh"
+            tools:layout_editor_absoluteY="31dp"/>
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:gravity="center"
+            android:text="watt"
+            android:textColor="#000000"
+            android:textSize="15dp"
+            app:layout_constraintStart_toEndOf="@+id/textView8"
+            app:layout_constraintTop_toBottomOf="@+id/realtime_power"/>
+
+        <TextView
+            android:id="@+id/realtime_heartrate"
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="24dp"
+            android:gravity="center"
+            android:text="999"
+            android:textColor="#000000"
+            android:textSize="60dp"
+
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/realtime_power"
+            tools:layout_editor_absoluteY="31dp"/>
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:gravity="center"
+            android:text="bpm"
+            android:textColor="#000000"
+            android:textSize="15dp"
+            app:layout_constraintStart_toEndOf="@+id/textView9"
+            app:layout_constraintTop_toBottomOf="@+id/realtime_heartrate"/>
+
+        <TextView
+            android:id="@+id/realtime_distance"
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="999"
+
+            android:textColor="#000000"
+            android:textSize="60dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView8"/>
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:gravity="center"
+            android:text="km"
+            android:textColor="#000000"
+            android:textSize="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/realtime_distance"/>
+
+        <TextView
+            android:id="@+id/realtime_cadance"
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="999"
+
+            android:textColor="#000000"
+            android:textSize="60dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/realtime_distance"
+            app:layout_constraintTop_toBottomOf="@+id/textView9"/>
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:gravity="center"
+            android:text="rpm"
+            android:textColor="#000000"
+            android:textSize="15dp"
+            app:layout_constraintStart_toEndOf="@+id/textView12"
+            app:layout_constraintTop_toBottomOf="@+id/realtime_cadance"/>
 
 
     </android.support.constraint.ConstraintLayout>

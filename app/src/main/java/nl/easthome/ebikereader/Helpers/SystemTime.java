@@ -5,4 +5,8 @@ public class SystemTime {
         return System.currentTimeMillis() / 1000;
     }
 
+    public static double convertMStoKMS(double speedInMeterPerSeconds) {
+        return speedInMeterPerSeconds * 3.6;
+    }
+
 }

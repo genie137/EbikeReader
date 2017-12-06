@@ -36,9 +36,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
+import nl.easthome.antpluslibary.SensorData.AntPlusCadenceSensorData;
+import nl.easthome.antpluslibary.SensorData.AntPlusHeartSensorData;
+import nl.easthome.antpluslibary.SensorData.AntPlusPowerSensorData;
+import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
 import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
+import nl.easthome.ebikereader.Helpers.SystemTime;
 import nl.easthome.ebikereader.Helpers.UserLogout;
 import nl.easthome.ebikereader.Implementations.RideRecordingServiceConnection;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
@@ -52,8 +57,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.dashboard_layout) ConstraintLayout mDashboardLayout;
     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
-    @BindView(R.id.dashboard_measurementtext) TextView mMeasurementText;
     @BindView(R.id.dashboard_statustext) TextView mStatusText;
+    @BindView(R.id.realtime_cadance) TextView mRealtimeCadance;
+    @BindView(R.id.realtime_distance) TextView mRealtimeDistance;
+    @BindView(R.id.realtime_heartrate) TextView mRealtimeHeartrate;
+    @BindView(R.id.realtime_power) TextView mRealtimePower;
+    @BindView(R.id.realtime_speed_kmh) TextView mRealtimeSpeed;
     private RideRecordingGuiUpdater mRideRecordingGuiUpdater;
     private RideRecordingServiceConnection mRideRecordingServiceConnection;
     private Intent mRideRecordingIntent;
@@ -62,14 +71,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @OnClick(R.id.fab)
     public void onStartRecordingButtonPress() {
         mRideRecordingService = mRideRecordingServiceConnection.getRideRecordingService();
-
         if (mRideRecordingService.isRecording()) {
             mRideRecordingService.stopRecording();
             mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
         } else {
             try {
                 mRideRecordingService.startRecording(this, mRideRecordingGuiUpdater);
-                //populatePieChart();
                 mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
             } catch (NotImplementedException | SecurityException nie) {
                 nie.printStackTrace();
@@ -224,33 +231,51 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     public class RideRecordingGuiUpdater implements IRideRecordingGuiUpdate {
         @Override
-        public void onNewRequestedGuiUpdate(DashboardGuiUpdateStates updateState, final RideMeasurement rideMeasurement) {
-            switch (updateState) {
-                case STARTED_RECORDING:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mStatusText.setText("STATUS: Started Recording");
-                        }
-                    });
-                    break;
-                case STOPPED_RECORDING:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mStatusText.setText("STATUS: Stopped Recording");
-                        }
-                    });
-                    break;
-                case NEW_MEASUREMENT:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mMeasurementText.setText(rideMeasurement.toString());
-                        }
-                    });
-                    break;
-            }
+        public void onNewRequestedGuiUpdate(final DashboardGuiUpdateStates updateState, final RideMeasurement rideMeasurement) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    switch (updateState) {
+                        case STARTED_RECORDING:
+                            mStatusText.setText(R.string.dashboard_activity_status_started_recording);
+                            break;
+                        case STOPPED_RECORDING:
+                            mStatusText.setText(R.string.dashboard_activity_status_stopped_recording);
+                            break;
+                        case NEW_MEASUREMENT:
+                            AntPlusSpeedSensorData speedSensorData = rideMeasurement.getSpeedSensorData();
+                            if (speedSensorData == null) {
+                                mRealtimeSpeed.setText("***");
+                            } else {
+                                mRealtimeSpeed.setText(String.valueOf(SystemTime.convertMStoKMS(speedSensorData.getSpeedInMeterPerSecond())));
+                                mRealtimeDistance.setText(String.valueOf(speedSensorData.getCalcAccumulatedDistanceInMeters()));
+                            }
+                            AntPlusCadenceSensorData cadenceSensorData = rideMeasurement.getCadenceSensorData();
+                            if (cadenceSensorData == null) {
+                                mRealtimeCadance.setText("***");
+                            } else {
+                                mRealtimeCadance.setText(String.valueOf(cadenceSensorData.getCalculatedCadence()));
+                            }
+                            AntPlusHeartSensorData heartSensorData = rideMeasurement.getHeartSensorData();
+                            if (heartSensorData == null) {
+                                mRealtimeHeartrate.setText("***");
+                            } else {
+                                //todo heartrate
+                            }
+                            AntPlusPowerSensorData powerSensorData = rideMeasurement.getPowerSensorData();
+                            if (powerSensorData == null) {
+                                mRealtimePower.setText("***");
+                            } else {
+                                mRealtimePower.setText(String.valueOf(powerSensorData.getCalculatedPower()));
+                            }
+                            break;
+
+
+                    }
+                }
+            });
+
+
         }
 
         @Override

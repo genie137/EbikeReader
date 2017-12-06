@@ -111,6 +111,8 @@ public class RideRecordingService extends Service {
      * @return true if started correctly
      */
     public void startRecording(Activity activity, IRideRecordingGuiUpdate guiUpdater) throws NoDeviceConfiguredException, NotImplementedException, SecurityException, LocationIsDisabledException, NoLocationPermissionGiven {
+
+
         mStartedFromActivity = activity;
         mRideRecordingGuiUpdate = guiUpdater;
         boolean startupSucceeded = false;
@@ -118,12 +120,10 @@ public class RideRecordingService extends Service {
             if (checkLocationDeviceState()) {
                 //1. Start Gui Component Updates
                 mRideRecordingMappingHelper = new RideRecordingMappingHelper(mRideRecordingGuiUpdate.getGoogleMap(), this);
-                mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.STARTED_RECORDING, null);
                 //2. Start Location Services
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mStartedFromActivity);
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mRideRecordingMappingHelper, null);
                 //3. Start Sensor Connection
-
                 mDeviceConnector = new AntPlusDeviceManager(mStartedFromActivity);
                 mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
                 mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
@@ -134,6 +134,7 @@ public class RideRecordingService extends Service {
                 mRideRecording.startRide();
                 mIsRecording = true;
                 //5. Inform log, user and finally block
+                mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.STARTED_RECORDING, null);
                 startForeground(mNotificationID, showNotification());
                 startupSucceeded = true;
                 Log.d(LOGTAG, "RecordingStart");
