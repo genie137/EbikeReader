@@ -60,5 +60,8 @@
     <string name="intro_screen_bike_description">To put the readings into context we like to know what bike you have. \n You can change the information later in the settings.</string>
     <string name="dashboard_activity_status_started_recording"><b>STATUS:</b> Started Recording</string>
     <string name="dashboard_activity_status_stopped_recording"><b>STATUS:</b> Stopped Recording</string>
+    <string name="realtime_display_no_info">-</string>
+    <string name="realtime_display_not_connected">x</string>
+    <string name="activity_title_ridehistory">Ride History</string>
 
 </resources>

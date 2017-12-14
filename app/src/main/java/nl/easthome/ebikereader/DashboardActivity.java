@@ -5,23 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.karumi.dexter.Dexter;
@@ -44,17 +34,14 @@ import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
 import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
 import nl.easthome.ebikereader.Helpers.SystemTime;
-import nl.easthome.ebikereader.Helpers.UserLogout;
 import nl.easthome.ebikereader.Implementations.RideRecordingServiceConnection;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Services.RideRecordingService;
 
-public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DashboardActivity extends BaseActivityWithMenu {
     static final String LOGTAG = "DashboardActivity";
-    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @BindView(R.id.nav_view) NavigationView mNavigationView;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
+
     @BindView(R.id.dashboard_layout) ConstraintLayout mDashboardLayout;
     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
     @BindView(R.id.dashboard_statustext) TextView mStatusText;
@@ -97,16 +84,32 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         //0. Android
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        setContent(R.layout.activity_dashboard_content, R.id.nav_dashboard);
 		ButterKnife.bind(this);
+		setTitle("Dashboard");
         //1. Setup the menu
-        onCreateSetupNav();
         //2. Apply some viewsize changes for the arch
         //3. Connect to RideRecording service
         mRideRecordingGuiUpdater = new RideRecordingGuiUpdater();
         mRideRecordingServiceConnection = new RideRecordingServiceConnection();
         mRideRecordingIntent = new Intent(this, RideRecordingService.class);
         bindService(mRideRecordingIntent, mRideRecordingServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mRideRecordingService != null) {
+            if (!mRideRecordingService.isRecording()) {
+                super.onBackPressed();
+            }
+            else{
+               startActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        }
+        else {
+            super.onBackPressed();
+            finish();
+        }
     }
 
     @Override
@@ -122,44 +125,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Log.d(LOGTAG, "onDestroy");
         super.onDestroy();
     }
-    @Override public void onBackPressed() {
-        //TODO BUG When back is pressed, app is not returned to previous activity
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            if (mRideRecordingService != null && mRideRecordingService.isRecording()) {
-                new MaterialDialog.Builder(this)
-                        .title(R.string.dialog_quit_while_recording_title)
-                        .content(R.string.dialog_quit_while_recording_content)
-                        .positiveText(R.string.dialog_quit_while_recording_positive_button)
-                        .negativeText(R.string.dialog_quit_while_recording_negative_button)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                DashboardActivity.super.onBackPressed();
-                            }
-                        })
-                        .show();
-            } else {
-                super.onBackPressed();
-            }
-        }
-    }
 
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-
-		if (id == R.id.nav_ant_sensors) {
-		    startActivity(new Intent(this, AntSensorActivity.class));
-        } else if (id == R.id.nav_logout) {
-            UserLogout.showUserLogoutDialogs(this);
-        }
-
-		mDrawerLayout.closeDrawer(GravityCompat.START);
-		return true;
-	}
 
     private void showNoDeviceConfiguredExceptionSnackbar() {
         //TODO move text to strings.xml
@@ -221,13 +188,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         }).show();
     }
 
-	private void onCreateSetupNav() {
-		setSupportActionBar(mToolbar);
-		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-		mDrawerLayout.addDrawerListener(toggle);
-		toggle.syncState();
-		mNavigationView.setNavigationItemSelectedListener(this);
-	}
 
     public class RideRecordingGuiUpdater implements IRideRecordingGuiUpdate {
         @Override
@@ -245,26 +205,27 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         case NEW_MEASUREMENT:
                             AntPlusSpeedSensorData speedSensorData = rideMeasurement.getSpeedSensorData();
                             if (speedSensorData == null) {
-                                mRealtimeSpeed.setText("***");
+                                mRealtimeDistance.setText(R.string.realtime_display_not_connected);
+                                mRealtimeSpeed.setText(R.string.realtime_display_not_connected);
                             } else {
                                 mRealtimeSpeed.setText(String.valueOf(SystemTime.convertMStoKMS(speedSensorData.getSpeedInMeterPerSecond())));
                                 mRealtimeDistance.setText(String.valueOf(speedSensorData.getCalcAccumulatedDistanceInMeters()));
                             }
                             AntPlusCadenceSensorData cadenceSensorData = rideMeasurement.getCadenceSensorData();
                             if (cadenceSensorData == null) {
-                                mRealtimeCadance.setText("***");
+                                mRealtimeCadance.setText(R.string.realtime_display_not_connected);
                             } else {
                                 mRealtimeCadance.setText(String.valueOf(cadenceSensorData.getCalculatedCadence()));
                             }
                             AntPlusHeartSensorData heartSensorData = rideMeasurement.getHeartSensorData();
                             if (heartSensorData == null) {
-                                mRealtimeHeartrate.setText("***");
+                                mRealtimeHeartrate.setText(R.string.realtime_display_not_connected);
                             } else {
                                 //todo heartrate
                             }
                             AntPlusPowerSensorData powerSensorData = rideMeasurement.getPowerSensorData();
                             if (powerSensorData == null) {
-                                mRealtimePower.setText("***");
+                                mRealtimePower.setText(R.string.realtime_display_not_connected);
                             } else {
                                 mRealtimePower.setText(String.valueOf(powerSensorData.getCalculatedPower()));
                             }

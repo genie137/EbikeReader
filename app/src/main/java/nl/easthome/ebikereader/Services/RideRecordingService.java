@@ -23,12 +23,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.math.BigDecimal;
-
 import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorList;
+import nl.easthome.antpluslibary.Sensors.AntPlusCadenceSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusHeartSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
+import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
 import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
@@ -41,10 +43,6 @@ import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
-import nl.easthome.ebikereader.Sensors.EBikeCadenceSensorImplementation;
-import nl.easthome.ebikereader.Sensors.EBikeHeartSensorImplementation;
-import nl.easthome.ebikereader.Sensors.EBikePowerSensorImplementation;
-import nl.easthome.ebikereader.Sensors.EBikeSpeedSensorImplementation;
 
 public class RideRecordingService extends Service {
     private static final String LOGTAG =  "RideRecordingService";
@@ -124,11 +122,11 @@ public class RideRecordingService extends Service {
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mStartedFromActivity);
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mRideRecordingMappingHelper, null);
                 //3. Start Sensor Connection
-                mDeviceConnector = new AntPlusDeviceManager(mStartedFromActivity);
-                mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
-                mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
-                mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
-                mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(getWheelCircumference()))));
+//                mDeviceConnector = new AntPlusDeviceManager(mStartedFromActivity);
+//                mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
+//                mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
+//                mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
+//                mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(getWheelCircumference()))));
                 //4. Start Measurement Logging
                 mRideRecording = new RideRecording();
                 mRideRecording.startRide();
@@ -202,10 +200,24 @@ public class RideRecordingService extends Service {
 
     public void addRideMeasurement(RideMeasurement rideMeasurement, long timestamp) {
         Log.d(LOGTAG, "New measurement added at timestamp: " + String.valueOf(timestamp));
-        rideMeasurement.setSpeedSensorData(mAntPlusSensorList.getAntPlusSpeedSensor().getLastSensorData());
-        rideMeasurement.setCadenceSensorData(mAntPlusSensorList.getAntPlusCadenceSensor().getLastSensorData());
-        rideMeasurement.setPowerSensorData(mAntPlusSensorList.getAntPlusPowerSensor().getLastSensorData());
-        rideMeasurement.setHeartSensorData(mAntPlusSensorList.getAntPlusHeartSensor().getLastSensorData());
+        AntPlusSpeedSensor speedSensor = mAntPlusSensorList.getAntPlusSpeedSensor();
+        AntPlusCadenceSensor cadenceSensor = mAntPlusSensorList.getAntPlusCadenceSensor();
+        AntPlusPowerSensor powerSensor = mAntPlusSensorList.getAntPlusPowerSensor();
+        AntPlusHeartSensor heartSensor = mAntPlusSensorList.getAntPlusHeartSensor();
+
+        if (speedSensor != null){
+            rideMeasurement.setSpeedSensorData(speedSensor.getLastSensorData());
+        }
+        if (cadenceSensor != null){
+            rideMeasurement.setCadenceSensorData(cadenceSensor.getLastSensorData());
+        }
+        if (powerSensor != null){
+            rideMeasurement.setPowerSensorData(powerSensor.getLastSensorData());
+        }
+        if (heartSensor != null) {
+            rideMeasurement.setHeartSensorData(heartSensor.getLastSensorData());
+        }
+
         mRideRecording.addRideMeasurement(timestamp, rideMeasurement);
         mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.NEW_MEASUREMENT, rideMeasurement);
     }

@@ -112,21 +112,21 @@ public class AntPlusDeviceManager {
     }
 
     public void disconnectAllSensors() {
-        AntPlusBikePowerPcc powerSensor = mAntPlusSensorList.getAntPlusPowerSensor().getResultConnection();
+        AntPlusPowerSensor powerSensor = mAntPlusSensorList.getAntPlusPowerSensor();
         if (powerSensor != null) {
-            powerSensor.releaseAccess();
+            powerSensor.getResultConnection().releaseAccess();
         }
-        AntPlusBikeCadencePcc cadenceSensor = mAntPlusSensorList.getAntPlusCadenceSensor().getResultConnection();
+        AntPlusCadenceSensor cadenceSensor = mAntPlusSensorList.getAntPlusCadenceSensor();
         if (cadenceSensor != null) {
-            cadenceSensor.releaseAccess();
+            cadenceSensor.getResultConnection().releaseAccess();
         }
-        AntPlusHeartRatePcc heartSensor = mAntPlusSensorList.getAntPlusHeartSensor().getResultConnection();
+        AntPlusHeartSensor heartSensor = mAntPlusSensorList.getAntPlusHeartSensor();
         if (heartSensor != null) {
-            heartSensor.releaseAccess();
+            heartSensor.getResultConnection().releaseAccess();
         }
-        AntPlusBikeSpeedDistancePcc speedSensor = mAntPlusSensorList.getAntPlusSpeedSensor().getResultConnection();
+        AntPlusSpeedSensor speedSensor = mAntPlusSensorList.getAntPlusSpeedSensor();
         if (speedSensor != null) {
-            speedSensor.releaseAccess();
+            speedSensor.getResultConnection().releaseAccess();
         }
     }
 

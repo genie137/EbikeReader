@@ -41,4 +41,9 @@ public class FirebaseSaver {
         String ref = FIREBASE_RIDES_DIRECTORY + "/" + rideRecording.getRideId();
         FirebaseDatabase.getInstance().getReference(ref).setValue(rideRecording);
     }
+
+    public static void getUserRides(String uid, ValueEventListener valueEventListener){
+        String ref = FIREBASE_USER_DIRECTORY + "/" + uid + "/" + FIREBASE_USER_DETAILS_DIRECTORY;
+        FirebaseDatabase.getInstance().getReference(ref).addListenerForSingleValueEvent(valueEventListener);
+    }
 }
