@@ -36,7 +36,7 @@ public class AntDeviceListViewAdapter extends ArrayAdapter<AntPlusFoundSensor> {
         }
 
 
-        final TextView device_type = convertView.findViewById(R.id.device_type);
+        final TextView device_type = convertView.findViewById(R.id.device_name);
         TextView device_id = convertView.findViewById(R.id.device_id);
         final Button device_button = convertView.findViewById(R.id.device_connection_toggle);
         final ImageView device_state_image= convertView.findViewById(R.id.device_image);

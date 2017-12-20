@@ -43,7 +43,12 @@ public class FirebaseSaver {
     }
 
     public static void getUserRides(String uid, ValueEventListener valueEventListener){
-        String ref = FIREBASE_USER_DIRECTORY + "/" + uid + "/" + FIREBASE_USER_DETAILS_DIRECTORY;
-        FirebaseDatabase.getInstance().getReference(ref).addListenerForSingleValueEvent(valueEventListener);
+        String ref = FIREBASE_USER_DIRECTORY + "/" + uid + "/" + FIREBASE_RIDES_DIRECTORY;
+        FirebaseDatabase.getInstance().getReference(ref).addValueEventListener(valueEventListener);
+    }
+
+    public static void getRideDetail(String rideID, ValueEventListener valueEventListener) {
+        String ref = FIREBASE_RIDES_DIRECTORY + "/" + rideID;
+        FirebaseDatabase.getInstance().getReference(ref).addValueEventListener(valueEventListener);
     }
 }

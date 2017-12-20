@@ -10,9 +10,9 @@ import nl.easthome.ebikereader.Helpers.SystemTime;
 
 public class RideRecording {
 
-    private String mRideId;
-    private long mRideStart;
-    private long mRideEnd;
+    private String rideId;
+    private long rideStart;
+    private long rideEnd;
     private Map<String, Object> mRideMeasurements;
 
     public RideRecording() {
@@ -20,26 +20,38 @@ public class RideRecording {
     }
 
 	public void startRide() {
-        mRideStart = SystemTime.getSystemTimestamp();
-        mRideEnd = 0;
-        mRideId = FirebaseSaver.addNewRide(this, FirebaseAuth.getInstance().getUid());
+        rideStart = SystemTime.getSystemTimestamp();
+        rideEnd = 0;
+        rideId = FirebaseSaver.addNewRide(this, FirebaseAuth.getInstance().getUid());
     }
 	public void stopRide() {
-        mRideEnd = SystemTime.getSystemTimestamp();
+        rideEnd = SystemTime.getSystemTimestamp();
         FirebaseSaver.updateRideRecording(this);
     }
 
 	public String getRideId() {
-		return mRideId;
+		return rideId;
 	}
 
-	public long getRideStart() {
-		return mRideStart;
-	}
+    public void setRideId(String rideId) {
+        this.rideId = rideId;
+    }
 
-	public long getRideEnd() {
-		return mRideEnd;
-	}
+    public long getRideStart() {
+        return rideStart;
+    }
+
+    public void setRideStart(long rideStart) {
+        this.rideStart = rideStart;
+    }
+
+    public long getRideEnd() {
+        return rideEnd;
+    }
+
+    public void setRideEnd(long rideEnd) {
+        this.rideEnd = rideEnd;
+    }
 
     public Map<String, Object> getRideMeasurements() {
         return mRideMeasurements;
@@ -52,5 +64,15 @@ public class RideRecording {
     public void addRideMeasurement(long timestamp, RideMeasurement rideMeasurement) {
         mRideMeasurements.put(String.valueOf(timestamp), rideMeasurement);
         FirebaseSaver.updateRideRecording(this);
+    }
+
+    @Override
+    public String toString() {
+        return "RideRecording{" +
+                "mRideId='" + rideId + '\'' +
+                ", rideStart=" + rideStart +
+                ", rideEnd=" + rideEnd +
+                ", mRideMeasurements=" + mRideMeasurements +
+                '}';
     }
 }

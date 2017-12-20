@@ -5,6 +5,7 @@
 
     <ImageView
         android:id="@+id/device_image"
+        android:src="@drawable/ic_ebike"
         android:layout_width="60dp"
         android:layout_height="60dp"/>
 
@@ -15,42 +16,31 @@
         >
 
         <TextView
-            android:id="@+id/device_name"
+            android:id="@+id/ride_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:text="HeartRate"
+            android:text="12 December 2017 @ 18:45"
             android:textColor="@android:color/black"
             android:textSize="20dp"
             android:textStyle="bold"/>
 
         <TextView
 
-            android:id="@+id/device_id"
+            android:id="@+id/ride_details"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/device_name"
-            android:text="DeviceID"
+            android:layout_below="@+id/ride_date"
+            android:text="Avg Spd: 45kmh, Distance: 10km"
             android:textColor="@android:color/darker_gray"
             android:textSize="15dp"
             android:textStyle="italic"/>
-
-        <Button
-            android:id="@+id/device_connection_toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="6dp"
-            android:layout_weight="1"
-            android:text="Pair"
-            android:splitTrack="false"/>
 
     </RelativeLayout>
 
