@@ -2,13 +2,14 @@ package nl.easthome.ebikereader.Objects;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Helpers.SystemTime;
 
-public class RideRecording {
+public class RideRecording implements Serializable {
 
     private String rideId;
     private long rideStart;

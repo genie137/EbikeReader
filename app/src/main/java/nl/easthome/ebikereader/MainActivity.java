@@ -45,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel mNotificationChannel = new NotificationChannel(getString(R.string.notification_id_channel), getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
-            mNotificationManager.createNotificationChannel(mNotificationChannel);
+            if (mNotificationManager != null) {
+                mNotificationManager.createNotificationChannel(mNotificationChannel);
+            }
         }
     }
 

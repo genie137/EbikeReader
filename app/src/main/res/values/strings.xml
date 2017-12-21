@@ -63,5 +63,6 @@
     <string name="realtime_display_no_info">-</string>
     <string name="realtime_display_not_connected">x</string>
     <string name="activity_title_ridehistory">Ride History</string>
+    <string name="title_activity_ride_history_details">RideHistoryDetailsActivity</string>
 
 </resources>
