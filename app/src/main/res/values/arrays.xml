@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sensors">
+        <item>Power Sensor</item>
+        <item>Cadance Sensor</item>
+        <item>Heartrate Sensor</item>
+        <item>Speed Sensor</item>
+    </string-array>
+
+</resources>

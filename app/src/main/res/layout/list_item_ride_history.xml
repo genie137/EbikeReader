@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/ride_date"
-            android:text="Avg Spd: 45kmh, Distance: 10km"
+            android:text="Distance: 10km"
             android:textColor="@android:color/darker_gray"
             android:textSize="15dp"
             android:textStyle="italic"/>

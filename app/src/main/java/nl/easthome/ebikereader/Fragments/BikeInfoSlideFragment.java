@@ -7,13 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.github.paolorotolo.appintro.ISlidePolicy;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nl.easthome.ebikereader.R;
 
 //todo implement loding items from firebase
-public class BikeInfoSlideFragment extends Fragment {
+public class BikeInfoSlideFragment extends Fragment implements ISlidePolicy{
     @BindView(R.id.model_input) EditText mBikeModel;
     @BindView(R.id.km_input) EditText mKmInput;
     @BindView(R.id.battery_input) EditText mBattWatt;
@@ -49,5 +52,16 @@ public class BikeInfoSlideFragment extends Fragment {
 
     public double getBikeWheelCircumference() {
         return Double.parseDouble(mWheelCircum.getText().toString());
+    }
+
+    @Override
+    public boolean isPolicyRespected() {
+        return (!mBikeModel.getText().toString().equals("") && !mKmInput.getText().toString().equals("") && !mBattWatt.getText().toString().equals("") && !mMaxSpeed.getText().toString().equals("") && !mWheelCircum.getText().toString().equals(""));
+    }
+
+    //TODO move text to strings.xml
+    @Override
+    public void onUserIllegallyRequestedNextPage() {
+        Toast.makeText(getContext(), "Please enter the data in order to continue.", Toast.LENGTH_LONG).show();
     }
 }

@@ -2,37 +2,37 @@ package nl.easthome.ebikereader.Objects;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
+import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
-import nl.easthome.ebikereader.Helpers.SystemTime;
 
-public class RideRecording implements Serializable {
+public class RideRecording {
 
     private String rideId;
     private long rideStart;
     private long rideEnd;
-    private Map<String, Object> mRideMeasurements;
+    private HashMap<String, RideMeasurement> mRideMeasurements;
+
 
     public RideRecording() {
         mRideMeasurements = new HashMap<>();
     }
 
-	public void startRide() {
-        rideStart = SystemTime.getSystemTimestamp();
+    public void startRide() {
+        rideStart = Constants.getSystemTimestamp();
         rideEnd = 0;
         rideId = FirebaseSaver.addNewRide(this, FirebaseAuth.getInstance().getUid());
     }
-	public void stopRide() {
-        rideEnd = SystemTime.getSystemTimestamp();
+
+    public void stopRide() {
+        rideEnd = Constants.getSystemTimestamp();
         FirebaseSaver.updateRideRecording(this);
     }
 
-	public String getRideId() {
-		return rideId;
-	}
+    public String getRideId() {
+        return rideId;
+    }
 
     public void setRideId(String rideId) {
         this.rideId = rideId;
@@ -54,11 +54,11 @@ public class RideRecording implements Serializable {
         this.rideEnd = rideEnd;
     }
 
-    public Map<String, Object> getRideMeasurements() {
+    public HashMap<String, RideMeasurement> getRideMeasurements() {
         return mRideMeasurements;
     }
 
-    public void setRideMeasurements(Map<String, Object> mRideMeasurements) {
+    public void setRideMeasurements(HashMap<String, RideMeasurement> mRideMeasurements) {
         this.mRideMeasurements = mRideMeasurements;
     }
 
@@ -66,6 +66,7 @@ public class RideRecording implements Serializable {
         mRideMeasurements.put(String.valueOf(timestamp), rideMeasurement);
         FirebaseSaver.updateRideRecording(this);
     }
+
 
     @Override
     public String toString() {

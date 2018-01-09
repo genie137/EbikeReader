@@ -17,5 +17,7 @@ public class EBikeHeartSensorImplementation extends ISensorHandler<AntPlusHeartR
 
             }
         });
+
+
     }
 }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.karumi.dexter.Dexter;
@@ -20,6 +21,8 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,7 +36,7 @@ import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
 import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
-import nl.easthome.ebikereader.Helpers.SystemTime;
+import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Implementations.RideRecordingServiceConnection;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
@@ -62,21 +65,40 @@ public class DashboardActivity extends BaseActivityWithMenu {
             mRideRecordingService.stopRecording();
             mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
         } else {
-            try {
-                mRideRecordingService.startRecording(this, mRideRecordingGuiUpdater);
-                mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
-            } catch (NotImplementedException | SecurityException nie) {
-                nie.printStackTrace();
-            } catch (NoDeviceConfiguredException ndce) {
-                showNoDeviceConfiguredExceptionSnackbar();
-                mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
-            } catch (LocationIsDisabledException lide) {
-                showLocationDisabledExceptionSnackbar();
-                mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
-            } catch (NoLocationPermissionGiven noLocationPermissionGiven) {
-                showLocationPermissionMissingExceptionSnackbar();
-                noLocationPermissionGiven.printStackTrace();
-            }
+            final Activity activity = this;
+            new MaterialDialog.Builder(this)
+                    .title("Which sensors to record?\n(GPS is always recorded)")
+                    .items(R.array.sensors)
+                    .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                            String selected = Arrays.toString(text);
+                            try {
+                                mRideRecordingService.startRecording(
+                                        activity,
+                                        mRideRecordingGuiUpdater,
+                                        selected.contains("Power Sensor"),
+                                        selected.contains("Cadance Sensor"),
+                                        selected.contains("Heartrate Sensor"),
+                                        selected.contains("Speed Sensor"));
+                                mFloatingActionButton.setImageResource(R.drawable.ic_stop_white_36dp);
+                            } catch (NotImplementedException | SecurityException nie) {
+                                nie.printStackTrace();
+                            } catch (NoDeviceConfiguredException ndce) {
+                                showNoDeviceConfiguredExceptionSnackbar();
+                                mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+                            } catch (LocationIsDisabledException lide) {
+                                showLocationDisabledExceptionSnackbar();
+                                mFloatingActionButton.setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
+                            } catch (NoLocationPermissionGiven noLocationPermissionGiven) {
+                                showLocationPermissionMissingExceptionSnackbar();
+                                noLocationPermissionGiven.printStackTrace();
+                            }
+                            return true;
+                        }
+                    })
+                    .positiveText("Start Recording")
+                    .show();
         }
     }
 
@@ -208,7 +230,7 @@ public class DashboardActivity extends BaseActivityWithMenu {
                                 mRealtimeDistance.setText(R.string.realtime_display_not_connected);
                                 mRealtimeSpeed.setText(R.string.realtime_display_not_connected);
                             } else {
-                                mRealtimeSpeed.setText(String.valueOf(SystemTime.convertMStoKMS(speedSensorData.getSpeedInMeterPerSecond())));
+                                mRealtimeSpeed.setText(String.valueOf(Constants.convertMStoKMS(speedSensorData.getSpeedInMeterPerSecond())));
                                 mRealtimeDistance.setText(String.valueOf(speedSensorData.getCalcAccumulatedDistanceInMeters()));
                             }
                             AntPlusCadenceSensorData cadenceSensorData = rideMeasurement.getCadenceSensorData();

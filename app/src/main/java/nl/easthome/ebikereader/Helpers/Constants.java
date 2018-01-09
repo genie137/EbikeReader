@@ -4,7 +4,10 @@ import android.text.format.DateFormat;
 
 import java.util.Calendar;
 import java.util.Locale;
-public class SystemTime {
+public class Constants {
+
+    public static final String CSV_COL_SEPERATOR = ",";
+    public static final String CSV_ROW_SEPERATOR = "\n";
 
     public static long getSystemTimestamp() {
         return System.currentTimeMillis() / 1000;
@@ -21,5 +24,8 @@ public class SystemTime {
         String date = DateFormat.format("dd-MM-yyyy @ HH:mm", cal).toString();
         return date;
     }
+
+
+
 
 }

@@ -9,22 +9,27 @@ import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 
 public class RideMeasurement {
 
-	private Location mLocation;
+	private FirebaseLocation mLocation;
     private AntPlusSpeedSensorData mSpeedSensorData;
     private AntPlusCadenceSensorData mCadenceSensorData;
     private AntPlusPowerSensorData mPowerSensorData;
     private AntPlusHeartSensorData mHeartSensorData;
+    private EstimatedPowerData mEstimatedPowerData;
 
     public RideMeasurement() {
     }
 
 	public RideMeasurement(Location location) {
-		mLocation = location;
+		mLocation = new FirebaseLocation(location);
 	}
 
-	public Location getLocation() {
-		return mLocation;
-	}
+    public FirebaseLocation getLocation() {
+        return mLocation;
+    }
+
+    public void setLocation(FirebaseLocation mLocation) {
+        this.mLocation = mLocation;
+    }
 
     public AntPlusSpeedSensorData getSpeedSensorData() {
         return mSpeedSensorData;
@@ -58,6 +63,14 @@ public class RideMeasurement {
         this.mHeartSensorData = heartSensorData;
     }
 
+    public EstimatedPowerData getEstimatedPowerData() {
+        return mEstimatedPowerData;
+    }
+
+    public void setEstimatedPowerData(EstimatedPowerData mEstimatedPowerData) {
+        this.mEstimatedPowerData = mEstimatedPowerData;
+    }
+
     @Override
     public String toString() {
         return "RideMeasurement{" +
@@ -66,6 +79,7 @@ public class RideMeasurement {
                 ", mCadenceSensorData=" + mCadenceSensorData +
                 ", mPowerSensorData=" + mPowerSensorData +
                 ", mHeartSensorData=" + mHeartSensorData +
+                ", mEstimatedPowerData=" + mEstimatedPowerData +
                 '}';
     }
 }

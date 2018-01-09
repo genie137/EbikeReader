@@ -23,6 +23,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.math.BigDecimal;
+
 import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
@@ -35,14 +37,18 @@ import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
 import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
+import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
-import nl.easthome.ebikereader.Helpers.SystemTime;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
+import nl.easthome.ebikereader.Sensors.EBikeCadenceSensorImplementation;
+import nl.easthome.ebikereader.Sensors.EBikeHeartSensorImplementation;
+import nl.easthome.ebikereader.Sensors.EBikePowerSensorImplementation;
+import nl.easthome.ebikereader.Sensors.EBikeSpeedSensorImplementation;
 
 public class RideRecordingService extends Service {
     private static final String LOGTAG =  "RideRecordingService";
@@ -99,7 +105,7 @@ public class RideRecordingService extends Service {
 				.setContentText(getString(R.string.recording_notification_text))
 				.setContentIntent(pendingIntent)
 				.setSmallIcon(R.drawable.ic_action_record)
-                .setWhen(SystemTime.getSystemTimestamp())
+                .setWhen(Constants.getSystemTimestamp())
                 .build();
         notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 		return notification;
@@ -108,7 +114,7 @@ public class RideRecordingService extends Service {
      * Method for binded clients, starts the recording.
      * @return true if started correctly
      */
-    public void startRecording(Activity activity, IRideRecordingGuiUpdate guiUpdater) throws NoDeviceConfiguredException, NotImplementedException, SecurityException, LocationIsDisabledException, NoLocationPermissionGiven {
+    public void startRecording(Activity activity, IRideRecordingGuiUpdate guiUpdater, boolean powerSensor, boolean cadenceSensor, boolean heartSensor, boolean speedSensor) throws NoDeviceConfiguredException, NotImplementedException, SecurityException, LocationIsDisabledException, NoLocationPermissionGiven {
 
 
         mStartedFromActivity = activity;
@@ -122,11 +128,21 @@ public class RideRecordingService extends Service {
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mStartedFromActivity);
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mRideRecordingMappingHelper, null);
                 //3. Start Sensor Connection
-//                mDeviceConnector = new AntPlusDeviceManager(mStartedFromActivity);
-//                mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
-//                mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
-//                mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
-//                mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(getWheelCircumference()))));
+                if (powerSensor || cadenceSensor || heartSensor || speedSensor){
+                    mDeviceConnector = new AntPlusDeviceManager(mStartedFromActivity);
+                    if (powerSensor) {
+                        mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
+                    }
+                    if (cadenceSensor){
+                        mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
+                    }
+                    if (heartSensor){
+                        mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
+                    }
+                    if (speedSensor){
+                        mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(getWheelCircumference()))));
+                    }
+                }
                 //4. Start Measurement Logging
                 mRideRecording = new RideRecording();
                 mRideRecording.startRide();

@@ -42,8 +42,8 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                RideRecording item = rideHistoryAdapter.getItem(position);
-                Intent intent = new Intent(RideHistoryActivity.this, RideHistoryDetailsActivity.class).putExtra("RIDEID", item.getRideId()).putExtra("RIDEOBJECT", item);
+                RideRecording ride = rideHistoryAdapter.getItem(position);
+                Intent intent = new Intent(RideHistoryActivity.this, RideHistoryDetailsActivity.class).putExtra("RIDEID", ride.getRideId()).putExtra("RIDESTART", ride.getRideStart());
                 startActivity(intent);
             }
         });
@@ -83,7 +83,7 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot rideSnapshot : dataSnapshot.getChildren()) {
-                        FirebaseSaver.getRideDetail(rideSnapshot.getValue().toString(), new ValueEventListener() {
+                        FirebaseSaver.getRideRecording(rideSnapshot.getValue().toString(), new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 RideRecording rideRecording = dataSnapshot.getValue(RideRecording.class);

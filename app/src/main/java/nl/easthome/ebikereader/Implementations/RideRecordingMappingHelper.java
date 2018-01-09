@@ -15,7 +15,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.easthome.ebikereader.Helpers.SystemTime;
+import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Services.RideRecordingService;
 
@@ -82,7 +82,7 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
 	@Override
 	public void onLocationResult(LocationResult locationResult) {
 		addPointToMap(locationResult.getLastLocation());
-		mRideRecordingService.addRideMeasurement(new RideMeasurement(locationResult.getLastLocation()), SystemTime.getSystemTimestamp());
+		mRideRecordingService.addRideMeasurement(new RideMeasurement(locationResult.getLastLocation()), Constants.getSystemTimestamp());
 		super.onLocationResult(locationResult);
 	}
 }

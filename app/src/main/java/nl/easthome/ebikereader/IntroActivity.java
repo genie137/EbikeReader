@@ -16,7 +16,7 @@ import nl.easthome.ebikereader.Fragments.WelcomeSlideFragment;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Objects.UserDetails;
 
-public class IntroActivity extends AppIntro {
+public class IntroActivity extends AppIntro{
     BodyMeasurementSlideFragment bodyMeasurementSlideFragment = new BodyMeasurementSlideFragment();
     BikeInfoSlideFragment bikeInfoSlideFragment = new BikeInfoSlideFragment();
 

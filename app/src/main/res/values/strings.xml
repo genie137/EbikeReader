@@ -40,7 +40,7 @@
     <string name="intro_dialog_bodymeasurements_positive_button">Done</string>
     <string name="intro_dialog_bodymeasurements_empty_fields_toast">You can\'t leave the fields empty!</string>
     <string name="intro_screen_bodymeasurements_title">Body Measurements</string>
-    <string name="intro_screen_bodymeasurements_description">To improve measurements, we want to know more about you! \n Please fill in the data in the next window. \n You can change the information later in the settings.</string>
+    <string name="intro_screen_bodymeasurements_description">To improve measurements, we want to know more about you! \n Please fill in the data below. \n You can change the information later in the settings.</string>
     <string name="title_activity_ant_sensor_activty">Ant+ Sensors</string>
     <string name="title_activity_ant_sensor">AntSensorActivity</string>
     <string name="activity_title_antsensor">Ant+ Sensors</string>

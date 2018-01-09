@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import nl.easthome.ebikereader.Helpers.SystemTime;
+import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.R;
 
@@ -33,7 +33,7 @@ public class RideHistoryAdapter extends ArrayAdapter<RideRecording> {
         TextView mRideDate = convertView.findViewById(R.id.ride_date);
         TextView mRideDetails = convertView.findViewById(R.id.ride_details);
         
-        mRideDate.setText(SystemTime.convertTimestampToDateTime(rideRecording.getRideStart()));
+        mRideDate.setText(Constants.convertTimestampToDateTime(rideRecording.getRideStart()));
 
         return convertView;
     }

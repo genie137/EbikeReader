@@ -47,7 +47,7 @@ public class FirebaseSaver {
         FirebaseDatabase.getInstance().getReference(ref).addValueEventListener(valueEventListener);
     }
 
-    public static void getRideDetail(String rideID, ValueEventListener valueEventListener) {
+    public static void getRideRecording(String rideID, ValueEventListener valueEventListener) {
         String ref = FIREBASE_RIDES_DIRECTORY + "/" + rideID;
         FirebaseDatabase.getInstance().getReference(ref).addValueEventListener(valueEventListener);
     }
