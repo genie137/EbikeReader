@@ -26,7 +26,7 @@ public class EBikeCadenceSensorImplementation extends ISensorHandler<AntPlusBike
             @Override
             public void onNewCalculatedCadence(long l, EnumSet<EventFlag> enumSet, BigDecimal bigDecimal) {
                 AntPlusCadenceSensorData dataset = getLatestNonCompletedDataset(AntPlusCadenceSensorData.class);
-                dataset.setCalculatedCadence(bigDecimal);
+                dataset.dosetCalculatedCadence(bigDecimal);
             }
         });
 
@@ -34,7 +34,7 @@ public class EBikeCadenceSensorImplementation extends ISensorHandler<AntPlusBike
             @Override
             public void onNewRawCadenceData(long l, EnumSet<EventFlag> enumSet, BigDecimal bigDecimal, long l1) {
                 AntPlusCadenceSensorData dataset = getLatestNonCompletedDataset(AntPlusCadenceSensorData.class);
-                dataset.setCumulativeResolutions(l1);
+                dataset.dosetCumulativeResolutions(l1);
             }
         });
     }

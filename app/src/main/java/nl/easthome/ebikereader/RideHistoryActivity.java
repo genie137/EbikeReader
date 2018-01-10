@@ -86,6 +86,9 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
                         FirebaseSaver.getRideRecording(rideSnapshot.getValue().toString(), new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
+                                System.out.println(dataSnapshot.getValue().toString());
+                                
+
                                 RideRecording rideRecording = dataSnapshot.getValue(RideRecording.class);
                                 rideHistoryAdapter.add(rideRecording);
                             }

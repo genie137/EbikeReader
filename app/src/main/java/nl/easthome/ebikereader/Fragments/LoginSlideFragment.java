@@ -19,6 +19,7 @@ import java.util.Arrays;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import nl.easthome.ebikereader.Interfaces.ILoginCompleteListner;
 import nl.easthome.ebikereader.R;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -28,6 +29,7 @@ public class LoginSlideFragment extends Fragment implements ISlidePolicy{
     private static final int RC_SIGN_IN = 9001;
     @BindView(R.id.loginButton) Button mLoginButton;
     private boolean loginState = false;
+    private ILoginCompleteListner completeListner;
 
     public LoginSlideFragment() {
     }
@@ -59,6 +61,9 @@ public class LoginSlideFragment extends Fragment implements ISlidePolicy{
                     Toast.makeText(getContext(), "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName() + "!", Toast.LENGTH_LONG).show();
                     mLoginButton.setText("Done!");
                     loginState = true;
+                    if (completeListner != null){
+                        completeListner.onLoginComplete();
+                    }
                     break;
                 case RESULT_CANCELED:
                     Toast.makeText(getContext(), "Something went wrong, please try again.", Toast.LENGTH_LONG).show();
@@ -88,5 +93,7 @@ public class LoginSlideFragment extends Fragment implements ISlidePolicy{
     }
 
 
-
+    public void addLoginCompleteListner(ILoginCompleteListner completeListner) {
+        this.completeListner = completeListner;
+    }
 }

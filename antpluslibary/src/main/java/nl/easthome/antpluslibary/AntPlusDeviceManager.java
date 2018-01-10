@@ -112,22 +112,31 @@ public class AntPlusDeviceManager {
     }
 
     public void disconnectAllSensors() {
-        AntPlusPowerSensor powerSensor = mAntPlusSensorList.getAntPlusPowerSensor();
-        if (powerSensor != null) {
-            powerSensor.getResultConnection().releaseAccess();
-        }
-        AntPlusCadenceSensor cadenceSensor = mAntPlusSensorList.getAntPlusCadenceSensor();
-        if (cadenceSensor != null) {
-            cadenceSensor.getResultConnection().releaseAccess();
-        }
-        AntPlusHeartSensor heartSensor = mAntPlusSensorList.getAntPlusHeartSensor();
-        if (heartSensor != null) {
-            heartSensor.getResultConnection().releaseAccess();
-        }
-        AntPlusSpeedSensor speedSensor = mAntPlusSensorList.getAntPlusSpeedSensor();
-        if (speedSensor != null) {
-            speedSensor.getResultConnection().releaseAccess();
-        }
+        try{
+            AntPlusPowerSensor powerSensor = mAntPlusSensorList.getAntPlusPowerSensor();
+            if (powerSensor != null) {
+                powerSensor.getResultConnection().releaseAccess();
+            }
+        } catch (NullPointerException npe){}
+        try {
+            AntPlusCadenceSensor cadenceSensor = mAntPlusSensorList.getAntPlusCadenceSensor();
+            if (cadenceSensor != null) {
+                cadenceSensor.getResultConnection().releaseAccess();
+            }
+        } catch (NullPointerException npe){}
+        try{
+            AntPlusHeartSensor heartSensor = mAntPlusSensorList.getAntPlusHeartSensor();
+            if (heartSensor != null) {
+                heartSensor.getResultConnection().releaseAccess();
+            }
+        }catch (NullPointerException npe){}
+        try{
+            AntPlusSpeedSensor speedSensor = mAntPlusSensorList.getAntPlusSpeedSensor();
+            if (speedSensor != null) {
+                speedSensor.getResultConnection().releaseAccess();
+            }
+        }catch (NullPointerException npe){}
+
     }
 
     public enum AntPlusSensorDeviceSaveResult{

@@ -34,7 +34,7 @@ public class EBikeSpeedSensorImplementation extends ISensorHandler<AntPlusBikeSp
             @Override
             public void onNewCalculatedSpeed(long l, EnumSet<EventFlag> enumSet, BigDecimal bigDecimal) {
                 AntPlusSpeedSensorData dataset = getLatestNonCompletedDataset(AntPlusSpeedSensorData.class);
-                dataset.setSpeedInMeterPerSecond(bigDecimal);
+                dataset.dosetSpeedInMeterPerSecond(bigDecimal);
             }
         });
         sensorConnection.subscribeCalculatedAccumulatedDistanceEvent(new AntPlusBikeSpeedDistancePcc.CalculatedAccumulatedDistanceReceiver(mWheelCircumference) {
@@ -47,7 +47,7 @@ public class EBikeSpeedSensorImplementation extends ISensorHandler<AntPlusBikeSp
             @Override
             public void onNewCalculatedAccumulatedDistance(long l, EnumSet<EventFlag> enumSet, BigDecimal bigDecimal) {
                 AntPlusSpeedSensorData dataset = getLatestNonCompletedDataset(AntPlusSpeedSensorData.class);
-                dataset.setCalcAccumulatedDistanceInMeters(bigDecimal);
+                dataset.dosetCalcAccumulatedDistanceInMeters(bigDecimal);
             }
         });
     }

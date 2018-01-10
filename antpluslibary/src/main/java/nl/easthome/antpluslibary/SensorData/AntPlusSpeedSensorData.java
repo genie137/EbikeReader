@@ -22,7 +22,7 @@ public class AntPlusSpeedSensorData extends AntPlusSensorData {
         return speedInMeterPerSecond;
     }
 
-    public void setSpeedInMeterPerSecond(BigDecimal speedInMeterPerSecond) {
+    public void dosetSpeedInMeterPerSecond(BigDecimal speedInMeterPerSecond) {
         this.speedInMeterPerSecond = Double.valueOf(speedInMeterPerSecond.toPlainString());
         verifyDatasetCompleted();
     }
@@ -31,9 +31,17 @@ public class AntPlusSpeedSensorData extends AntPlusSensorData {
         return calcAccumulatedDistanceInMeters;
     }
 
-    public void setCalcAccumulatedDistanceInMeters(BigDecimal calcAccumulatedDistanceInMeters) {
+    public void dosetCalcAccumulatedDistanceInMeters(BigDecimal calcAccumulatedDistanceInMeters) {
         this.calcAccumulatedDistanceInMeters = Double.valueOf(calcAccumulatedDistanceInMeters.toPlainString());
         verifyDatasetCompleted();
+    }
+
+    public void setSpeedInMeterPerSecond(double speedInMeterPerSecond) {
+        this.speedInMeterPerSecond = speedInMeterPerSecond;
+    }
+
+    public void setCalcAccumulatedDistanceInMeters(double calcAccumulatedDistanceInMeters) {
+        this.calcAccumulatedDistanceInMeters = calcAccumulatedDistanceInMeters;
     }
 
     @Override

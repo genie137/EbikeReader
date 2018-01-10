@@ -4,13 +4,13 @@ import nl.easthome.ebikereader.Fragments.BikeInfoSlideFragment;
 import nl.easthome.ebikereader.Fragments.BodyMeasurementSlideFragment;
 
 public class UserDetails {
-    private double UserHeight;
-    private double UserWeight;
+    private int UserHeight;
+    private int UserWeight;
     private String BikeModel;
-    private double BikeKmRange;
-    private double BikeBattWatt;
-    private double BikeMaxSpeed;
-    private double BikeWheelCircumference;
+    private int BikeKmRange;
+    private int BikeBattWatt;
+    private int BikeMaxSpeed;
+    private int BikeWheelCircumference;
 
     public UserDetails() {
 
@@ -30,19 +30,19 @@ public class UserDetails {
         BikeWheelCircumference = bikeInfoSlideFragment.getBikeWheelCircumference();
     }
 
-    public double getUserHeight() {
+    public int getUserHeight() {
         return UserHeight;
     }
 
-    public void setUserHeight(double userHeight) {
+    public void setUserHeight(int userHeight) {
         UserHeight = userHeight;
     }
 
-    public double getUserWeight() {
+    public int getUserWeight() {
         return UserWeight;
     }
 
-    public void setUserWeight(double userWeight) {
+    public void setUserWeight(int userWeight) {
         UserWeight = userWeight;
     }
 
@@ -54,35 +54,35 @@ public class UserDetails {
         BikeModel = bikeModel;
     }
 
-    public double getBikeKmRange() {
+    public int getBikeKmRange() {
         return BikeKmRange;
     }
 
-    public void setBikeKmRange(double bikeKmRange) {
+    public void setBikeKmRange(int bikeKmRange) {
         BikeKmRange = bikeKmRange;
     }
 
-    public double getBikeBattWatt() {
+    public int getBikeBattWatt() {
         return BikeBattWatt;
     }
 
-    public void setBikeBattWatt(double bikeBattWatt) {
+    public void setBikeBattWatt(int bikeBattWatt) {
         BikeBattWatt = bikeBattWatt;
     }
 
-    public double getBikeMaxSpeed() {
+    public int getBikeMaxSpeed() {
         return BikeMaxSpeed;
     }
 
-    public void setBikeMaxSpeed(double bikeMaxSpeed) {
+    public void setBikeMaxSpeed(int bikeMaxSpeed) {
         BikeMaxSpeed = bikeMaxSpeed;
     }
 
-    public double getBikeWheelCircumference() {
+    public int getBikeWheelCircumference() {
         return BikeWheelCircumference;
     }
 
-    public void setBikeWheelCircumference(double bikeWheelCircumference) {
+    public void setBikeWheelCircumference(int bikeWheelCircumference) {
         BikeWheelCircumference = bikeWheelCircumference;
     }
 

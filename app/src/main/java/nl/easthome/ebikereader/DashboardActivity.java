@@ -231,7 +231,7 @@ public class DashboardActivity extends BaseActivityWithMenu {
                                 mRealtimeSpeed.setText(R.string.realtime_display_not_connected);
                             } else {
                                 mRealtimeSpeed.setText(String.valueOf(Constants.convertMStoKMS(speedSensorData.getSpeedInMeterPerSecond())));
-                                mRealtimeDistance.setText(String.valueOf(speedSensorData.getCalcAccumulatedDistanceInMeters()));
+                                mRealtimeDistance.setText(String.valueOf(speedSensorData.getCalcAccumulatedDistanceInMeters()/1000));
                             }
                             AntPlusCadenceSensorData cadenceSensorData = rideMeasurement.getCadenceSensorData();
                             if (cadenceSensorData == null) {

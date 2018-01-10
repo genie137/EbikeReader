@@ -18,12 +18,6 @@ import android.util.Log;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-
-import java.math.BigDecimal;
 
 import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
@@ -38,12 +32,11 @@ import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
 import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
 import nl.easthome.ebikereader.Helpers.Constants;
-import nl.easthome.ebikereader.Helpers.FirebaseSaver;
+import nl.easthome.ebikereader.Helpers.SharedPrefsSaver;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
-import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
 import nl.easthome.ebikereader.Sensors.EBikeCadenceSensorImplementation;
 import nl.easthome.ebikereader.Sensors.EBikeHeartSensorImplementation;
@@ -115,8 +108,6 @@ public class RideRecordingService extends Service {
      * @return true if started correctly
      */
     public void startRecording(Activity activity, IRideRecordingGuiUpdate guiUpdater, boolean powerSensor, boolean cadenceSensor, boolean heartSensor, boolean speedSensor) throws NoDeviceConfiguredException, NotImplementedException, SecurityException, LocationIsDisabledException, NoLocationPermissionGiven {
-
-
         mStartedFromActivity = activity;
         mRideRecordingGuiUpdate = guiUpdater;
         boolean startupSucceeded = false;
@@ -140,7 +131,7 @@ public class RideRecordingService extends Service {
                         mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
                     }
                     if (speedSensor){
-                        mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(BigDecimal.valueOf(getWheelCircumference()))));
+                        mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(SharedPrefsSaver.getWheelCircumference(mStartedFromActivity))));
                     }
                 }
                 //4. Start Measurement Logging
@@ -164,25 +155,6 @@ public class RideRecordingService extends Service {
 
     }
 
-    private double getWheelCircumference() {
-        //TODO figure out a way to pass directly.
-        final UserDetails[] userDetails = new UserDetails[1];
-
-        FirebaseSaver.getUserDetails(FirebaseAuth.getInstance().getUid(), new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                userDetails[0] = dataSnapshot.getValue(UserDetails.class);
-                System.out.println(userDetails[0].toString());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return 2.07;
-    }
-
     /**
      * Method for binded clients, stops the recording.
      */
@@ -199,7 +171,12 @@ public class RideRecordingService extends Service {
         }
         //3. Disconnect Sensors
         if (mDeviceConnector != null) {
-            mDeviceConnector.disconnectAllSensors();
+            try {
+                mDeviceConnector.disconnectAllSensors();
+            }
+            catch (NullPointerException npe){
+
+            }
         }
         //4. Stop Gui Component Updates
         //TODO reset map when previous rides can be viewed.

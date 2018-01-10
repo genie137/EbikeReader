@@ -25,7 +25,20 @@ public class Constants {
         return date;
     }
 
+    public static String convertTimestampToSimpleDateTime(long timestamp){
+        timestamp = timestamp * 1000;
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(timestamp);
+        String date = DateFormat.format("ddMMyyyyHHmm", cal).toString();
+        return date;
+    }
 
 
-
+    public static String convertTimestampToTime(Long timestamp) {
+        timestamp = timestamp * 1000;
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(timestamp);
+        String date = DateFormat.format("dd-MM-yyyy HH:mm", cal).toString();
+        return date;
+    }
 }

@@ -13,6 +13,7 @@ import com.github.paolorotolo.appintro.ISlidePolicy;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
 
 //todo implement loding items from firebase
@@ -38,20 +39,20 @@ public class BikeInfoSlideFragment extends Fragment implements ISlidePolicy{
         return mBikeModel.getText().toString();
     }
 
-    public double getBikeKmRange() {
-        return Double.parseDouble(mKmInput.getText().toString());
+    public int getBikeKmRange() {
+        return Integer.valueOf(mKmInput.getText().toString());
     }
 
-    public double getBikeBattWatt() {
-        return Double.parseDouble(mBattWatt.getText().toString());
+    public int getBikeBattWatt() {
+        return Integer.valueOf(mBattWatt.getText().toString());
     }
 
-    public double getBikeMaxSpeed() {
-        return Double.parseDouble(mMaxSpeed.getText().toString());
+    public int getBikeMaxSpeed() {
+        return Integer.valueOf(mMaxSpeed.getText().toString());
     }
 
-    public double getBikeWheelCircumference() {
-        return Double.parseDouble(mWheelCircum.getText().toString());
+    public int getBikeWheelCircumference() {
+        return Integer.valueOf(mWheelCircum.getText().toString());
     }
 
     @Override
@@ -63,5 +64,14 @@ public class BikeInfoSlideFragment extends Fragment implements ISlidePolicy{
     @Override
     public void onUserIllegallyRequestedNextPage() {
         Toast.makeText(getContext(), "Please enter the data in order to continue.", Toast.LENGTH_LONG).show();
+    }
+
+    public void fillFields(UserDetails userDetails) {
+        mBikeModel.setText(userDetails.getBikeModel());
+        mKmInput.setText(String.valueOf(userDetails.getBikeKmRange()));
+        mBattWatt.setText(String.valueOf(userDetails.getBikeBattWatt()));
+        mMaxSpeed.setText(String.valueOf(userDetails.getBikeMaxSpeed()));
+        mWheelCircum.setText(String.valueOf(userDetails.getBikeWheelCircumference()));
+
     }
 }

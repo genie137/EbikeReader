@@ -31,7 +31,7 @@ public class EBikePowerSensorImplementation extends ISensorHandler<AntPlusBikePo
             public void onNewCalculatedPower(long l, EnumSet<EventFlag> enumSet, AntPlusBikePowerPcc.DataSource dataSource, BigDecimal bigDecimal) {
                 Log.d("POWERSENSOR", "esttime: " + String.valueOf(l) + " eventflags: " + enumSet.toString() + " dataSource: " + dataSource.toString() + " calcpower: " + bigDecimal.toString());
                 AntPlusPowerSensorData dataset = getLatestNonCompletedDataset(AntPlusPowerSensorData.class);
-                dataset.setCalculatedPower(bigDecimal);
+                dataset.dosetCalculatedPower(bigDecimal);
             }
         });
     }

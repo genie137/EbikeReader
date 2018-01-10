@@ -13,6 +13,7 @@ import com.github.paolorotolo.appintro.ISlidePolicy;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
 
 //todo implement loding items from firebase
@@ -28,17 +29,23 @@ public class BodyMeasurementSlideFragment extends Fragment implements ISlidePoli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+
+
         View v = inflater.inflate(R.layout.fragment_body_measurement_slide, container, false);
         ButterKnife.bind(this, v);
+
+
+
         return v;
     }
 
-    public double getUserWeight() {
-        return Double.parseDouble(mUserWeight.getText().toString());
+
+    public int getUserWeight() {
+        return Integer.valueOf(mUserWeight.getText().toString());
     }
 
-    public double getUserHeight() {
-        return Double.parseDouble(mUserHeight.getText().toString());
+    public int getUserHeight() {
+        return Integer.valueOf(mUserHeight.getText().toString());
     }
 
     @Override
@@ -50,5 +57,10 @@ public class BodyMeasurementSlideFragment extends Fragment implements ISlidePoli
     @Override
     public void onUserIllegallyRequestedNextPage() {
         Toast.makeText(getContext(), "Please enter the data in order to continue.", Toast.LENGTH_LONG).show();
+    }
+
+    public void fillFields(UserDetails userDetails) {
+            mUserHeight.setText(String.valueOf(userDetails.getUserHeight()));
+            mUserWeight.setText(String.valueOf(userDetails.getUserWeight()));
     }
 }

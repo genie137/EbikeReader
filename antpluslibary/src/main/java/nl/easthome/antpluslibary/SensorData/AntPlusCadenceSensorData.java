@@ -21,18 +21,26 @@ public class AntPlusCadenceSensorData extends AntPlusSensorData {
         return calculatedCadence;
     }
 
-    public void setCalculatedCadence(BigDecimal calculatedCadence) {
+    public void dosetCalculatedCadence(BigDecimal calculatedCadence) {
         this.calculatedCadence = Double.valueOf(calculatedCadence.toPlainString());
         verifyDatasetCompleted();
+    }
+
+    public void setCalculatedCadence(double calculatedCadence) {
+        this.calculatedCadence = calculatedCadence;
     }
 
     public double getCumulativeResolutions() {
         return cumulativeResolutions;
     }
 
-    public void setCumulativeResolutions(long cumulativeResolutions) {
+    public void dosetCumulativeResolutions(long cumulativeResolutions) {
         this.cumulativeResolutions = Long.valueOf(cumulativeResolutions).doubleValue();
         verifyDatasetCompleted();
+    }
+
+    public void setCumulativeResolutions(double cumulativeResolutions) {
+        this.cumulativeResolutions = cumulativeResolutions;
     }
 
     @Override

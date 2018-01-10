@@ -21,10 +21,14 @@ public class AntPlusPowerSensorData extends AntPlusSensorData {
         return calculatedPower;
     }
 
-    public void setCalculatedPower(BigDecimal calculatedPower) {
+    public void dosetCalculatedPower(BigDecimal calculatedPower) {
         this.calculatedPower = Double.valueOf(calculatedPower.toPlainString());
         System.out.println(calculatedPower);
         verifyDatasetCompleted();
+    }
+
+    public void setCalculatedPower(double calculatedPower) {
+        this.calculatedPower = calculatedPower;
     }
 
     @Override

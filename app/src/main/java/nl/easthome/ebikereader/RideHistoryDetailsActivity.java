@@ -29,7 +29,6 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -79,18 +78,6 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mRideRecording = dataSnapshot.getValue(RideRecording.class);
                 mRideHistoryId.setText(mRideRecording.toString());
-
-                HashMap<String, RideMeasurement> hashMap = new HashMap<>();
-
-                for (DataSnapshot measurementSnapshot: dataSnapshot.getChildren()){
-                    if (measurementSnapshot.hasChildren()){
-                        hashMap.put(measurementSnapshot.getKey(), measurementSnapshot.getValue(RideMeasurement.class));
-                    }
-                }
-
-                mRideRecording.setRideMeasurements(hashMap);
-
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -153,12 +140,13 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                 Log.d("CSVEXPORT", "Export Location at " + folder.getAbsolutePath() + " - Existed: " + doesFolderExists);
 
                 // Step 2 - creating file an create column headers
-                final String filename = folder.toString() + "/" + getTitle().toString() + ".csv";
+                final String filename = folder.toString() + "/Ride" + Constants.convertTimestampToSimpleDateTime(mRideRecording.getRideStart()) + ".csv";
                 Log.d("CSVEXPORT", "Filename is " + filename);
                 try {
+
                     FileWriter fw = new FileWriter(filename);
 
-                    fw.append("timestamp,");
+                    fw.append("UNIXtimestamp,");
                     fw.append("gps_accuracy,gps_altitude,gps_bearing,gps_elapsedrealtimenanos,gps_latitude,gps_longitude,gps_provider,gps_speed,gps_time,");
                     fw.append("speedsens_speed_ms,speedsens_distance_meters,");
                     fw.append("cadancesens_calculated,cadancesens_cumulative_resolutions,");
@@ -168,6 +156,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                     fw.append("\n");
 
                     //Step 3 -  Add Data
+                    System.out.println(mRideRecording.getRideMeasurements().toString());
 
                     for (Map.Entry<String, RideMeasurement> recording: mRideRecording.getRideMeasurements().entrySet()) {
 
@@ -236,7 +225,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                             csvLine += "NOTIMPLEMENTED" + "," + "NOTIMPLEMENTED" + "," +"NOTIMPLEMENTED" + "," + "NOTIMPLEMENTED";
                         }
                         else {
-                            csvLine += "x,x,x,x";
+                            csvLine += "x,x,x,x\n";
                         }
 
 
@@ -258,11 +247,10 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mProgressDialog.dismiss();
-                        Uri uri = new Uri.Builder().path(filename).build();
 
                         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + filename));
                         startActivity(Intent.createChooser(sharingIntent, "Send to: "));
                     }
                 });

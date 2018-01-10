@@ -100,4 +100,19 @@ public class FirebaseLocation {
     public void setTime(long time) {
         this.time = time;
     }
+
+    @Override
+    public String toString() {
+        return "FirebaseLocation{" +
+                "accuracy=" + accuracy +
+                ", altitude=" + altitude +
+                ", bearing=" + bearing +
+                ", elapsedRealTimeNanos=" + elapsedRealTimeNanos +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", provider='" + provider + '\'' +
+                ", speed=" + speed +
+                ", time=" + time +
+                '}';
+    }
 }
