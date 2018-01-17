@@ -161,20 +161,7 @@ public class AntPlusSupportSlideFragment extends Fragment implements ISlidePolic
                             }).show();
                     break;
                 case ANT_SUPPORTED:
-                    new MaterialDialog.Builder(getContext())
-                            .title(R.string.intro_dialog_antsupport_title)
-                            .content(R.string.intro_dialog_antsupport_positive_content)
-                            .positiveText(R.string.intro_dialog_antsupport_positive_button_text)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    mAntCheckButton.setText("Done!");
-                                    isAntCheckDone = true;
-                                    mAntCheckButton.setEnabled(false);
-                                    dialog.dismiss();
-                                }
-                            })
-                            .show();
+                    mAntCheckButton.setText("You have Ant+ Support!");
                     break;
                 default:
                     break;

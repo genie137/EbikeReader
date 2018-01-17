@@ -104,14 +104,10 @@ public class DashboardActivity extends BaseActivityWithMenu {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //0. Android
         super.onCreate(savedInstanceState);
         setContent(R.layout.activity_dashboard_content, R.id.nav_dashboard);
 		ButterKnife.bind(this);
 		setTitle("Dashboard");
-        //1. Setup the menu
-        //2. Apply some viewsize changes for the arch
-        //3. Connect to RideRecording service
         mRideRecordingGuiUpdater = new RideRecordingGuiUpdater();
         mRideRecordingServiceConnection = new RideRecordingServiceConnection();
         mRideRecordingIntent = new Intent(this, RideRecordingService.class);
@@ -243,7 +239,7 @@ public class DashboardActivity extends BaseActivityWithMenu {
                             if (heartSensorData == null) {
                                 mRealtimeHeartrate.setText(R.string.realtime_display_not_connected);
                             } else {
-                                //todo heartrate
+                                mRealtimeHeartrate.setText(String.valueOf(heartSensorData.getHeartRate()));
                             }
                             AntPlusPowerSensorData powerSensorData = rideMeasurement.getPowerSensorData();
                             if (powerSensorData == null) {
@@ -252,8 +248,6 @@ public class DashboardActivity extends BaseActivityWithMenu {
                                 mRealtimePower.setText(String.valueOf(powerSensorData.getCalculatedPower()));
                             }
                             break;
-
-
                     }
                 }
             });

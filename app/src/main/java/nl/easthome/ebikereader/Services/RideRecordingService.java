@@ -29,12 +29,14 @@ import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
 import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
 import nl.easthome.ebikereader.DashboardActivity;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
+import nl.easthome.ebikereader.Enums.UserGender;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
 import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
 import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Helpers.SharedPrefsSaver;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
+import nl.easthome.ebikereader.Objects.EstimatedPowerData;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.R;
@@ -210,6 +212,12 @@ public class RideRecordingService extends Service {
         if (heartSensor != null) {
             rideMeasurement.setHeartSensorData(heartSensor.getLastSensorData());
         }
+        if (speedSensor != null && heartSensor != null){
+            //TODO use actual age/weight/gender
+            rideMeasurement.setEstimatedPowerData(new EstimatedPowerData(rideMeasurement.getHeartSensorData().getHeartRate(), 25, 80, UserGender.MALE, rideMeasurement.getPowerSensorData().getCalculatedPower()));
+            Log.d("ESTIMATED", "timestamp: " + timestamp +" - " + rideMeasurement.getEstimatedPowerData().toString());
+        }
+
 
         mRideRecording.addRideMeasurement(timestamp, rideMeasurement);
         mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.NEW_MEASUREMENT, rideMeasurement);

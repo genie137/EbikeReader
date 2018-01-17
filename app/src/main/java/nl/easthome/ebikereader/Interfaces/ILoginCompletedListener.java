@@ -1,6 +1,6 @@
 package nl.easthome.ebikereader.Interfaces;
 
-public interface ILoginCompleteListner {
+public interface ILoginCompletedListener {
 
     void onLoginComplete();
 

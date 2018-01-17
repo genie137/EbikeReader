@@ -1,4 +1,6 @@
 package nl.easthome.ebikereader.Sensors;
+import android.util.Log;
+
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
 
@@ -12,9 +14,20 @@ public class EBikeHeartSensorImplementation extends ISensorHandler<AntPlusHeartR
     @Override
     public void subscribeToEvents(AntPlusHeartRatePcc sensorConnection) {
         sensorConnection.subscribeHeartRateDataEvent(new AntPlusHeartRatePcc.IHeartRateDataReceiver() {
+            /**
+             *
+             * @param l             timestamp
+             * @param enumSet       eventFlags
+             * @param i             computedHeartRate
+             * @param l1            heartBeatCounter
+             * @param bigDecimal    heartBeatEventTime
+             * @param dataState     dataState
+             */
             @Override
             public void onNewHeartRateData(long l, EnumSet<EventFlag> enumSet, int i, long l1, BigDecimal bigDecimal, AntPlusHeartRatePcc.DataState dataState) {
-
+                Log.d("HR", ""+i);
+                AntPlusHeartSensorData dataset = getLatestNonCompletedDataset(AntPlusHeartSensorData.class);
+                dataset.dosetHeartrate(i);
             }
         });
 

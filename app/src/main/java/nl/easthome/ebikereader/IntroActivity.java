@@ -18,10 +18,10 @@ import nl.easthome.ebikereader.Fragments.LoginSlideFragment;
 import nl.easthome.ebikereader.Fragments.WelcomeSlideFragment;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Helpers.SharedPrefsSaver;
-import nl.easthome.ebikereader.Interfaces.ILoginCompleteListner;
+import nl.easthome.ebikereader.Interfaces.ILoginCompletedListener;
 import nl.easthome.ebikereader.Objects.UserDetails;
 
-public class IntroActivity extends AppIntro implements ILoginCompleteListner{
+public class IntroActivity extends AppIntro implements ILoginCompletedListener {
     LoginSlideFragment loginSlideFragment = new LoginSlideFragment();
     BodyMeasurementSlideFragment bodyMeasurementSlideFragment = new BodyMeasurementSlideFragment();
     BikeInfoSlideFragment bikeInfoSlideFragment = new BikeInfoSlideFragment();
@@ -56,14 +56,13 @@ public class IntroActivity extends AppIntro implements ILoginCompleteListner{
         addSlide(loginSlideFragment);
         addSlide(bodyMeasurementSlideFragment);
         addSlide(bikeInfoSlideFragment);
-        loginSlideFragment.addLoginCompleteListner(this);
+        loginSlideFragment.addLoginCompleteListener(this);
 
     }
 
     @Override
     protected void onDestroy() {
         FirebaseAuth instance = FirebaseAuth.getInstance();
-        System.out.println("ONDESTROY");
         if (!introFinished && instance.getCurrentUser() != null){
             instance.signOut();
         }

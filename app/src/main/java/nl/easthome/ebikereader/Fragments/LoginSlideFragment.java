@@ -19,7 +19,7 @@ import java.util.Arrays;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import nl.easthome.ebikereader.Interfaces.ILoginCompleteListner;
+import nl.easthome.ebikereader.Interfaces.ILoginCompletedListener;
 import nl.easthome.ebikereader.R;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -29,7 +29,7 @@ public class LoginSlideFragment extends Fragment implements ISlidePolicy{
     private static final int RC_SIGN_IN = 9001;
     @BindView(R.id.loginButton) Button mLoginButton;
     private boolean loginState = false;
-    private ILoginCompleteListner completeListner;
+    private ILoginCompletedListener completeListner;
 
     public LoginSlideFragment() {
     }
@@ -39,6 +39,7 @@ public class LoginSlideFragment extends Fragment implements ISlidePolicy{
         mLoginButton.setEnabled(false);
         startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
+                        .setAllowNewEmailAccounts(true)
                         .setAvailableProviders(
                                 Arrays.asList(
                                         new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
@@ -93,7 +94,7 @@ public class LoginSlideFragment extends Fragment implements ISlidePolicy{
     }
 
 
-    public void addLoginCompleteListner(ILoginCompleteListner completeListner) {
-        this.completeListner = completeListner;
+    public void addLoginCompleteListener(ILoginCompletedListener completedListener) {
+        this.completeListner = completedListener;
     }
 }
