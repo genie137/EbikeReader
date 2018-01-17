@@ -17,6 +17,7 @@ public class AntPlusHeartSensorData extends AntPlusSensorData {
 
     public void dosetHeartrate(int i){
         heartRate = i;
+        verifyDatasetCompleted();
     }
 
     public int getHeartRate() {

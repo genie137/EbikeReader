@@ -162,6 +162,8 @@ public class AntPlusSupportSlideFragment extends Fragment implements ISlidePolic
                     break;
                 case ANT_SUPPORTED:
                     mAntCheckButton.setText("You have Ant+ Support!");
+                    mAntCheckButton.setEnabled(false);
+                    isAntCheckDone = true;
                     break;
                 default:
                     break;

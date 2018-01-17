@@ -30,7 +30,5 @@ public class EBikeHeartSensorImplementation extends ISensorHandler<AntPlusHeartR
                 dataset.dosetHeartrate(i);
             }
         });
-
-
     }
 }
