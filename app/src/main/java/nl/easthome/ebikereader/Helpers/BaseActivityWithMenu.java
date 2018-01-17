@@ -1,4 +1,4 @@
-package nl.easthome.ebikereader;
+package nl.easthome.ebikereader.Helpers;
 
 import android.content.Intent;
 import android.support.annotation.IdRes;
@@ -13,7 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import nl.easthome.ebikereader.Helpers.UserLogout;
+import nl.easthome.ebikereader.AntSensorActivity;
+import nl.easthome.ebikereader.DashboardActivity;
+import nl.easthome.ebikereader.R;
+import nl.easthome.ebikereader.RideHistoryActivity;
 
 public class BaseActivityWithMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

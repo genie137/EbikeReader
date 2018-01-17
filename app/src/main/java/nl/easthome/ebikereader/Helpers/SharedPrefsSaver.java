@@ -22,7 +22,7 @@ public class SharedPrefsSaver {
     public static void saveUserDetails(Activity activity, UserDetails userDetails){
         SharedPreferences.Editor preferences = activity.getSharedPreferences(SPPageUserDetails, Context.MODE_PRIVATE).edit();
 
-        preferences.putInt(userWeightKey, userDetails.getUserHeight());
+        preferences.putInt(userHeightKey, userDetails.getUserHeight());
         preferences.putInt(userWeightKey, userDetails.getUserWeight());
         preferences.putString(userBikeModelKey, userDetails.getBikeModel());
         preferences.putInt(userBikeBatteryCapacityKey, userDetails.getBikeBattWatt());

@@ -213,11 +213,12 @@ public class RideRecordingService extends Service {
             rideMeasurement.setHeartSensorData(heartSensor.getLastSensorData());
         }
         if (speedSensor != null && heartSensor != null){
-            //TODO use actual age/weight/gender
-            rideMeasurement.setEstimatedPowerData(new EstimatedPowerData(rideMeasurement.getHeartSensorData().getHeartRate(), 25, 80, UserGender.MALE, rideMeasurement.getPowerSensorData().getCalculatedPower()));
-            Log.d("ESTIMATED", "timestamp: " + timestamp +" - " + rideMeasurement.getEstimatedPowerData().toString());
+            if (rideMeasurement.getHeartSensorData() != null && rideMeasurement.getPowerSensorData() != null) {
+                //TODO use actual age/weight/gender
+                rideMeasurement.setEstimatedPowerData(new EstimatedPowerData(rideMeasurement.getHeartSensorData().getHeartRate(), 25, 80, UserGender.MALE, rideMeasurement.getPowerSensorData().getCalculatedPower()));
+                Log.d("ESTIMATED", "timestamp: " + timestamp + " - " + rideMeasurement.getEstimatedPowerData().toString());
+            }
         }
-
 
         mRideRecording.addRideMeasurement(timestamp, rideMeasurement);
         mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.NEW_MEASUREMENT, rideMeasurement);

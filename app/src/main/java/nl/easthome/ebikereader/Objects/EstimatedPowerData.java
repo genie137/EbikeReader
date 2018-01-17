@@ -12,6 +12,9 @@ public class EstimatedPowerData extends AntPlusSensorData {
     private static final int formulaDurationInMinutes = 1;
     private static final double formulaConvertKcaltoWh = 1.163;
 
+    public EstimatedPowerData() {
+    }
+
     public EstimatedPowerData(double userHeartRate, int userAge, double userWeight, UserGender userGender, double bikePowerReading) {
         switch (userGender) {
             case MALE:

@@ -7,6 +7,7 @@ import android.widget.ProgressBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nl.easthome.antpluslibary.AntPlusSensorScanner;
+import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
 
 public class AntSensorActivity extends BaseActivityWithMenu {
     AntPlusSensorScanner mAntPlusSensorScanner;

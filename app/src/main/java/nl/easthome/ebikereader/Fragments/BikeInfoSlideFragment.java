@@ -16,7 +16,6 @@ import butterknife.ButterKnife;
 import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
 
-//todo implement loding items from firebase
 public class BikeInfoSlideFragment extends Fragment implements ISlidePolicy{
     @BindView(R.id.model_input) EditText mBikeModel;
     @BindView(R.id.km_input) EditText mKmInput;

@@ -6,9 +6,6 @@ import java.util.Calendar;
 import java.util.Locale;
 public class Constants {
 
-    public static final String CSV_COL_SEPERATOR = ",";
-    public static final String CSV_ROW_SEPERATOR = "\n";
-
     public static long getSystemTimestamp() {
         return System.currentTimeMillis() / 1000;
     }

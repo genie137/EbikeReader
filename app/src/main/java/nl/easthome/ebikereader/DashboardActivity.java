@@ -36,6 +36,7 @@ import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
 import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
+import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
 import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Implementations.RideRecordingServiceConnection;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;

@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nl.easthome.ebikereader.Adapters.RideHistoryAdapter;
+import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Objects.RideRecording;
 
@@ -43,7 +44,11 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RideRecording ride = rideHistoryAdapter.getItem(position);
-                Intent intent = new Intent(RideHistoryActivity.this, RideHistoryDetailsActivity.class).putExtra("RIDEID", ride.getRideId()).putExtra("RIDESTART", ride.getRideStart());
+                Intent intent = new Intent(
+                        RideHistoryActivity.this,
+                        RideHistoryDetailsActivity.class)
+                        .putExtra(RideHistoryDetailsActivity.intentExtraRideId, ride.getRideId())
+                        .putExtra(RideHistoryDetailsActivity.intentExtraRideStart, ride.getRideStart());
                 startActivity(intent);
             }
         });

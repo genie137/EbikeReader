@@ -16,7 +16,6 @@ import butterknife.ButterKnife;
 import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
 
-//todo implement loding items from firebase
 public class BodyMeasurementSlideFragment extends Fragment implements ISlidePolicy {
     @BindView(R.id.weight_input) EditText mUserWeight;
     @BindView(R.id.height_input) EditText mUserHeight;
@@ -28,14 +27,8 @@ public class BodyMeasurementSlideFragment extends Fragment implements ISlidePoli
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-
-
         View v = inflater.inflate(R.layout.fragment_body_measurement_slide, container, false);
         ButterKnife.bind(this, v);
-
-
-
         return v;
     }
 
