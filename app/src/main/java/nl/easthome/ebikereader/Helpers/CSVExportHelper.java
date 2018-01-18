@@ -35,9 +35,6 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
     private static final String unknown_item = "X";
 
 
-
-
-
     public CSVExportHelper(RideRecording rideRecording) {
         mRideRecording = rideRecording;
     }
@@ -83,6 +80,7 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
                 csvLine.append(csvHeartSensor(recordingValue.getHeartSensorData()));
                 csvLine.append(csvEstimatedSensor(recordingValue.getEstimatedPowerData()));
                 csvLine.append(csv_line_break);
+                fw.append(csvLine.toString());
 
             }
             fw.close();
