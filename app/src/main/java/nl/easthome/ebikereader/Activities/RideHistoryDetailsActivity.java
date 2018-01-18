@@ -1,4 +1,4 @@
-package nl.easthome.ebikereader;
+package nl.easthome.ebikereader.Activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +31,7 @@ import nl.easthome.ebikereader.Helpers.CSVExportHelper;
 import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Objects.RideRecording;
+import nl.easthome.ebikereader.R;
 
 public class RideHistoryDetailsActivity extends AppCompatActivity {
     private String mRideID;
@@ -42,6 +44,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
     @BindView(R.id.ride_history_detail_layout) CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.ride_history_id) TextView mRideHistoryId;
+    @BindView(R.id.exportFab) FloatingActionButton mExportFab;
     @OnClick(R.id.exportFab) public void onExportFabButtonPress(){exportRideDetails();}
 
 
@@ -66,7 +69,14 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mRideRecording = dataSnapshot.getValue(RideRecording.class);
-                mRideHistoryId.setText(mRideRecording.toString());
+                if (mRideRecording != null) {
+                    mRideHistoryId.setText(mRideRecording.toString());
+                }
+                else {
+                    mRideHistoryId.setText("Could not show ride.");
+                    mExportFab.setEnabled(false);
+                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

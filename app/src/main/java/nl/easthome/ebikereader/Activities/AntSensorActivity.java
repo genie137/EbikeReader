@@ -1,4 +1,4 @@
-package nl.easthome.ebikereader;
+package nl.easthome.ebikereader.Activities;
 
 import android.os.Bundle;
 import android.widget.ListView;
@@ -8,6 +8,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nl.easthome.antpluslibary.AntPlusSensorScanner;
 import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
+import nl.easthome.ebikereader.R;
 
 public class AntSensorActivity extends BaseActivityWithMenu {
     AntPlusSensorScanner mAntPlusSensorScanner;

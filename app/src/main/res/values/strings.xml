@@ -64,5 +64,10 @@
     <string name="realtime_display_not_connected">x</string>
     <string name="activity_title_ridehistory">Ride History</string>
     <string name="title_activity_ride_history_details">RideHistoryDetailsActivity</string>
+    <string name="dashboard_sensor_choose_dialog">Which sensors to record? (GPS is always recorded)</string>
+    <string name="dashboard_recording_start_dialog_confirm">Start Recording</string>
+    <string name="dashboard_recording_start_dialog_deny">Cancel</string>
+    <string name="activity_title_dashboard">Dashboard</string>
+    <string name="title_activity_ride_history">History of Rides</string>
 
 </resources>

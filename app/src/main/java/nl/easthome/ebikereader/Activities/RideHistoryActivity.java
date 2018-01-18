@@ -1,4 +1,4 @@
-package nl.easthome.ebikereader;
+package nl.easthome.ebikereader.Activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +23,7 @@ import nl.easthome.ebikereader.Adapters.RideHistoryAdapter;
 import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Objects.RideRecording;
+import nl.easthome.ebikereader.R;
 
 public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRefreshLayout.OnRefreshListener {
     ArrayList<RideRecording> mRides;

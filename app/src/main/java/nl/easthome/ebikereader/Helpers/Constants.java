@@ -30,7 +30,6 @@ public class Constants {
         return date;
     }
 
-
     public static String convertTimestampToTime(Long timestamp) {
         timestamp = timestamp * 1000;
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);

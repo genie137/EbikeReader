@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
-import nl.easthome.ebikereader.MainActivity;
+import nl.easthome.ebikereader.Activities.MainActivity;
 import nl.easthome.ebikereader.R;
 
 public class UserLogout {

@@ -27,7 +27,7 @@ import nl.easthome.antpluslibary.Sensors.AntPlusCadenceSensor;
 import nl.easthome.antpluslibary.Sensors.AntPlusHeartSensor;
 import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
 import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
-import nl.easthome.ebikereader.DashboardActivity;
+import nl.easthome.ebikereader.Activities.DashboardActivity;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Enums.UserGender;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
@@ -181,7 +181,6 @@ public class RideRecordingService extends Service {
             }
         }
         //4. Stop Gui Component Updates
-        //TODO reset map when previous rides can be viewed.
         mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.STOPPED_RECORDING, null);
         //5. Stop Location Updates
         if (mFusedLocationClient != null) {

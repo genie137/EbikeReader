@@ -1,4 +1,4 @@
-package nl.easthome.ebikereader;
+package nl.easthome.ebikereader.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;

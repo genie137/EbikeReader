@@ -1,4 +1,4 @@
-package nl.easthome.ebikereader;
+package nl.easthome.ebikereader.Activities;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,6 +13,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
 import io.fabric.sdk.android.Fabric;
+import nl.easthome.ebikereader.R;
 
 public class MainActivity extends AppCompatActivity {
 

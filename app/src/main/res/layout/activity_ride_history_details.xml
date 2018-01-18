@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nl.easthome.ebikereader.RideHistoryDetailsActivity"
+    tools:context="nl.easthome.ebikereader.Activities.RideHistoryDetailsActivity"
     android:id="@+id/ride_history_detail_layout">
 
     <android.support.design.widget.AppBarLayout

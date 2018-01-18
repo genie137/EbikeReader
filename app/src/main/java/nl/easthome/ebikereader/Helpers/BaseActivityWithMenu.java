@@ -12,11 +12,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
-import nl.easthome.ebikereader.AntSensorActivity;
-import nl.easthome.ebikereader.DashboardActivity;
+import com.google.firebase.auth.FirebaseAuth;
+
+import nl.easthome.ebikereader.Activities.AntSensorActivity;
+import nl.easthome.ebikereader.Activities.DashboardActivity;
+import nl.easthome.ebikereader.Activities.RideHistoryActivity;
 import nl.easthome.ebikereader.R;
-import nl.easthome.ebikereader.RideHistoryActivity;
 
 public class BaseActivityWithMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -34,24 +37,16 @@ public class BaseActivityWithMenu extends AppCompatActivity implements Navigatio
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        /**
-         * This is going to be our actual root layout.
-         */
         fullLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.base_activity_with_menu_layout, null);
-        /**
-         * {@link FrameLayout} to inflate the child's view. We could also use a {@link android.view.ViewStub}
-         */
         FrameLayout activityContainer = (FrameLayout) fullLayout.findViewById(R.id.base_activity_content);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
-
-        /**
-         * Note that we don't pass the child's layoutId to the parent,
-         * instead we pass it our inflated layout.
-         */
         super.setContentView(fullLayout);
 
         toolbar = (Toolbar) findViewById(R.id.base_activity_toolbar);
         navigationView = (NavigationView) findViewById(R.id.base_activity_nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView profileName = (TextView) headerView.findViewById(R.id.profileName);
+        TextView profileEmail = (TextView) headerView.findViewById(R.id.profileEmail);
 
         if (useToolbar())
         {
@@ -63,7 +58,11 @@ public class BaseActivityWithMenu extends AppCompatActivity implements Navigatio
         }
 
         setUpNavView();
+        profileName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        profileEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     }
+
+
 
     /**
      * Helper method that can be used by child classes to
