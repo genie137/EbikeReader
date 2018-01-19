@@ -7,14 +7,271 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="nl.easthome.ebikereader.Activities.RideHistoryDetailsActivity"
+    tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/activity_ride_history_details">
 
-    <TextView
-        android:id="@+id/ride_history_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="xxxxxx"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp"/>
+    <fragment
+        android:id="@+id/detailMap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="0dp"
+        android:layout_height="251dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="381dp"
+        android:layout_height="303dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:max="100"
+            android:progress="50"
+            android:progressTint="?android:attr/statusBarColor"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userEngineRatioLabel"/>
+
+        <TextView
+            android:id="@+id/totalDistanceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="21dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Distance: "
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/totalDistanceLabel2"/>
+
+        <TextView
+            android:id="@+id/totalDistanceLabel2"
+            android:layout_width="wrap_content"
+            android:layout_height="21dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Duration: "
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/speedLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Speed: "
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/totalDistanceLabel"/>
+
+        <TextView
+            android:id="@+id/heartbeatLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Heartbeat: "
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cadanceLabel"/>
+
+        <TextView
+            android:id="@+id/cadanceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Cadance: "
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/speedLabel"/>
+
+        <TextView
+            android:id="@+id/powerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Power:"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heartbeatLabel"/>
+
+        <TextView
+            android:id="@+id/estTotalUserPowerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Est. Total User Power:"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/powerLabel"/>
+
+        <TextView
+            android:id="@+id/userEngineRatioLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Avg. User/Engine ratio:"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/estTotalUserPowerLabel"/>
+
+        <TextView
+            android:id="@+id/durationValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="99h 99min 99sec"
+            android:textAlignment="textEnd"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toEndOf="@+id/totalDistanceLabel2"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/speedValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="(9999 / 9999 / 9999 )"
+            android:textAlignment="textEnd"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toEndOf="@+id/speedLabel"
+            app:layout_constraintTop_toBottomOf="@+id/totalDistanceLabel"/>
+
+        <TextView
+            android:id="@+id/distanceValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:text="(9999 / 9999 / 9999 )"
+            android:textAlignment="textEnd"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toEndOf="@+id/totalDistanceLabel"
+            app:layout_constraintTop_toBottomOf="@+id/durationValue"/>
+
+        <TextView
+            android:id="@+id/cadanceValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="(9999 / 9999 / 9999 )"
+            android:textAlignment="textEnd"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toEndOf="@+id/cadanceLabel"
+            app:layout_constraintTop_toBottomOf="@+id/speedLabel"/>
+
+        <TextView
+            android:id="@+id/heartbeatValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="(9999 / 9999 / 9999 )"
+            android:textAlignment="textEnd"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toEndOf="@+id/heartbeatLabel"
+            app:layout_constraintTop_toBottomOf="@+id/cadanceLabel"/>
+
+        <TextView
+            android:id="@+id/powerValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="(9999 / 9999 / 9999 )"
+            android:textAlignment="textEnd"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toEndOf="@+id/powerLabel"
+            app:layout_constraintTop_toBottomOf="@+id/heartbeatLabel"/>
+
+        <TextView
+            android:id="@+id/estTotalUserPowerValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="9999"
+            android:textAlignment="textEnd"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toEndOf="@+id/estTotalUserPowerLabel"
+            app:layout_constraintTop_toBottomOf="@+id/powerLabel"/>
+
+        <TextView
+            android:id="@+id/userEngineRatioValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:text="[ 9999 / 9999 ]"
+            android:textAlignment="textEnd"
+            android:textColor="@color/appNameColor"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toEndOf="@+id/userEngineRatioLabel"
+            app:layout_constraintTop_toBottomOf="@+id/powerLabel"/>
+
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

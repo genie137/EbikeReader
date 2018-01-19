@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -24,12 +25,18 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nl.easthome.ebikereader.Helpers.CSVExportHelper;
 import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
+import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
+import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.R;
 
@@ -38,13 +45,17 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
     private long mRideStart;
     private RideRecording mRideRecording;
     private ProgressDialog mProgressDialog;
+    private RideRecordingMappingHelper mRideRecordingMappingHelper;
+    private int numberOfMeasurements;
+    private long rideStart = Long.MAX_VALUE;
+    private long rideEnd = Long.MIN_VALUE;
     public static final String intentExtraRideId =  "RIDEID";
     public static final String intentExtraRideStart =  "RIDESTART";
 
     @BindView(R.id.ride_history_detail_layout) CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.ride_history_id) TextView mRideHistoryId;
     @BindView(R.id.exportFab) FloatingActionButton mExportFab;
+    @BindView(R.id.durationValue) TextView mDurationValue;
     @OnClick(R.id.exportFab) public void onExportFabButtonPress(){exportRideDetails();}
 
 
@@ -60,7 +71,9 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
         mRideID = getIntent().getStringExtra(intentExtraRideId);
         mRideStart = getIntent().getLongExtra(intentExtraRideStart, 0L);
         setTitle("Ride: " + Constants.convertTimestampToDateTime(mRideStart));
+        mRideRecordingMappingHelper = new RideRecordingMappingHelper((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.detailMap), null);
         getRideRecording();
+
     }
 
     private void getRideRecording() {
@@ -70,10 +83,30 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mRideRecording = dataSnapshot.getValue(RideRecording.class);
                 if (mRideRecording != null) {
-                    mRideHistoryId.setText(mRideRecording.toString());
-                }
-                else {
-                    mRideHistoryId.setText("Could not show ride.");
+                    TreeMap<String, RideMeasurement> treeMap = new TreeMap(mRideRecording.getRideMeasurements());
+
+
+                    numberOfMeasurements = treeMap.size();
+
+                    for (Map.Entry<String, RideMeasurement> measurementEntry : treeMap.entrySet()) {
+                        RideMeasurement recordingValue = measurementEntry.getValue();
+
+                        if (recordingValue.getTimestamp() > rideEnd){
+                            rideEnd =  recordingValue.getTimestamp();
+                        }
+                        if (recordingValue.getTimestamp() < rideStart) {
+                            rideStart = recordingValue.getTimestamp();
+                        }
+
+
+
+
+                        mRideRecordingMappingHelper.addPointToMap(recordingValue.getLocation());
+
+                    }
+
+                    fillDurationField();
+                } else {
                     mExportFab.setEnabled(false);
                 }
 
@@ -90,6 +123,22 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                 Toast toast = new Toast(RideHistoryDetailsActivity.this);
                 toast.setText("ERROR: " + databaseError.getMessage());
                 toast.show();
+            }
+        });
+    }
+
+    private void fillDurationField() {
+        long duration = rideEnd - rideStart;
+        long hours = TimeUnit.SECONDS.toHours(duration);
+        long minutes = TimeUnit.SECONDS.toMinutes(duration - TimeUnit.HOURS.toMinutes(hours));
+        long seconds = duration - TimeUnit.MINUTES.toSeconds(minutes);
+
+        final String formattedString = String.format("%d hours, %d minutes, %d seconds", hours, minutes, seconds);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mDurationValue.setText(formattedString);
             }
         });
     }

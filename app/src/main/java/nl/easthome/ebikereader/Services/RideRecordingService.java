@@ -219,6 +219,7 @@ public class RideRecordingService extends Service {
             }
         }
 
+        rideMeasurement.setTimestamp(timestamp);
         mRideRecording.addRideMeasurement(timestamp, rideMeasurement);
         mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.NEW_MEASUREMENT, rideMeasurement);
     }

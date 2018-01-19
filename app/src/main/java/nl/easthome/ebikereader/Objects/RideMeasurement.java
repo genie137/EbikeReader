@@ -9,6 +9,7 @@ import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 
 public class RideMeasurement {
 
+    private long mTimestamp;
 	private FirebaseLocation mLocation;
     private AntPlusSpeedSensorData mSpeedSensorData;
     private AntPlusCadenceSensorData mCadenceSensorData;
@@ -71,10 +72,19 @@ public class RideMeasurement {
         this.mEstimatedPowerData = mEstimatedPowerData;
     }
 
+    public long getTimestamp() {
+        return mTimestamp;
+    }
+
+    public void setTimestamp(long mTimestamp) {
+        this.mTimestamp = mTimestamp;
+    }
+
     @Override
     public String toString() {
         return "RideMeasurement{" +
-                "mLocation=" + mLocation +
+                "mTimestamp=" + mTimestamp +
+                ", mLocation=" + mLocation +
                 ", mSpeedSensorData=" + mSpeedSensorData +
                 ", mCadenceSensorData=" + mCadenceSensorData +
                 ", mPowerSensorData=" + mPowerSensorData +
