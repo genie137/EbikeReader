@@ -3,10 +3,16 @@ import java.math.BigDecimal;
 
 import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 
+/**
+ * Class containing "useful" data from the sensor.
+ */
 public class AntPlusCadenceSensorData extends AntPlusSensorData {
     private double calculatedCadence = -1;
     private double cumulativeResolutions = -1;
 
+    /**
+     * Constructor
+     */
     public AntPlusCadenceSensorData() {
     }
 
@@ -17,13 +23,32 @@ public class AntPlusCadenceSensorData extends AntPlusSensorData {
         }
     }
 
-    public double getCalculatedCadence() {
-        return calculatedCadence;
+    /**
+     * Set the value of cumulativeResolutions while converting the value from long to double.
+     * This method has the name doset, because firebase uses POJO to build/convert objects, and these need to be empty.
+     *
+     * @param cumulativeResolutions The amount of cumulative resolutions.
+     */
+    public void dosetCumulativeResolutions(long cumulativeResolutions) {
+        this.cumulativeResolutions = Long.valueOf(cumulativeResolutions).doubleValue();
+        verifyDatasetCompleted();
     }
 
+    /**
+     * Set the value of cumulativeResolutions while converting the value from BigDecimal to double.
+     * Firebase cannot handle BigDecimals.
+     * This method has the name doset, because firebase uses POJO to build/convert objects, and these need to be empty.
+     * @param calculatedCadence The calculated cadence.
+     */
     public void dosetCalculatedCadence(BigDecimal calculatedCadence) {
         this.calculatedCadence = Double.valueOf(calculatedCadence.toPlainString());
         verifyDatasetCompleted();
+    }
+
+    //Getters and setters
+
+    public double getCalculatedCadence() {
+        return calculatedCadence;
     }
 
     public void setCalculatedCadence(double calculatedCadence) {
@@ -32,11 +57,6 @@ public class AntPlusCadenceSensorData extends AntPlusSensorData {
 
     public double getCumulativeResolutions() {
         return cumulativeResolutions;
-    }
-
-    public void dosetCumulativeResolutions(long cumulativeResolutions) {
-        this.cumulativeResolutions = Long.valueOf(cumulativeResolutions).doubleValue();
-        verifyDatasetCompleted();
     }
 
     public void setCumulativeResolutions(double cumulativeResolutions) {

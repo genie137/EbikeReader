@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">antpluslibary</string>
+    <string name="add_ant_device_button_pair">Pair</string>
+    <string name="add_ant_device_button_unpair">Unpair</string>
+    <string name="add_ant_device_msg_added">has been added!</string>
+    <string name="add_ant_device_msg_replaced">has been replaced!</string>
+    <string name="add_ant_device_error">An Error occurred while performing pair/unpair. Try again later</string>
+    <string name="add_ant_sensor_replace_error">Could not remove sensor Because there was no sensor there?</string>
+    <string name="add_ant_sensor_remove_success">successfully removed.</string>
+    <string name="ant_connected_device_preamp">Device:</string>
+    <string name="placeholder_deviceID">DeviceID</string>
+    <string name="placeholder_deviceName">HeartRate</string>
+    <string name="placeholder_sensor_state_image">Sensor State</string>
 </resources>

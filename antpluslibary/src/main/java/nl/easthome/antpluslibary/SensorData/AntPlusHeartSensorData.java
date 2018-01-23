@@ -1,10 +1,12 @@
 package nl.easthome.antpluslibary.SensorData;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 
+/**
+ *
+ */
 public class AntPlusHeartSensorData extends AntPlusSensorData {
-    public int heartRate  = -1;
+    private int heartRate = -1;
 
-    //TODO IMPLEMENT
     public AntPlusHeartSensorData() {
     }
 

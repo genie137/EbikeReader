@@ -41,6 +41,16 @@ import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.R;
 
 public class RideHistoryDetailsActivity extends AppCompatActivity {
+    public static final String intentExtraRideId = "RIDEID";
+    public static final String intentExtraRideStart = "RIDESTART";
+    @BindView(R.id.ride_history_detail_layout)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.exportFab)
+    FloatingActionButton mExportFab;
+    @BindView(R.id.durationValue)
+    TextView mDurationValue;
     private String mRideID;
     private long mRideStart;
     private RideRecording mRideRecording;
@@ -49,13 +59,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
     private int numberOfMeasurements;
     private long rideStart = Long.MAX_VALUE;
     private long rideEnd = Long.MIN_VALUE;
-    public static final String intentExtraRideId =  "RIDEID";
-    public static final String intentExtraRideStart =  "RIDESTART";
 
-    @BindView(R.id.ride_history_detail_layout) CoordinatorLayout mCoordinatorLayout;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.exportFab) FloatingActionButton mExportFab;
-    @BindView(R.id.durationValue) TextView mDurationValue;
     @OnClick(R.id.exportFab) public void onExportFabButtonPress(){exportRideDetails();}
 
 
@@ -84,8 +88,6 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                 mRideRecording = dataSnapshot.getValue(RideRecording.class);
                 if (mRideRecording != null) {
                     TreeMap<String, RideMeasurement> treeMap = new TreeMap(mRideRecording.getRideMeasurements());
-
-
                     numberOfMeasurements = treeMap.size();
 
                     for (Map.Entry<String, RideMeasurement> measurementEntry : treeMap.entrySet()) {

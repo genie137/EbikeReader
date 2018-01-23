@@ -4,14 +4,22 @@ import nl.easthome.antpluslibary.Sensors.AntPlusHeartSensor;
 import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
 import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
 
+/**
+ * Class that contains references to the different sensor objects.
+ */
 public class AntPlusSensorList {
-    AntPlusCadenceSensor antPlusCadenceSensor;
-    AntPlusHeartSensor antPlusHeartSensor;
-    AntPlusPowerSensor antPlusPowerSensor;
-    AntPlusSpeedSensor antPlusSpeedSensor;
+    private AntPlusCadenceSensor antPlusCadenceSensor;
+    private AntPlusHeartSensor antPlusHeartSensor;
+    private AntPlusPowerSensor antPlusPowerSensor;
+    private AntPlusSpeedSensor antPlusSpeedSensor;
 
+    /**
+     * Constructor.
+     */
     public AntPlusSensorList() {
     }
+
+    //Getters and Setters
 
     public AntPlusCadenceSensor getAntPlusCadenceSensor() {
         return antPlusCadenceSensor;

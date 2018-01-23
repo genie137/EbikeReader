@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
               android:layout_height="wrap_content" >
 
     <ImageView
         android:id="@+id/device_image"
         android:layout_width="60dp"
-        android:layout_height="60dp"/>
+        android:layout_height="60dp"
+        android:contentDescription="@string/placeholder_sensor_state_image" />
 
     <RelativeLayout
-        android:paddingTop="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="4dp"
         >
 
         <TextView
@@ -22,23 +24,24 @@
             android:layout_alignParentTop="true"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:text="HeartRate"
+            android:text="@string/placeholder_deviceName"
             android:textColor="@android:color/black"
-            android:textSize="20dp"
-            android:textStyle="bold"/>
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="RelativeOverlap" />
 
         <TextView
 
             android:id="@+id/device_id"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/device_name"
-            android:text="DeviceID"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
+            android:text="@string/placeholder_deviceID"
             android:textColor="@android:color/darker_gray"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textStyle="italic"/>
 
         <Button
@@ -48,9 +51,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="6dp"
-            android:layout_weight="1"
-            android:text="Pair"
-            android:splitTrack="false"/>
+            android:splitTrack="false"
+            android:text="@string/add_ant_device_button_pair"
+            tools:ignore="RelativeOverlap" />
 
     </RelativeLayout>
 

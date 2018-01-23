@@ -1,4 +1,7 @@
 package nl.easthome.antpluslibary.Implementations;
+
+import android.util.Log;
+
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
@@ -6,30 +9,45 @@ import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
 import nl.easthome.antpluslibary.Objects.AntPlusConnectedSensor;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 
+/**
+ * Class that handles the result of connecting to the ant+ device/sensor.
+ *
+ * @param <SensorPcc>  Defines the sensor/device type.
+ * @param <SensorData> Defines the data type.
+ */
+public class SensorResultReceiver<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> implements AntPluginPcc.IPluginAccessResultReceiver<SensorPcc> {
+    private static final String LOGTAG = "ANT+MDS_SENSOR_RESULT";
+    private AntPlusConnectedSensor<SensorPcc, SensorData> mAntPlusConnectedSensor;
 
-public class SensorResultReceiver<T extends AntPluginPcc, T1 extends AntPlusSensorData> implements AntPluginPcc.IPluginAccessResultReceiver<T> {
-    private AntPlusConnectedSensor<T, T1> mAntPlusConnectedSensor;
-
-    public SensorResultReceiver(AntPlusConnectedSensor<T, T1> antPlusConnectedSensor) {
+    /**
+     * Constructor
+     *
+     * @param antPlusConnectedSensor The sensor for which this class handles the connection.
+     */
+    public SensorResultReceiver(AntPlusConnectedSensor<SensorPcc, SensorData> antPlusConnectedSensor) {
         mAntPlusConnectedSensor = antPlusConnectedSensor;
     }
 
+    /**
+     * Method gets called when the connection of a device has completed or failed.
+     * Only gets called on the initial connection!
+     * @param sensorPcc The sensor/device pcc.
+     * @param requestAccessResult   Result of the process to establish the connection.
+     * @param deviceState State of the device connecting.
+     */
     @Override
-    public void onResultReceived(T t, RequestAccessResult requestAccessResult, DeviceState deviceState) {
-        String result;
-        if (t ==  null) {
-            result = "Null";
-        }
-        else{
-            result = t.toString();
+    public void onResultReceived(SensorPcc sensorPcc, RequestAccessResult requestAccessResult, DeviceState deviceState) {
+        String sensorPccType;
+        if (sensorPcc == null) {
+            sensorPccType = "Null";
+        } else {
+            sensorPccType = sensorPcc.toString();
         }
 
-
-        System.out.println("access: "+ requestAccessResult.toString() + ", result: "+ result + ", devicestate: " + deviceState.toString());
         switch (requestAccessResult){
             case SUCCESS:
                 mAntPlusConnectedSensor.setDeviceState(deviceState);
-                mAntPlusConnectedSensor.setResultConnection(t);
+                mAntPlusConnectedSensor.setResultConnection(sensorPcc);
                 break;
             case USER_CANCELLED:
                 break;
@@ -52,5 +70,7 @@ public class SensorResultReceiver<T extends AntPluginPcc, T1 extends AntPlusSens
             case UNRECOGNIZED:
                 break;
         }
+
+        Log.d(LOGTAG, "Type: " + sensorPccType + " AccessResult: " + requestAccessResult.toString() + " Device State: " + deviceState.toString());
     }
 }

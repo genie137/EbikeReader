@@ -4,15 +4,15 @@
               android:layout_height="wrap_content" >
 
     <ImageView
-        android:id="@+id/device_image"
-        android:src="@drawable/ic_ebike"
+        android:id="@+id/deviceStateImage"
         android:layout_width="60dp"
-        android:layout_height="60dp"/>
+        android:layout_height="60dp"
+        android:src="@drawable/ic_ebike" />
 
     <RelativeLayout
-        android:paddingTop="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="4dp"
         >
 
         <TextView
@@ -31,12 +31,12 @@
         <TextView
 
             android:id="@+id/ride_details"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/ride_date"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
             android:text=""
             android:textColor="@android:color/darker_gray"
             android:textSize="15dp"

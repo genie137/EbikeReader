@@ -1,12 +1,14 @@
 package nl.easthome.antpluslibary.Exceptions;
 /**
- * Created by jorisoosterhuis on 17/11/2017.
+ * Exception shown when a function is not yet implemented.
  */
-
 public class NotImplementedException extends Exception {
 
+    /**
+     * Constructor.
+     */
     public NotImplementedException() {
-        super("Not implemented yet");
+        super("Not yet implemented.");
     }
 
 }

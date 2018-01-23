@@ -9,7 +9,8 @@ import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
-import nl.easthome.antpluslibary.Adapters.AntDeviceListViewAdapter;
+import nl.easthome.antpluslibary.Adapters.AntPlusDeviceListViewAdapter;
+import nl.easthome.antpluslibary.Enums.AntAddType;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Implementations.MdsSearchCallback;
 import nl.easthome.antpluslibary.Objects.AntPlusFoundSensor;
@@ -17,8 +18,7 @@ import nl.easthome.antpluslibary.Objects.AntPlusFoundSensor;
 public class AntPlusSensorScanner {
     private Activity mActivity;
     private ListView mListView;
-    private MdsSearchCallback mMdsSearchCallbacks;
-    private AntDeviceListViewAdapter mAntDeviceListViewAdapter;
+    private AntPlusDeviceListViewAdapter mAntPlusDeviceListViewAdapter;
     private EnumSet<DeviceType> mDeviceSet;
     private MultiDeviceSearch mMultiDeviceSearch;
     private AntPlusDeviceManager mDeviceManager;
@@ -57,6 +57,7 @@ public class AntPlusSensorScanner {
         return EnumSet.allOf(DeviceType.class);
     }
 
+
     public static EnumSet<DeviceType> getBikeDeviceTypeSet() {
         EnumSet<DeviceType> deviceTypes = getEmptyDeviceTypeSet();
         deviceTypes.add(DeviceType.BIKE_POWER);
@@ -73,10 +74,10 @@ public class AntPlusSensorScanner {
      */
     public boolean startFindDevices(){
         try{
-            mAntDeviceListViewAdapter = new AntDeviceListViewAdapter(mActivity, mSensors);
+            mAntPlusDeviceListViewAdapter = new AntPlusDeviceListViewAdapter(mActivity, mSensors);
             addPreviouslyConnectedDevices();
-            mListView.setAdapter(mAntDeviceListViewAdapter);
-            mMdsSearchCallbacks = new MdsSearchCallback(mActivity, mSensors, mAntDeviceListViewAdapter);
+            mListView.setAdapter(mAntPlusDeviceListViewAdapter);
+            MdsSearchCallback mMdsSearchCallbacks = new MdsSearchCallback(mActivity, mSensors, mAntPlusDeviceListViewAdapter);
             mMultiDeviceSearch = new MultiDeviceSearch(mActivity, mDeviceSet, mMdsSearchCallbacks, null);
             return true;
         }catch (Exception e) {
@@ -97,11 +98,10 @@ public class AntPlusSensorScanner {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAntDeviceListViewAdapter.add(new AntPlusFoundSensor(deviceType1, id, "Device: " + id, AntPlusFoundSensor.AntAddType.EXISTING_AND_MISSING));
+                        mAntPlusDeviceListViewAdapter.add(new AntPlusFoundSensor(deviceType1, id, mActivity.getString(R.string.ant_connected_device_preamp) + id, AntAddType.EXISTING_AND_MISSING));
                     }
                 });
-            } catch (NoDeviceConfiguredException e) {
-
+            } catch (NoDeviceConfiguredException ignored) {
             }
         }
     }
