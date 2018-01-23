@@ -1,5 +1,6 @@
 package nl.easthome.ebikereader.Activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -94,9 +95,8 @@ public class DashboardActivity extends BaseActivityWithMenu {
     }
 
     public void showNoDeviceConfiguredExceptionSnackbar() {
-        //TODO move text to strings.xml
-        Snackbar snackbar = Snackbar.make(mDashboardLayout, "Not all sensors have been configured.", Snackbar.LENGTH_LONG);
-        snackbar.setAction("Fix This", new View.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(mDashboardLayout, R.string.snackbar_not_all_sensors_configured, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent viewIntent = new Intent(DashboardActivity.this, AntSensorActivity.class);
@@ -107,9 +107,8 @@ public class DashboardActivity extends BaseActivityWithMenu {
     }
 
     public void showLocationDisabledExceptionSnackbar() {
-        //TODO move text to strings.xml
-        Snackbar snackbar = Snackbar.make(mDashboardLayout, "Location is not enabled in settings.", Snackbar.LENGTH_LONG);
-        snackbar.setAction("Fix This", new View.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(mDashboardLayout, R.string.snackbar_location_not_enabled_in_settings, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent viewIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -121,27 +120,26 @@ public class DashboardActivity extends BaseActivityWithMenu {
 
     public void showLocationPermissionMissingExceptionSnackbar() {
         final Activity activity = this;
-        //TODO move text to strings.xml
-        Snackbar snackbar = Snackbar.make(mDashboardLayout, "No location permission.", Snackbar.LENGTH_LONG);
-        snackbar.setAction("Fix This", new View.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(mDashboardLayout, R.string.snackbar_no_location_permission, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Dexter.withActivity(activity).withPermission(android.Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
+                Dexter.withActivity(activity).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        Toast.makeText(activity, "Thanks! You can now use the recorder.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, R.string.permission_for_location_granted, Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
-                        Toast.makeText(activity, "You cant use the recorder until you give the permission.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, R.string.permission_for_location_on_denied, Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
                         final PermissionToken token1 = token;
-                        Snackbar snackbar1 = Snackbar.make(mDashboardLayout, "We need the permission to see where you go.", Snackbar.LENGTH_LONG);
-                        snackbar1.setAction("Fix It.", new View.OnClickListener() {
+                        Snackbar snackbar1 = Snackbar.make(mDashboardLayout, R.string.permission_for_location_rationale, Snackbar.LENGTH_LONG);
+                        snackbar1.setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 token1.continuePermissionRequest();

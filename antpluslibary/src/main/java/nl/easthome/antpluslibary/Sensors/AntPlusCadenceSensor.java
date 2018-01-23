@@ -7,7 +7,7 @@ import nl.easthome.antpluslibary.Objects.AntPlusConnectedSensor;
 import nl.easthome.antpluslibary.SensorData.AntPlusCadenceSensorData;
 
 public class AntPlusCadenceSensor extends AntPlusConnectedSensor<AntPlusBikeCadencePcc, AntPlusCadenceSensorData> {
-    private ISensorHandler<AntPlusBikeCadencePcc, AntPlusCadenceSensorData> mSensorHandler;
+    private final ISensorHandler<AntPlusBikeCadencePcc, AntPlusCadenceSensorData> mSensorHandler;
 
     public AntPlusCadenceSensor(ISensorHandler<AntPlusBikeCadencePcc, AntPlusCadenceSensorData> sensorHandler) {
         super(DeviceType.BIKE_CADENCE);

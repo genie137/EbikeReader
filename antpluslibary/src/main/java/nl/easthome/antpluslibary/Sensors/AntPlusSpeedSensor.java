@@ -7,7 +7,7 @@ import nl.easthome.antpluslibary.Objects.AntPlusConnectedSensor;
 import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 
 public class AntPlusSpeedSensor extends AntPlusConnectedSensor<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> {
-    private ISensorHandler<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> mSensorHandler;
+    private final ISensorHandler<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> mSensorHandler;
 
     public AntPlusSpeedSensor(ISensorHandler<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> sensorHandler) {
         super(DeviceType.BIKE_SPD);

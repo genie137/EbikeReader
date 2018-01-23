@@ -1,4 +1,6 @@
 package nl.easthome.ebikereader.Activities;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,12 +47,15 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RideRecording ride = rideHistoryAdapter.getItem(position);
-                Intent intent = new Intent(
-                        RideHistoryActivity.this,
-                        RideHistoryDetailsActivity.class)
-                        .putExtra(RideHistoryDetailsActivity.intentExtraRideId, ride.getRideId())
-                        .putExtra(RideHistoryDetailsActivity.intentExtraRideStart, ride.getRideStart());
-                startActivity(intent);
+                Intent intent = null;
+                if (ride != null) {
+                    intent = new Intent(
+                            RideHistoryActivity.this,
+                            RideHistoryDetailsActivity.class)
+                            .putExtra(RideHistoryDetailsActivity.intentExtraRideId, ride.getRideId())
+                            .putExtra(RideHistoryDetailsActivity.intentExtraRideStart, ride.getRideStart());
+                    startActivity(intent);
+                }
             }
         });
 
@@ -69,9 +74,7 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
             rideHistoryAdapter.clear();
             task.execute().get();
             mSwipeRefreshLayout.setRefreshing(false);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -82,6 +85,7 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
         gatherData();
     }
 
+    @SuppressLint("StaticFieldLeak")
     class GatherDataAsyncTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
@@ -89,27 +93,29 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot rideSnapshot : dataSnapshot.getChildren()) {
-                        FirebaseSaver.getRideRecording(rideSnapshot.getValue().toString(), new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                RideRecording rideRecording = dataSnapshot.getValue(RideRecording.class);
-                                rideHistoryAdapter.add(rideRecording);
-                            }
+                        if (rideSnapshot.getValue() != null) {
+                            FirebaseSaver.getRideRecording(rideSnapshot.getValue().toString(), new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    RideRecording rideRecording = dataSnapshot.getValue(RideRecording.class);
+                                    rideHistoryAdapter.add(rideRecording);
+                                }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                               Toast toast = new Toast(RideHistoryActivity.this);
-                               toast.setText("ERROR: " + databaseError.getMessage());
-                               toast.show();
-                            }
-                        });
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Toast toast = new Toast(RideHistoryActivity.this);
+                                    toast.setText(getString(R.string.toast_error_preamp) + databaseError.getMessage());
+                                    toast.show();
+                                }
+                            });
+                        }
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Toast toast = new Toast(RideHistoryActivity.this);
-                    toast.setText("ERROR: " + databaseError.getMessage());
+                    toast.setText(getString(R.string.toast_error_preamp) + databaseError.getMessage());
                     toast.show();
                 }
             });

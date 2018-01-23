@@ -7,6 +7,7 @@ import com.google.firebase.database.Exclude;
  * Abstract Class that contains the received data from the sensor.
  * The @Exclude annotation is from Firebase, and excludes the field from being saved online.
  */
+@SuppressWarnings("ALL")
 public abstract class AntPlusSensorData {
 
     @Exclude

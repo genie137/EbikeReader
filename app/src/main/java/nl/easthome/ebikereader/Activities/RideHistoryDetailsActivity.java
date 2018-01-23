@@ -25,6 +25,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +41,7 @@ import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.R;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class RideHistoryDetailsActivity extends AppCompatActivity {
     public static final String intentExtraRideId = "RIDEID";
     public static final String intentExtraRideStart = "RIDESTART";
@@ -52,7 +54,6 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
     @BindView(R.id.durationValue)
     TextView mDurationValue;
     private String mRideID;
-    private long mRideStart;
     private RideRecording mRideRecording;
     private ProgressDialog mProgressDialog;
     private RideRecordingMappingHelper mRideRecordingMappingHelper;
@@ -69,25 +70,26 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ride_history_details);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         mRideID = getIntent().getStringExtra(intentExtraRideId);
-        mRideStart = getIntent().getLongExtra(intentExtraRideStart, 0L);
-        setTitle("Ride: " + Constants.convertTimestampToDateTime(mRideStart));
+        long mRideStart = getIntent().getLongExtra(intentExtraRideStart, 0L);
+        setTitle(getString(R.string.ride_history_detail_title_preamp) + Constants.convertTimestampToDateTime(mRideStart));
         mRideRecordingMappingHelper = new RideRecordingMappingHelper((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.detailMap), null);
         getRideRecording();
 
     }
 
     private void getRideRecording() {
-        mProgressDialog = ProgressDialog.show(this, "Loading Ride.", "This wil take a minute...", true, false);
+        mProgressDialog = ProgressDialog.show(this, getString(R.string.progress_dialog_loading_ride_title), getString(R.string.progress_dialog_loading_ride_message), true, false);
         FirebaseSaver.getRideRecording(mRideID, new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mRideRecording = dataSnapshot.getValue(RideRecording.class);
                 if (mRideRecording != null) {
-                    TreeMap<String, RideMeasurement> treeMap = new TreeMap(mRideRecording.getRideMeasurements());
+                    TreeMap<String, RideMeasurement> treeMap = new TreeMap<>(mRideRecording.getRideMeasurements());
                     numberOfMeasurements = treeMap.size();
 
                     for (Map.Entry<String, RideMeasurement> measurementEntry : treeMap.entrySet()) {
@@ -100,14 +102,14 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                             rideStart = recordingValue.getTimestamp();
                         }
 
-
-
-
                         mRideRecordingMappingHelper.addPointToMap(recordingValue.getLocation());
 
                     }
 
                     fillDurationField();
+                    //TODO CALCULATE ALL FIELDS IN UI
+
+
                 } else {
                     mExportFab.setEnabled(false);
                 }
@@ -123,7 +125,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast toast = new Toast(RideHistoryDetailsActivity.this);
-                toast.setText("ERROR: " + databaseError.getMessage());
+                toast.setText(getString(R.string.toast_error_preamp) + databaseError.getMessage());
                 toast.show();
             }
         });
@@ -135,7 +137,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
         long minutes = TimeUnit.SECONDS.toMinutes(duration - TimeUnit.HOURS.toMinutes(hours));
         long seconds = duration - TimeUnit.MINUTES.toSeconds(minutes);
 
-        final String formattedString = String.format("%d hours, %d minutes, %d seconds", hours, minutes, seconds);
+        final String formattedString = String.format(Locale.ENGLISH, getString(R.string.detail_duration_format), hours, minutes, seconds);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -150,12 +152,12 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
         Dexter.withActivity(this).withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new PermissionListener() {
             @Override
             public void onPermissionGranted(PermissionGrantedResponse response) {
-                        doOnExport();
+                doOnExport();
             }
 
             @Override
             public void onPermissionDenied(PermissionDeniedResponse response) {
-                Snackbar.make(mCoordinatorLayout, "If you give no permission, we cannot generate a file. \nChange this in settings.", Snackbar.LENGTH_LONG);
+                Snackbar.make(mCoordinatorLayout, R.string.export_permission_denied, Snackbar.LENGTH_LONG);
             }
 
             @Override
@@ -163,7 +165,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Snackbar.make(mCoordinatorLayout, "If you give no permission, we cannot generate a file.", Snackbar.LENGTH_LONG).setAction("FIX THIS", new View.OnClickListener() {
+                        Snackbar.make(mCoordinatorLayout, R.string.export_permission_rationale, Snackbar.LENGTH_LONG).setAction(getString(R.string.snackbar_button_fix_this), new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 token.continuePermissionRequest();
@@ -176,7 +178,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
     }
 
     private void doOnExport() {
-        mProgressDialog = ProgressDialog.show(this, "Generating CSV file.", "This wil take a minute...", true, false);
+        mProgressDialog = ProgressDialog.show(this, getString(R.string.progress_csv_export_title), getString(R.string.progress_csv_export_message), true, false);
 
         try {
             CSVExportHelper csvExportHelper = new CSVExportHelper(mRideRecording);
@@ -184,10 +186,10 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
             sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + filename));
-            startActivity(Intent.createChooser(sharingIntent, "Send to: "));
+            startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_intent_title)));
         } catch (Exception e) {
             e.printStackTrace();
-            Snackbar.make(mCoordinatorLayout, "Something went wrong while exporting. Try again later.", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mCoordinatorLayout, R.string.export_error, Snackbar.LENGTH_LONG).show();
         } finally {
             mProgressDialog.dismiss();
         }

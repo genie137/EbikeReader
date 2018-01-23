@@ -7,7 +7,7 @@ import nl.easthome.antpluslibary.Objects.AntPlusConnectedSensor;
 import nl.easthome.antpluslibary.SensorData.AntPlusPowerSensorData;
 
 public class AntPlusPowerSensor extends AntPlusConnectedSensor<AntPlusBikePowerPcc, AntPlusPowerSensorData> {
-    private ISensorHandler<AntPlusBikePowerPcc, AntPlusPowerSensorData> mSensorHandler;
+    private final ISensorHandler<AntPlusBikePowerPcc, AntPlusPowerSensorData> mSensorHandler;
 
     public AntPlusPowerSensor(ISensorHandler<AntPlusBikePowerPcc, AntPlusPowerSensorData> sensorHandler) {
         super(DeviceType.BIKE_POWER);

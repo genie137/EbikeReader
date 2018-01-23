@@ -28,8 +28,8 @@ import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
 public class AntPlusDeviceManager {
     private static final int PROXIMITY = 10;
     private static final String SP_PAGE_NAME = "ANT+DeviceManager";
-    private static AntPlusSensorList mAntPlusSensorList = new AntPlusSensorList();
-    private Activity mActivity;
+    private static final AntPlusSensorList mAntPlusSensorList = new AntPlusSensorList();
+    private final Activity mActivity;
 
     /**
      * Constructor
@@ -90,7 +90,7 @@ public class AntPlusDeviceManager {
      * @throws NoDeviceConfiguredException Is thrown when no device id from that device type was saved.
      */
     public int getDeviceIdForType(DeviceType type) throws NoDeviceConfiguredException {
-        SharedPreferences sharedPreferences = mActivity.getSharedPreferences(mActivity.getPackageName(), 0);
+        SharedPreferences sharedPreferences = mActivity.getSharedPreferences(SP_PAGE_NAME, 0);
 
         int result = sharedPreferences.getInt(type.toString(), 0);
 

@@ -25,7 +25,7 @@ import nl.easthome.antpluslibary.R;
  * This class is a ListView adapter for discovered and registered ant+ sensors.
  */
 public class AntPlusDeviceListViewAdapter extends ArrayAdapter<AntPlusFoundSensor> {
-    private Activity mActivity;
+    private final Activity mActivity;
 
     /**
      * Constructor.
@@ -90,7 +90,7 @@ public class AntPlusDeviceListViewAdapter extends ArrayAdapter<AntPlusFoundSenso
 
         private final ImageView deviceStateImage;
         private final Button deviceConnectionToggle;
-        private AntPlusFoundSensor device;
+        private final AntPlusFoundSensor device;
 
         /**
          * This class handles the onClick action for the device pair/unpair button.

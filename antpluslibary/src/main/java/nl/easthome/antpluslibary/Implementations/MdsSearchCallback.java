@@ -17,9 +17,9 @@ import nl.easthome.antpluslibary.Objects.AntPlusFoundSensor;
  */
 public class MdsSearchCallback implements MultiDeviceSearch.SearchCallbacks {
     private static final String LOGTAG = "ANT+MDS_SEARCH_CALLBACK";
-    private Activity mActivity;
-    private ArrayList<AntPlusFoundSensor> mSensors;
-    private AntPlusDeviceListViewAdapter mListViewAdapter;
+    private final Activity mActivity;
+    private final ArrayList<AntPlusFoundSensor> mSensors;
+    private final AntPlusDeviceListViewAdapter mListViewAdapter;
 
     /**
      * Constructor

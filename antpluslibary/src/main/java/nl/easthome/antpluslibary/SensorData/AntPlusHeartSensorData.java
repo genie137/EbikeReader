@@ -4,6 +4,7 @@ import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 /**
  *
  */
+@SuppressWarnings("ALL")
 public class AntPlusHeartSensorData extends AntPlusSensorData {
     private int heartRate = -1;
 

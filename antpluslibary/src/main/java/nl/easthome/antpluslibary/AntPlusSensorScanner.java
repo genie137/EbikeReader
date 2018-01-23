@@ -15,14 +15,15 @@ import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
 import nl.easthome.antpluslibary.Implementations.MdsSearchCallback;
 import nl.easthome.antpluslibary.Objects.AntPlusFoundSensor;
 
+@SuppressWarnings("ALL")
 public class AntPlusSensorScanner {
-    private Activity mActivity;
-    private ListView mListView;
+    private final Activity mActivity;
+    private final ListView mListView;
+    private final EnumSet<DeviceType> mDeviceSet;
+    private final AntPlusDeviceManager mDeviceManager;
+    private final ArrayList<AntPlusFoundSensor> mSensors;
     private AntPlusDeviceListViewAdapter mAntPlusDeviceListViewAdapter;
-    private EnumSet<DeviceType> mDeviceSet;
     private MultiDeviceSearch mMultiDeviceSearch;
-    private AntPlusDeviceManager mDeviceManager;
-    private ArrayList<AntPlusFoundSensor> mSensors;
 
 
     /**

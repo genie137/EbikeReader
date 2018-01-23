@@ -16,15 +16,15 @@ import nl.easthome.antpluslibary.Implementations.SensorStateChangeReceiver;
  * @param <SensorPcc>  Defines the sensor/device type.
  * @param <SensorData> Defines the data type.
  */
+@SuppressWarnings("ALL")
 public abstract class AntPlusConnectedSensor<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> {
+    private final String deviceType;
+    private final SensorResultReceiver mSensorResultReceiver;
+    private final SensorStateChangeReceiver<SensorPcc, SensorData> mSensorStateChangeReceiver;
+    private final ConcurrentLinkedDeque<SensorData> mSensorData;
     private DeviceState deviceState = DeviceState.SEARCHING;
-
-    private String deviceType;
     private PccReleaseHandle<SensorPcc> mReleaseHandle;
-    private SensorResultReceiver mSensorResultReceiver;
-    private SensorStateChangeReceiver<SensorPcc, SensorData> mSensorStateChangeReceiver;
     private SensorPcc resultConnection;
-    private ConcurrentLinkedDeque<SensorData> mSensorData;
 
     /**
      * Constructor.

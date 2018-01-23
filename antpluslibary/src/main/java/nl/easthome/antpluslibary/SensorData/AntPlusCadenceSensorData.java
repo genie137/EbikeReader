@@ -6,6 +6,7 @@ import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 /**
  * Class containing "useful" data from the sensor.
  */
+@SuppressWarnings("ALL")
 public class AntPlusCadenceSensorData extends AntPlusSensorData {
     private double calculatedCadence = -1;
     private double cumulativeResolutions = -1;

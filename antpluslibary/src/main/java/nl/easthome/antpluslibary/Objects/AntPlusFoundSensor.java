@@ -9,11 +9,12 @@ import nl.easthome.antpluslibary.Enums.AntAddType;
  * DataClass that contains information about a found sensor.
  */
 
+@SuppressWarnings("ALL")
 public class AntPlusFoundSensor
 {
-    private DeviceType mSensorType;
-    private int mDeviceNumber;
-    private String mName;
+    private final DeviceType mSensorType;
+    private final int mDeviceNumber;
+    private final String mName;
     private AntAddType mAntAddType;
 
     /**

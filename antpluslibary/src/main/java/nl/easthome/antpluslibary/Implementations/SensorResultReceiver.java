@@ -17,7 +17,7 @@ import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
  */
 public class SensorResultReceiver<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> implements AntPluginPcc.IPluginAccessResultReceiver<SensorPcc> {
     private static final String LOGTAG = "ANT+MDS_SENSOR_RESULT";
-    private AntPlusConnectedSensor<SensorPcc, SensorData> mAntPlusConnectedSensor;
+    private final AntPlusConnectedSensor<SensorPcc, SensorData> mAntPlusConnectedSensor;
 
     /**
      * Constructor

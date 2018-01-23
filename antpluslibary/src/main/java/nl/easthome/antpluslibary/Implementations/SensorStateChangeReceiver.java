@@ -16,7 +16,7 @@ import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
  */
 public class SensorStateChangeReceiver<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> implements AntPluginPcc.IDeviceStateChangeReceiver {
     private static final String LOGTAG = "ANT+SENSOR_STATE_CHANGE";
-    private AntPlusConnectedSensor<SensorPcc, SensorData> mAntPlusConnectedSensor;
+    private final AntPlusConnectedSensor<SensorPcc, SensorData> mAntPlusConnectedSensor;
 
     /**
      * Constructor
