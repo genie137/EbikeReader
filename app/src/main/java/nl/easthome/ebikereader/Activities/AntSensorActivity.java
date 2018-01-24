@@ -10,10 +10,14 @@ import nl.easthome.antpluslibary.AntPlusSensorScanner;
 import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
 import nl.easthome.ebikereader.R;
 
+/**
+ * Activity which handles the pairing and unpairing of ant+ sensors
+ */
 public class AntSensorActivity extends BaseActivityWithMenu {
     AntPlusSensorScanner mAntPlusSensorScanner;
     @BindView(R.id.ant_device_progress_bar) ProgressBar mProgressBar;
     @BindView(R.id.ant_device_listView) ListView mListView;
+
 
 
     @Override

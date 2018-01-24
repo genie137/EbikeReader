@@ -69,7 +69,7 @@
     <string name="dashboard_recording_start_dialog_deny">Cancel</string>
     <string name="activity_title_dashboard">Dashboard</string>
     <string name="title_activity_ride_history">History of Rides</string>
-    <string name="snackbar_not_all_sensors_configured">Not all sensors have been configured.</string>
+    <string name="snackbar_not_all_sensors_configured">A sensor that you want to record is not saved.</string>
     <string name="snackbar_location_not_enabled_in_settings">Location is not enabled in settings.</string>
     <string name="snackbar_button_fix_this">Fix This</string>
     <string name="snackbar_no_location_permission">No location permission.</string>

@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Setup of application tools (Fabric, Firebase and Notifications)
+     * Sends the user to the Dashboard or Intro activity, based upon if the user has stored credentials.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         setupNotificationChannel();
 
-        //If the user has stored credentials (auth.getCurrentUser()) then start the DashboardActivity otherwise run the IntroActivity.
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
             startActivity(new Intent(this, IntroActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));

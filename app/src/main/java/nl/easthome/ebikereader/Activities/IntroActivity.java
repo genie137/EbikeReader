@@ -21,12 +21,16 @@ import nl.easthome.ebikereader.Helpers.SharedPrefsSaver;
 import nl.easthome.ebikereader.Interfaces.ILoginCompletedListener;
 import nl.easthome.ebikereader.Objects.UserDetails;
 
+/**
+ * The IntroActivty handles the different login fragments.
+ */
 public class IntroActivity extends AppIntro implements ILoginCompletedListener {
     LoginSlideFragment loginSlideFragment = new LoginSlideFragment();
     BodyMeasurementSlideFragment bodyMeasurementSlideFragment = new BodyMeasurementSlideFragment();
     BikeInfoSlideFragment bikeInfoSlideFragment = new BikeInfoSlideFragment();
 
     boolean introFinished = false;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +40,10 @@ public class IntroActivity extends AppIntro implements ILoginCompletedListener {
         createSlides();
     }
 
+    /**
+     * After all fragments have been passed, the passed data gets saved. And the Dashboard activity gets started.
+     * @param currentFragment NAN
+     */
     @Override
     public void onDonePressed(Fragment currentFragment) {
         UserDetails userDetails = new UserDetails();
@@ -48,6 +56,9 @@ public class IntroActivity extends AppIntro implements ILoginCompletedListener {
         finish();
     }
 
+    /**
+     * Adds/creates the slides.
+     */
     private void createSlides() {
         setOffScreenPageLimit(6);
         addSlide(new WelcomeSlideFragment());
@@ -70,6 +81,9 @@ public class IntroActivity extends AppIntro implements ILoginCompletedListener {
         super.onDestroy();
     }
 
+    /**
+     * When the login has been completed, the body measturement slides and bikeinfo slides get filled with data from the server.
+     */
     @Override
     public void onLoginComplete() {
         FirebaseSaver.getUserDetails(FirebaseAuth.getInstance().getUid(), new ValueEventListener() {

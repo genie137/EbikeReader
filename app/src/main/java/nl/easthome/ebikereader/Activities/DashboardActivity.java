@@ -1,7 +1,5 @@
 package nl.easthome.ebikereader.Activities;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,25 +8,23 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import nl.easthome.ebikereader.Dialogs.FixLocationSnackbarOnClick;
 import nl.easthome.ebikereader.Dialogs.StartRecordingDialog;
 import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
 import nl.easthome.ebikereader.Implementations.RideRecordingServiceConnection;
 import nl.easthome.ebikereader.R;
 import nl.easthome.ebikereader.Services.RideRecordingService;
 
+/**
+ * Activity which shows the dashboard and starts/stops the recording.
+ * @BindView is part of the Butterknife libary
+ */
 public class DashboardActivity extends BaseActivityWithMenu {
     @BindView(R.id.dashboard_layout) ConstraintLayout mDashboardLayout;
     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
@@ -42,7 +38,7 @@ public class DashboardActivity extends BaseActivityWithMenu {
     private Intent mRideRecordingIntent;
     private RideRecordingService mRideRecordingService;
 
-    @OnClick(R.id.fab) public void onStartRecordingButtonPress() { pressedStartRecording();}
+    @OnClick(R.id.fab) public void onClickRecordingToggle() { onRecordingToggleButton();}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +51,11 @@ public class DashboardActivity extends BaseActivityWithMenu {
         bindService(mRideRecordingIntent, mRideRecordingServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Activity onBackPressed, gets executed if the back button was pressed.
+     * If a ride is running the activity will move to background and goes to home.
+     * Else the activity gets destroyed.
+     */
     @Override
     public void onBackPressed() {
         if (mRideRecordingService != null) {
@@ -71,20 +72,26 @@ public class DashboardActivity extends BaseActivityWithMenu {
         }
     }
 
+    /**
+     * Activity onDestroy, gets executed when the activity is destroyed.
+     * Stops the recording if its still running.
+     */
     @Override
     protected void onDestroy() {
-        //1. Disconnect the RideRecording service
         if (mRideRecordingService != null) {
             if (!mRideRecordingService.isRecording()) {
                 stopService(mRideRecordingIntent);
             }
         }
         unbindService(mRideRecordingServiceConnection);
-        //2. Destroy Activity
         super.onDestroy();
     }
 
-    private void pressedStartRecording() {
+    /**
+     * Perform actions when the recording button was pressed.
+     * If already recording, it stops the recording. Else it starts the recording by showing the start recording dialog.
+     */
+    private void onRecordingToggleButton() {
         mRideRecordingService = mRideRecordingServiceConnection.getRideRecordingService();
         if (mRideRecordingService.isRecording()) {
             mRideRecordingService.stopRecording();
@@ -94,6 +101,9 @@ public class DashboardActivity extends BaseActivityWithMenu {
         }
     }
 
+    /**
+     * Shows a Snackbar explaining the error if a sensor wants to be recorded, but has no ID saved.
+     */
     public void showNoDeviceConfiguredExceptionSnackbar() {
         Snackbar snackbar = Snackbar.make(mDashboardLayout, R.string.snackbar_not_all_sensors_configured, Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
@@ -106,6 +116,9 @@ public class DashboardActivity extends BaseActivityWithMenu {
         snackbar.show();
     }
 
+    /**
+     * Shows a Snackbar explaining the error that Location is disabled in android settings.
+     */
     public void showLocationDisabledExceptionSnackbar() {
         Snackbar snackbar = Snackbar.make(mDashboardLayout, R.string.snackbar_location_not_enabled_in_settings, Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
@@ -118,38 +131,16 @@ public class DashboardActivity extends BaseActivityWithMenu {
         snackbar.show();
     }
 
+    /**
+     * Shows a snackbar explaining the error that no Location permission was given.
+     * TODO TEST new onclick
+     */
     public void showLocationPermissionMissingExceptionSnackbar() {
-        final Activity activity = this;
         Snackbar snackbar = Snackbar.make(mDashboardLayout, R.string.snackbar_no_location_permission, Snackbar.LENGTH_LONG);
-        snackbar.setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Dexter.withActivity(activity).withPermission(Manifest.permission.ACCESS_FINE_LOCATION).withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        Toast.makeText(activity, R.string.permission_for_location_granted, Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        Toast.makeText(activity, R.string.permission_for_location_on_denied, Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        final PermissionToken token1 = token;
-                        Snackbar snackbar1 = Snackbar.make(mDashboardLayout, R.string.permission_for_location_rationale, Snackbar.LENGTH_LONG);
-                        snackbar1.setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                token1.continuePermissionRequest();
-                            }
-                        }).show();
-                    }
-                }).check();
-            }
-        }).show();
+        snackbar.setAction(R.string.snackbar_button_fix_this, new FixLocationSnackbarOnClick(this, mDashboardLayout)).show();
     }
+
+    //Getters and setters
 
     public RideRecordingService getRideRecordingService() {
         return mRideRecordingService;
