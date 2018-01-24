@@ -32,8 +32,13 @@ public class RideHistoryAdapter extends ArrayAdapter<RideRecording> {
 
         TextView mRideDate = convertView.findViewById(R.id.ride_date);
         TextView mRideDetails = convertView.findViewById(R.id.ride_details);
-        
-        mRideDate.setText(Constants.convertTimestampToDateTime(rideRecording.getRideStart()));
+
+        if (rideRecording != null) {
+            mRideDate.setText(Constants.convertTimestampToDateTime(rideRecording.getRideStart()));
+        } else {
+            mRideDate.setText(R.string.ride_date_unknown);
+        }
+        mRideDetails.setText("");
 
         return convertView;
     }

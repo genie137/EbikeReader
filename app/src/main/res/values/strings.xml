@@ -87,5 +87,6 @@
     <string name="share_intent_title">Send to:</string>
     <string name="export_error">Something went wrong while exporting. Try again later.</string>
     <string name="detail_duration_format">%d hours, %d minutes, %d seconds</string>
+    <string name="ride_date_unknown">Unknown</string>
 
 </resources>
