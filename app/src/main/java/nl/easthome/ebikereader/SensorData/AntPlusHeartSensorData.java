@@ -1,4 +1,4 @@
-package nl.easthome.antpluslibary.SensorData;
+package nl.easthome.ebikereader.SensorData;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 
 /**

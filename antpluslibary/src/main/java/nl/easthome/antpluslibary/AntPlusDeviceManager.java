@@ -2,24 +2,10 @@ package nl.easthome.antpluslibary;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
-import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeCadencePcc;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusBikePowerPcc;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeSpeedDistancePcc;
-import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
 
 import nl.easthome.antpluslibary.Enums.AntPlusSensorDeviceSaveResult;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
-import nl.easthome.antpluslibary.Interfaces.ISensorHandler;
-import nl.easthome.antpluslibary.Objects.AntPlusSensorList;
-import nl.easthome.antpluslibary.SensorData.AntPlusCadenceSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusHeartSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusPowerSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
-import nl.easthome.antpluslibary.Sensors.AntPlusCadenceSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusHeartSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
 
 /**
  * Class that handles the saving, retrieving and connecting of saved devices.
@@ -28,7 +14,6 @@ import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
 public class AntPlusDeviceManager {
     private static final int PROXIMITY = 10;
     private static final String SP_PAGE_NAME = "ANT+DeviceManager";
-    private static final AntPlusSensorList mAntPlusSensorList = new AntPlusSensorList();
     private final Activity mActivity;
 
     /**
@@ -99,92 +84,5 @@ public class AntPlusDeviceManager {
         }
 
         return result;
-    }
-
-    /**
-     * Connects to the power sensor.
-     * @param sensorHandler The sensor handler for the specified sensor.
-     * @return The power sensor object.
-     * @throws NoDeviceConfiguredException Is thrown when no device id from that device type was saved.
-     */
-    public AntPlusPowerSensor initConnectionToPowerSensor(ISensorHandler<AntPlusBikePowerPcc, AntPlusPowerSensorData> sensorHandler) throws NoDeviceConfiguredException {
-        AntPlusPowerSensor antPlusPowerSensor = new AntPlusPowerSensor(sensorHandler);
-        antPlusPowerSensor.setReleaseHandle(AntPlusBikePowerPcc.requestAccess(mActivity, getDeviceIdForType(DeviceType.BIKE_POWER), PROXIMITY, antPlusPowerSensor.getSensorResultReceiver(), antPlusPowerSensor.getSensorStateChangeReceiver()));
-        sensorHandler.setDataDeque(antPlusPowerSensor.getSensorDataDeque());
-        mAntPlusSensorList.setAntPlusPowerSensor(antPlusPowerSensor);
-        return antPlusPowerSensor;
-    }
-
-    /**
-     * Connects to the heart sensor.
-     * @param sensorHandler The sensor handler for the specified sensor.
-     * @return The heart sensor object.
-     * @throws NoDeviceConfiguredException Is thrown when no device id from that device type was saved.
-     */
-    public AntPlusHeartSensor initConnectionToHeartRateSensor(ISensorHandler<AntPlusHeartRatePcc, AntPlusHeartSensorData> sensorHandler) throws NoDeviceConfiguredException {
-        AntPlusHeartSensor antPlusHeartSensor = new AntPlusHeartSensor(sensorHandler);
-        antPlusHeartSensor.setReleaseHandle(AntPlusHeartRatePcc.requestAccess(mActivity, getDeviceIdForType(DeviceType.HEARTRATE), PROXIMITY, antPlusHeartSensor.getSensorResultReceiver(), antPlusHeartSensor.getSensorStateChangeReceiver()));
-        sensorHandler.setDataDeque(antPlusHeartSensor.getSensorDataDeque());
-        mAntPlusSensorList.setAntPlusHeartSensor(antPlusHeartSensor);
-        return antPlusHeartSensor;
-    }
-
-    /**
-     * Connects to the cadence sensor.
-     * @param sensorHandler The sensor handler for the specified sensor.
-     * @return The cadence sensor object.
-     * @throws NoDeviceConfiguredException Is thrown when no device id from that device type was saved.
-     */
-    public AntPlusCadenceSensor initConnectionToCadenceSensor(ISensorHandler<AntPlusBikeCadencePcc, AntPlusCadenceSensorData> sensorHandler) throws NoDeviceConfiguredException {
-        AntPlusCadenceSensor antPlusCadenceSensor = new AntPlusCadenceSensor(sensorHandler);
-        antPlusCadenceSensor.setReleaseHandle(AntPlusBikeCadencePcc.requestAccess(mActivity, getDeviceIdForType(DeviceType.BIKE_CADENCE), PROXIMITY, false, antPlusCadenceSensor.getSensorResultReceiver(), antPlusCadenceSensor.getSensorStateChangeReceiver()));
-        sensorHandler.setDataDeque(antPlusCadenceSensor.getSensorDataDeque());
-        mAntPlusSensorList.setAntPlusCadenceSensor(antPlusCadenceSensor);
-        return antPlusCadenceSensor;
-    }
-
-    /**
-     * Connects to the speed sensor.
-     * @param sensorHandler The sensor handler for the specified sensor.
-     * @return The speed sensor object.
-     * @throws NoDeviceConfiguredException Is thrown when no device id from that device type was saved.
-     */
-    public AntPlusSpeedSensor initConnectionToSpeedSensor(ISensorHandler<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> sensorHandler) throws NoDeviceConfiguredException {
-        AntPlusSpeedSensor antPlusSpeedSensor = new AntPlusSpeedSensor(sensorHandler);
-        antPlusSpeedSensor.setReleaseHandle(AntPlusBikeSpeedDistancePcc.requestAccess(mActivity, getDeviceIdForType(DeviceType.BIKE_SPD), PROXIMITY, false, antPlusSpeedSensor.getSensorResultReceiver(), antPlusSpeedSensor.getSensorStateChangeReceiver()));
-        sensorHandler.setDataDeque(antPlusSpeedSensor.getSensorDataDeque());
-        mAntPlusSensorList.setAntPlusSpeedSensor(antPlusSpeedSensor);
-        return antPlusSpeedSensor;
-    }
-
-    /**
-     * Disconnect from all sensors, if connected.
-     */
-    public void disconnectAllSensors() {
-        try{
-            AntPlusPowerSensor powerSensor = mAntPlusSensorList.getAntPlusPowerSensor();
-            if (powerSensor != null) {
-                powerSensor.getResultConnection().releaseAccess();
-            }
-        } catch (NullPointerException ignored){}
-        try {
-            AntPlusCadenceSensor cadenceSensor = mAntPlusSensorList.getAntPlusCadenceSensor();
-            if (cadenceSensor != null) {
-                cadenceSensor.getResultConnection().releaseAccess();
-            }
-        } catch (NullPointerException ignored){}
-        try{
-            AntPlusHeartSensor heartSensor = mAntPlusSensorList.getAntPlusHeartSensor();
-            if (heartSensor != null) {
-                heartSensor.getResultConnection().releaseAccess();
-            }
-        } catch (NullPointerException ignored){}
-        try{
-            AntPlusSpeedSensor speedSensor = mAntPlusSensorList.getAntPlusSpeedSensor();
-            if (speedSensor != null) {
-                speedSensor.getResultConnection().releaseAccess();
-            }
-        } catch (NullPointerException ignored){}
-
     }
 }

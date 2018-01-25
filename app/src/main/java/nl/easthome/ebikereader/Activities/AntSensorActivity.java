@@ -8,6 +8,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nl.easthome.antpluslibary.AntPlusSensorScanner;
 import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
+import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.R;
 
 /**
@@ -26,7 +27,7 @@ public class AntSensorActivity extends BaseActivityWithMenu {
         setContent(R.layout.activity_ant_sensor, R.id.nav_ant_sensors);
         ButterKnife.bind(this);
         setTitle(getString(R.string.activity_title_antsensor));
-        mAntPlusSensorScanner = new AntPlusSensorScanner(this, mListView, AntPlusSensorScanner.getBikeDeviceTypeSet());
+        mAntPlusSensorScanner = new AntPlusSensorScanner(this, mListView, Constants.getBikeDeviceTypeSet());
         boolean goodStart = mAntPlusSensorScanner.startFindDevices();
         if (!goodStart) {
             mProgressBar.setIndeterminate(false);

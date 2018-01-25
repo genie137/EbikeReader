@@ -1,24 +1,32 @@
-package nl.easthome.ebikereader.Sensors;
+package nl.easthome.ebikereader.Implementations.Sensors;
+
+import android.app.Activity;
+
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikeSpeedDistancePcc;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
+import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
 
+import nl.easthome.antpluslibary.Implementations.SensorResultReceiver;
+import nl.easthome.antpluslibary.Implementations.SensorStateChangeReceiver;
 import nl.easthome.antpluslibary.Interfaces.ISensorHandler;
-import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusSpeedSensorData;
 
 public class EBikeSpeedSensorImplementation extends ISensorHandler<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> {
     private BigDecimal mWheelCircumference;
 
     /**
      * Implementation of the SensorHandler for the speed sensor.
-     *
+     * !
+     * @param activity
+     * @param deviceID
      * @param wheelCircumference in Meters.
-     *                           (source: ANT+ Managed Network Document – Bike Speed and Cadence Device Profiles, Rev 2.1 page 26)
      */
-    public EBikeSpeedSensorImplementation(BigDecimal wheelCircumference) {
-        mWheelCircumference = wheelCircumference;
+    public EBikeSpeedSensorImplementation(Activity activity, int deviceID, BigDecimal wheelCircumference) {
+        super(activity, deviceID);
+        this.mWheelCircumference = wheelCircumference;
     }
 
     @Override
@@ -52,4 +60,8 @@ public class EBikeSpeedSensorImplementation extends ISensorHandler<AntPlusBikeSp
         });
     }
 
+    @Override
+    public PccReleaseHandle<AntPlusBikeSpeedDistancePcc> getReleaseHandle(SensorResultReceiver<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> resultReceiver, SensorStateChangeReceiver<AntPlusBikeSpeedDistancePcc, AntPlusSpeedSensorData> stateReceiver) {
+        return AntPlusBikeSpeedDistancePcc.requestAccess(mActivity, mDeviceID, PROXIMITY, false, resultReceiver, stateReceiver);
+    }
 }

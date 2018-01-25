@@ -22,7 +22,6 @@ import nl.easthome.ebikereader.Services.RideRecordingService;
 public class RideRecordingMappingHelper extends LocationCallback implements OnMapReadyCallback {
 	private RideRecordingService mRideRecordingService;
 	private boolean mIsMapReady;
-	private SupportMapFragment mMapFragment;
 	private GoogleMap mGoogleMap;
 	private Polyline mPolyline;
 
@@ -30,8 +29,7 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
     public RideRecordingMappingHelper(SupportMapFragment mapFragment, RideRecordingService rideRecordingService) {
         mRideRecordingService = rideRecordingService;
         mIsMapReady = false;
-        mMapFragment = mapFragment;
-        mMapFragment.getMapAsync(this);
+        mapFragment.getMapAsync(this);
     }
 
 	@Override

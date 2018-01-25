@@ -2,15 +2,17 @@ package nl.easthome.ebikereader.Objects;
 
 import android.location.Location;
 
-import nl.easthome.antpluslibary.SensorData.AntPlusCadenceSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusHeartSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusPowerSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
+import nl.easthome.ebikereader.Helpers.Constants;
+import nl.easthome.ebikereader.SensorData.AntPlusCadenceSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusHeartSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusPowerSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusSpeedSensorData;
 
 public class RideMeasurement {
 
     private long mTimestamp;
-	private FirebaseLocation mLocation;
+    private String mTimeAsString;
+    private FirebaseLocation mLocation;
     private AntPlusSpeedSensorData mSpeedSensorData;
     private AntPlusCadenceSensorData mCadenceSensorData;
     private AntPlusPowerSensorData mPowerSensorData;
@@ -72,12 +74,25 @@ public class RideMeasurement {
         this.mEstimatedPowerData = mEstimatedPowerData;
     }
 
+    public void dosetTimestamp(long mTimestamp) {
+        this.mTimestamp = mTimestamp;
+        this.mTimeAsString = Constants.convertTimestampToDateTime(mTimestamp);
+    }
+
     public long getTimestamp() {
         return mTimestamp;
     }
 
     public void setTimestamp(long mTimestamp) {
         this.mTimestamp = mTimestamp;
+    }
+
+    public String getTimeAsString() {
+        return mTimeAsString;
+    }
+
+    public void setTimeAsString(String mTimeAsString) {
+        this.mTimeAsString = mTimeAsString;
     }
 
     @Override

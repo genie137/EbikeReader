@@ -6,5 +6,9 @@
         <item>Heartrate Sensor</item>
         <item>Speed Sensor</item>
     </string-array>
+    <string-array name="genders">
+        <item>MALE</item>
+        <item>FEMALE</item>
+    </string-array>
 
 </resources>

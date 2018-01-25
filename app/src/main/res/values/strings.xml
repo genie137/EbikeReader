@@ -88,5 +88,8 @@
     <string name="export_error">Something went wrong while exporting. Try again later.</string>
     <string name="detail_duration_format">%d hours, %d minutes, %d seconds</string>
     <string name="ride_date_unknown">Unknown</string>
+    <string name="user_pref_unknown_bike_model">Unknown</string>
+    <string name="body_measurement_slide_not_all_fields_error">Please enter the data in order to continue.</string>
+    <string name="activity_title_settings">Settings</string>
 
 </resources>

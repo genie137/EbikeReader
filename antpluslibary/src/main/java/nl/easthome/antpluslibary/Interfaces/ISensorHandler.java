@@ -1,8 +1,14 @@
 package nl.easthome.antpluslibary.Interfaces;
+
+import android.app.Activity;
+
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
+import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+import nl.easthome.antpluslibary.Implementations.SensorResultReceiver;
+import nl.easthome.antpluslibary.Implementations.SensorStateChangeReceiver;
 import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
 
 /**
@@ -12,7 +18,16 @@ import nl.easthome.antpluslibary.Objects.AntPlusSensorData;
  * @param <SensorData> Defines the data type.
  */
 public abstract class ISensorHandler<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> {
+    protected static final int PROXIMITY = 20;
+    protected Activity mActivity;
+    protected int mDeviceID;
     private ConcurrentLinkedDeque<SensorData> mDataDeque;
+
+
+    public ISensorHandler(Activity activity, int deviceID) {
+        this.mActivity = activity;
+        this.mDeviceID = deviceID;
+    }
 
     /**
      * Defines which data needs to be saved.
@@ -30,6 +45,16 @@ public abstract class ISensorHandler<SensorPcc extends AntPluginPcc, SensorData 
     public void setDataDeque(ConcurrentLinkedDeque<SensorData> deque) {
         mDataDeque = deque;
     }
+
+
+    /**
+     * Gets the ReleaseHandle of the Sensor.
+     * Essentially the connection to the device.
+     *
+     * @return
+     */
+    public abstract PccReleaseHandle<SensorPcc> getReleaseHandle(SensorResultReceiver<SensorPcc, SensorData> resultReceiver, SensorStateChangeReceiver<SensorPcc, SensorData> stateReceiver);
+
 
     /**
      * Returns the dataset which has not been completely filled.
@@ -53,6 +78,4 @@ public abstract class ISensorHandler<SensorPcc extends AntPluginPcc, SensorData 
         }
         return null;
     }
-
-
 }

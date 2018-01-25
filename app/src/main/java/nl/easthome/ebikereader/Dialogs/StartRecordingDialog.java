@@ -7,10 +7,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.Arrays;
 
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
-import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
 import nl.easthome.ebikereader.Activities.DashboardActivity;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
-import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
+import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGivenException;
 import nl.easthome.ebikereader.Implementations.RideRecordingGuiUpdater;
 import nl.easthome.ebikereader.R;
 
@@ -43,7 +42,7 @@ public class StartRecordingDialog extends MaterialDialog.Builder implements Mate
                     selected.contains(sensorStrings[3])
             );
             mDashboardActivity.getFloatingActionButton().setImageResource(R.drawable.ic_stop_white_36dp);
-        } catch (NotImplementedException | SecurityException nie) {
+        } catch (SecurityException nie) {
             nie.printStackTrace();
         } catch (NoDeviceConfiguredException ndce) {
             mDashboardActivity.showNoDeviceConfiguredExceptionSnackbar();
@@ -51,7 +50,7 @@ public class StartRecordingDialog extends MaterialDialog.Builder implements Mate
         } catch (LocationIsDisabledException lide) {
             mDashboardActivity.showLocationDisabledExceptionSnackbar();
             mDashboardActivity.getFloatingActionButton().setImageResource(R.drawable.ic_play_circle_outline_white_36dp);
-        } catch (NoLocationPermissionGiven noLocationPermissionGiven) {
+        } catch (NoLocationPermissionGivenException noLocationPermissionGiven) {
             mDashboardActivity.showLocationPermissionMissingExceptionSnackbar();
             noLocationPermissionGiven.printStackTrace();
         }

@@ -1,8 +1,10 @@
 package nl.easthome.ebikereader.Helpers;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,12 +23,12 @@ import nl.easthome.ebikereader.Activities.DashboardActivity;
 import nl.easthome.ebikereader.Activities.RideHistoryActivity;
 import nl.easthome.ebikereader.R;
 
+@SuppressLint("Registered")
 public class BaseActivityWithMenu extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private NavigationView navigationView;
     private DrawerLayout fullLayout;
     private Toolbar toolbar;
-    private ActionBarDrawerToggle drawerToggle;
     private @IdRes int menuID;
 
     public void setContent(@LayoutRes int layoutResID, @IdRes int menuID){
@@ -35,6 +37,7 @@ public class BaseActivityWithMenu extends AppCompatActivity implements Navigatio
     }
 
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         fullLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.base_activity_with_menu_layout, null);
@@ -48,20 +51,27 @@ public class BaseActivityWithMenu extends AppCompatActivity implements Navigatio
         TextView profileName = (TextView) headerView.findViewById(R.id.profileName);
         TextView profileEmail = (TextView) headerView.findViewById(R.id.profileEmail);
 
-        if (useToolbar())
-        {
+        if (useToolbar()) {
             setSupportActionBar(toolbar);
-        }
-        else
-        {
+        } else {
             toolbar.setVisibility(View.GONE);
         }
 
         setUpNavView();
-        profileName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        profileEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-    }
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            String name = "Unknown";
+            String email = "Unknown";
 
+            try {
+                name = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            } catch (NullPointerException ignored) {
+            }
+
+            profileName.setText(name);
+            profileEmail.setText(email);
+        }
+    }
 
 
     /**
@@ -69,17 +79,15 @@ public class BaseActivityWithMenu extends AppCompatActivity implements Navigatio
      * specify that they don't want a {@link Toolbar}
      * @return true
      */
-    protected boolean useToolbar()
-    {
+    protected boolean useToolbar() {
         return true;
     }
 
-    protected void setUpNavView()
-    {
+    protected void setUpNavView() {
         navigationView.setNavigationItemSelectedListener(this);
 
         if( useDrawerToggle()) { // use the hamburger menu
-            drawerToggle = new ActionBarDrawerToggle(this, fullLayout, toolbar,
+            ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, fullLayout, toolbar,
                     R.string.navigation_drawer_open,
                     R.string.navigation_drawer_close);
             fullLayout.addDrawerListener(drawerToggle);
@@ -96,8 +104,7 @@ public class BaseActivityWithMenu extends AppCompatActivity implements Navigatio
      * hamburger menu.
      * @return
      */
-    protected boolean useDrawerToggle()
-    {
+    protected boolean useDrawerToggle() {
         return true;
     }
 
@@ -108,7 +115,7 @@ public class BaseActivityWithMenu extends AppCompatActivity implements Navigatio
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem menuItem) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         fullLayout.closeDrawer(GravityCompat.START);
         return onOptionsItemSelected(menuItem);
     }

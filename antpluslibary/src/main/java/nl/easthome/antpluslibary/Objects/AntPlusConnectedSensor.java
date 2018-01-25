@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import nl.easthome.antpluslibary.Implementations.SensorResultReceiver;
 import nl.easthome.antpluslibary.Implementations.SensorStateChangeReceiver;
+import nl.easthome.antpluslibary.Interfaces.ISensorHandler;
 
 
 /**
@@ -17,10 +18,11 @@ import nl.easthome.antpluslibary.Implementations.SensorStateChangeReceiver;
  * @param <SensorData> Defines the data type.
  */
 @SuppressWarnings("ALL")
-public abstract class AntPlusConnectedSensor<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> {
+public class AntPlusConnectedSensor<SensorPcc extends AntPluginPcc, SensorData extends AntPlusSensorData> {
     private final String deviceType;
     private final SensorResultReceiver mSensorResultReceiver;
     private final SensorStateChangeReceiver<SensorPcc, SensorData> mSensorStateChangeReceiver;
+    private final ISensorHandler<SensorPcc, SensorData> mSensorHandler;
     private final ConcurrentLinkedDeque<SensorData> mSensorData;
     private DeviceState deviceState = DeviceState.SEARCHING;
     private PccReleaseHandle<SensorPcc> mReleaseHandle;
@@ -31,20 +33,32 @@ public abstract class AntPlusConnectedSensor<SensorPcc extends AntPluginPcc, Sen
      *
      * @param deviceType The type of device that has the connection.
      */
-    protected AntPlusConnectedSensor(DeviceType deviceType) {
+    public AntPlusConnectedSensor(DeviceType deviceType, ISensorHandler<SensorPcc, SensorData> sensorHandler) {
         this.deviceType = deviceType.toString();
+        mSensorHandler = sensorHandler;
         mSensorResultReceiver = new SensorResultReceiver<>(this);
         mSensorStateChangeReceiver = new SensorStateChangeReceiver<>(this);
         mSensorData = new ConcurrentLinkedDeque<>();
+        mSensorHandler.setDataDeque(mSensorData);
+        connectSensor();
+    }
+
+    public void connectSensor() {
+        mReleaseHandle = mSensorHandler.getReleaseHandle(mSensorResultReceiver, mSensorStateChangeReceiver);
+    }
+
+    public void disconnectSensor() {
+        resultConnection.releaseAccess();
     }
 
     /**
      * Abstracted method, that is used to record the events.
-     * TODO simplify method by changing this object to incorporate the ISensorHandler itself.
      *
      * @param sensorPcc The connection to the sensor.
      */
-    protected abstract void subscribeToEvents(SensorPcc sensorPcc);
+    protected void subscribeToEvents(SensorPcc sensorPcc) {
+        mSensorHandler.subscribeToEvents(sensorPcc);
+    }
 
     /**
      * Method that returns the newest SensorData object in the deque that is complete.

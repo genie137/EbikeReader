@@ -6,6 +6,8 @@ import nl.easthome.ebikereader.Fragments.BodyMeasurementSlideFragment;
 public class UserDetails {
     private int UserHeight;
     private int UserWeight;
+    private int UserAge;
+    private String UserGender;
     private String BikeModel;
     private int BikeKmRange;
     private int BikeBattWatt;
@@ -19,6 +21,8 @@ public class UserDetails {
     public void fillUserBodyFields(BodyMeasurementSlideFragment bodyMeasurementSlideFragment) {
         UserHeight = bodyMeasurementSlideFragment.getUserHeight();
         UserWeight = bodyMeasurementSlideFragment.getUserWeight();
+        UserAge = bodyMeasurementSlideFragment.getUserAge();
+        UserGender = bodyMeasurementSlideFragment.getUserGender();
     }
 
 
@@ -86,11 +90,29 @@ public class UserDetails {
         BikeWheelCircumference = bikeWheelCircumference;
     }
 
+    public int getUserAge() {
+        return UserAge;
+    }
+
+    public void setUserAge(int userAge) {
+        UserAge = userAge;
+    }
+
+    public String getUserGender() {
+        return UserGender;
+    }
+
+    public void setUserGender(String userGender) {
+        this.UserGender = userGender;
+    }
+
     @Override
     public String toString() {
         return "UserDetails{" +
                 "UserHeight=" + UserHeight +
                 ", UserWeight=" + UserWeight +
+                ", UserAge=" + UserAge +
+                ", UserGender='" + UserGender + '\'' +
                 ", BikeModel='" + BikeModel + '\'' +
                 ", BikeKmRange=" + BikeKmRange +
                 ", BikeBattWatt=" + BikeBattWatt +

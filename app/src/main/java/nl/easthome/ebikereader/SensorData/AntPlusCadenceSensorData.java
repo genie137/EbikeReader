@@ -1,4 +1,4 @@
-package nl.easthome.antpluslibary.SensorData;
+package nl.easthome.ebikereader.SensorData;
 import java.math.BigDecimal;
 
 import nl.easthome.antpluslibary.Objects.AntPlusSensorData;

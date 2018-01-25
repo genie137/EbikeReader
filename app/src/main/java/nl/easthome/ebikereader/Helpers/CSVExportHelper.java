@@ -1,4 +1,5 @@
 package nl.easthome.ebikereader.Helpers;
+
 import android.os.AsyncTask;
 import android.os.Environment;
 
@@ -8,22 +9,21 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import nl.easthome.antpluslibary.SensorData.AntPlusCadenceSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusHeartSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusPowerSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 import nl.easthome.ebikereader.Exceptions.ExportException;
 import nl.easthome.ebikereader.Objects.EstimatedPowerData;
 import nl.easthome.ebikereader.Objects.FirebaseLocation;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
+import nl.easthome.ebikereader.SensorData.AntPlusCadenceSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusHeartSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusPowerSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusSpeedSensorData;
 
 
 public class CSVExportHelper extends AsyncTask<Void,Void,String> {
 
-    private RideRecording mRideRecording;
     private static final String errorString = "error";
-    private static final String header_time = "UNIXtimestamp,";
+    private static final String header_time = "UNIXtimestamp,timeString,";
     private static final String header_gps = "gps_accuracy,gps_altitude,gps_bearing,gps_elapsedrealtimenanos,gps_latitude,gps_longitude,gps_provider,gps_speed,gps_time,";
     private static final String header_speedsens = "speedsens_speed_ms,speedsens_distance_meters,";
     private static final String header_cadancesens = "cadancesens_calculated,cadancesens_cumulative_resolutions,";
@@ -33,6 +33,7 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
     private static final String csv_line_break = "\n";
     private static final String csv_column_break = ",";
     private static final String unknown_item = "X";
+    private RideRecording mRideRecording;
 
 
     public CSVExportHelper(RideRecording rideRecording) {
@@ -50,6 +51,7 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
     }
 
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected String doInBackground(Void... voids) {
         // Step 1 - creating an export location
@@ -70,9 +72,8 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
 
                 StringBuilder csvLine= new StringBuilder();
                 RideMeasurement recordingValue = recording.getValue();
-                String timestamp = recording.getKey();
 
-                csvLine.append(timestamp + csv_column_break);
+                csvLine.append(recordingValue.getTimestamp()).append(csv_column_break).append(recordingValue.getTimeAsString()).append(csv_column_break);
                 csvLine.append(csvLocation(recordingValue.getLocation()));
                 csvLine.append(csvSpeedSensor(recordingValue.getSpeedSensorData()));
                 csvLine.append(csvCadenceSensor(recordingValue.getCadenceSensorData()));
@@ -96,9 +97,9 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
         StringBuilder estimatedLine = new StringBuilder();
 
         if (ed != null){
-            estimatedLine.append(ed.getEstimatedUserWatt() + csv_column_break);
-            estimatedLine.append(ed.getEstimatedMotorWatt() + csv_column_break);
-            estimatedLine.append(ed.getEstimatedUserPercentage() + csv_column_break);
+            estimatedLine.append(ed.getEstimatedUserWatt()).append(csv_column_break);
+            estimatedLine.append(ed.getEstimatedMotorWatt()).append(csv_column_break);
+            estimatedLine.append(ed.getEstimatedUserPercentage()).append(csv_column_break);
             estimatedLine.append(ed.getEstimatedMotorPercentage());
 
 
@@ -131,7 +132,7 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
         StringBuilder cadenceLine = new StringBuilder();
 
         if (cd != null) {
-            cadenceLine.append(cd.getCalculatedCadence() + csv_column_break + cd.getCumulativeResolutions() + csv_column_break);
+            cadenceLine.append(cd.getCalculatedCadence()).append(csv_column_break).append(cd.getCumulativeResolutions()).append(csv_column_break);
             return cadenceLine.toString();
 
         } else {
@@ -145,7 +146,7 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
         StringBuilder speedLine = new StringBuilder();
 
         if (sd != null) {
-            speedLine.append(sd.getSpeedInMeterPerSecond() + csv_column_break + sd.getCalcAccumulatedDistanceInMeters() + csv_column_break);
+            speedLine.append(sd.getSpeedInMeterPerSecond()).append(csv_column_break).append(sd.getCalcAccumulatedDistanceInMeters()).append(csv_column_break);
             return speedLine.toString();
         } else {
             speedLine.append(unknown_item + csv_column_break + unknown_item + csv_column_break);
@@ -156,15 +157,24 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
     private String csvLocation(FirebaseLocation l){
         StringBuilder locationLine = new StringBuilder();
         if (l != null) {
-            locationLine.append(l.getAccuracy() + csv_column_break
-                    + l.getAltitude() + csv_column_break
-                    + l.getBearing() + csv_column_break
-                    + l.getElapsedRealTimeNanos() + csv_column_break
-                    + l.getLatitude() + csv_column_break
-                    + l.getLongitude() + csv_column_break
-                    + l.getProvider() + csv_column_break
-                    + l.getSpeed() + csv_column_break
-                    + l.getTime() + csv_column_break);
+            locationLine.append(l.getAccuracy())
+                    .append(csv_column_break)
+                    .append(l.getAltitude())
+                    .append(csv_column_break)
+                    .append(l.getBearing())
+                    .append(csv_column_break)
+                    .append(l.getElapsedRealTimeNanos())
+                    .append(csv_column_break)
+                    .append(l.getLatitude())
+                    .append(csv_column_break)
+                    .append(l.getLongitude())
+                    .append(csv_column_break)
+                    .append(l.getProvider())
+                    .append(csv_column_break)
+                    .append(l.getSpeed())
+                    .append(csv_column_break)
+                    .append(l.getTime())
+                    .append(csv_column_break);
             return locationLine.toString();
         } else {
             for (int i = 0; i < 9; i++) {

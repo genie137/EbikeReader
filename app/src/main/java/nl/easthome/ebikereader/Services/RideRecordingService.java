@@ -15,42 +15,39 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.dsi.ant.plugins.antplus.pcc.defines.DeviceType;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import nl.easthome.antpluslibary.AntPlusDeviceManager;
 import nl.easthome.antpluslibary.Exceptions.NoDeviceConfiguredException;
-import nl.easthome.antpluslibary.Exceptions.NotImplementedException;
-import nl.easthome.antpluslibary.Objects.AntPlusSensorList;
-import nl.easthome.antpluslibary.Sensors.AntPlusCadenceSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusHeartSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusPowerSensor;
-import nl.easthome.antpluslibary.Sensors.AntPlusSpeedSensor;
+import nl.easthome.antpluslibary.Objects.AntPlusConnectedSensor;
 import nl.easthome.ebikereader.Activities.DashboardActivity;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
-import nl.easthome.ebikereader.Enums.UserGender;
 import nl.easthome.ebikereader.Exceptions.LocationIsDisabledException;
-import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGiven;
+import nl.easthome.ebikereader.Exceptions.NoLocationPermissionGivenException;
 import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Helpers.SharedPrefsSaver;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
+import nl.easthome.ebikereader.Implementations.Sensors.EBikeCadenceSensorImplementation;
+import nl.easthome.ebikereader.Implementations.Sensors.EBikeHeartSensorImplementation;
+import nl.easthome.ebikereader.Implementations.Sensors.EBikePowerSensorImplementation;
+import nl.easthome.ebikereader.Implementations.Sensors.EBikeSpeedSensorImplementation;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
+import nl.easthome.ebikereader.Objects.AntPlusSensorList;
 import nl.easthome.ebikereader.Objects.EstimatedPowerData;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
+import nl.easthome.ebikereader.Objects.UserDetails;
 import nl.easthome.ebikereader.R;
-import nl.easthome.ebikereader.Sensors.EBikeCadenceSensorImplementation;
-import nl.easthome.ebikereader.Sensors.EBikeHeartSensorImplementation;
-import nl.easthome.ebikereader.Sensors.EBikePowerSensorImplementation;
-import nl.easthome.ebikereader.Sensors.EBikeSpeedSensorImplementation;
 
 public class RideRecordingService extends Service {
     private static final String LOGTAG =  "RideRecordingService";
     private static int mNumberOfBoundClients = 0;
     private static boolean mIsRecording = false;
     private int mNotificationID = R.string.notification_id;
-    private LocationRequest mLocationRequest = new LocationRequest().setInterval(5000).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    private LocationRequest mLocationRequest = new LocationRequest().setInterval(Constants.MAX_LOCATION_INTERVAL_MS).setFastestInterval(Constants.MIN_LOCATION_INTERVAL_MS).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     private IBinder mBinder = new RideRecordingBinder();
     private IRideRecordingGuiUpdate mRideRecordingGuiUpdate;
     private RideRecording mRideRecording;
@@ -58,7 +55,6 @@ public class RideRecordingService extends Service {
     private AntPlusSensorList mAntPlusSensorList = new AntPlusSensorList();
     private Activity mStartedFromActivity;
     private RideRecordingMappingHelper mRideRecordingMappingHelper;
-    private AntPlusDeviceManager mDeviceConnector;
 
     public RideRecordingService() {
     }
@@ -92,24 +88,30 @@ public class RideRecordingService extends Service {
         Log.d(LOGTAG, "OnRebind");
         super.onRebind(intent);
     }
+
+    /**
+     * Shows a notification to indicate that a recording is running.
+     *
+     * @return Notification object.
+     */
     private Notification showNotification() {
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, mNotificationID, new Intent(this, DashboardActivity.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), PendingIntent.FLAG_UPDATE_CURRENT);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getResources().getString(R.string.notification_id_channel));
-		Notification notification = builder
-				.setContentTitle(getString(R.string.recording_notification_title))
-				.setContentText(getString(R.string.recording_notification_text))
-				.setContentIntent(pendingIntent)
-				.setSmallIcon(R.drawable.ic_action_record)
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, mNotificationID, new Intent(this, DashboardActivity.class).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getResources().getString(R.string.notification_id_channel));
+        Notification notification = builder
+                .setContentTitle(getString(R.string.recording_notification_title))
+                .setContentText(getString(R.string.recording_notification_text))
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_action_record)
                 .setWhen(Constants.getSystemTimestamp())
                 .build();
         notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
-		return notification;
-	}
+        return notification;
+    }
+
     /**
      * Method for binded clients, starts the recording.
-     * @return true if started correctly
      */
-    public void startRecording(Activity activity, IRideRecordingGuiUpdate guiUpdater, boolean powerSensor, boolean cadenceSensor, boolean heartSensor, boolean speedSensor) throws NoDeviceConfiguredException, NotImplementedException, SecurityException, LocationIsDisabledException, NoLocationPermissionGiven {
+    public void startRecording(Activity activity, IRideRecordingGuiUpdate guiUpdater, boolean recordPowerSensor, boolean recordCadenceSensor, boolean recordHeartSensor, boolean recordSpeedSensor) throws NoDeviceConfiguredException, SecurityException, LocationIsDisabledException, NoLocationPermissionGivenException {
         mStartedFromActivity = activity;
         mRideRecordingGuiUpdate = guiUpdater;
         boolean startupSucceeded = false;
@@ -121,26 +123,26 @@ public class RideRecordingService extends Service {
                 mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mStartedFromActivity);
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mRideRecordingMappingHelper, null);
                 //3. Start Sensor Connection
-                if (powerSensor || cadenceSensor || heartSensor || speedSensor){
-                    mDeviceConnector = new AntPlusDeviceManager(mStartedFromActivity);
-                    if (powerSensor) {
-                        mAntPlusSensorList.setAntPlusPowerSensor(mDeviceConnector.initConnectionToPowerSensor(new EBikePowerSensorImplementation()));
+                if (recordPowerSensor || recordCadenceSensor || recordHeartSensor || recordSpeedSensor) {
+                    AntPlusDeviceManager mDeviceConnector = new AntPlusDeviceManager(mStartedFromActivity);
+                    if (recordPowerSensor) {
+                        mAntPlusSensorList.setAntPlusPowerSensor(new AntPlusConnectedSensor<>(DeviceType.BIKE_POWER, new EBikePowerSensorImplementation(mStartedFromActivity, mDeviceConnector.getDeviceIdForType(DeviceType.BIKE_POWER))));
                     }
-                    if (cadenceSensor){
-                        mAntPlusSensorList.setAntPlusCadenceSensor(mDeviceConnector.initConnectionToCadenceSensor(new EBikeCadenceSensorImplementation()));
+                    if (recordCadenceSensor) {
+                        mAntPlusSensorList.setAntPlusCadenceSensor(new AntPlusConnectedSensor<>(DeviceType.BIKE_CADENCE, new EBikeCadenceSensorImplementation(mStartedFromActivity, mDeviceConnector.getDeviceIdForType(DeviceType.BIKE_CADENCE))));
                     }
-                    if (heartSensor){
-                        mAntPlusSensorList.setAntPlusHeartSensor(mDeviceConnector.initConnectionToHeartRateSensor(new EBikeHeartSensorImplementation()));
+                    if (recordHeartSensor) {
+                        mAntPlusSensorList.setAntPlusHeartSensor(new AntPlusConnectedSensor<>(DeviceType.HEARTRATE, new EBikeHeartSensorImplementation(mStartedFromActivity, mDeviceConnector.getDeviceIdForType(DeviceType.HEARTRATE))));
                     }
-                    if (speedSensor){
-                        mAntPlusSensorList.setAntPlusSpeedSensor(mDeviceConnector.initConnectionToSpeedSensor(new EBikeSpeedSensorImplementation(SharedPrefsSaver.getWheelCircumference(mStartedFromActivity))));
+                    if (recordSpeedSensor) {
+                        mAntPlusSensorList.setAntPlusSpeedSensor(new AntPlusConnectedSensor<>(DeviceType.BIKE_SPD, new EBikeSpeedSensorImplementation(mStartedFromActivity, mDeviceConnector.getDeviceIdForType(DeviceType.BIKE_SPD), SharedPrefsSaver.getWheelCircumference(mStartedFromActivity))));
                     }
                 }
                 //4. Start Measurement Logging
                 mRideRecording = new RideRecording();
                 mRideRecording.startRide();
                 mIsRecording = true;
-                //5. Inform log, user and finally block
+                //5. Inform log, user
                 mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.STARTED_RECORDING, null);
                 startForeground(mNotificationID, showNotification());
                 startupSucceeded = true;
@@ -172,14 +174,7 @@ public class RideRecordingService extends Service {
             mRideRecording = null;
         }
         //3. Disconnect Sensors
-        if (mDeviceConnector != null) {
-            try {
-                mDeviceConnector.disconnectAllSensors();
-            }
-            catch (NullPointerException npe){
-
-            }
-        }
+        mAntPlusSensorList.disconnectAllConnectedSensors();
         //4. Stop Gui Component Updates
         mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.STOPPED_RECORDING, null);
         //5. Stop Location Updates
@@ -194,37 +189,19 @@ public class RideRecordingService extends Service {
 
     public void addRideMeasurement(RideMeasurement rideMeasurement, long timestamp) {
         Log.d(LOGTAG, "New measurement added at timestamp: " + String.valueOf(timestamp));
-        AntPlusSpeedSensor speedSensor = mAntPlusSensorList.getAntPlusSpeedSensor();
-        AntPlusCadenceSensor cadenceSensor = mAntPlusSensorList.getAntPlusCadenceSensor();
-        AntPlusPowerSensor powerSensor = mAntPlusSensorList.getAntPlusPowerSensor();
-        AntPlusHeartSensor heartSensor = mAntPlusSensorList.getAntPlusHeartSensor();
+        rideMeasurement.dosetTimestamp(timestamp);
+        rideMeasurement = mAntPlusSensorList.addRideMeasurementDataOfAllConnectedSensors(rideMeasurement);
 
-        if (speedSensor != null){
-            rideMeasurement.setSpeedSensorData(speedSensor.getLastSensorData());
-        }
-        if (cadenceSensor != null){
-            rideMeasurement.setCadenceSensorData(cadenceSensor.getLastSensorData());
-        }
-        if (powerSensor != null){
-            rideMeasurement.setPowerSensorData(powerSensor.getLastSensorData());
-        }
-        if (heartSensor != null) {
-            rideMeasurement.setHeartSensorData(heartSensor.getLastSensorData());
-        }
-        if (speedSensor != null && heartSensor != null){
-            if (rideMeasurement.getHeartSensorData() != null && rideMeasurement.getPowerSensorData() != null) {
-                //TODO use actual age/weight/gender
-                rideMeasurement.setEstimatedPowerData(new EstimatedPowerData(rideMeasurement.getHeartSensorData().getHeartRate(), 25, 80, UserGender.MALE, rideMeasurement.getPowerSensorData().getCalculatedPower()));
-                Log.d("ESTIMATED", "timestamp: " + timestamp + " - " + rideMeasurement.getEstimatedPowerData().toString());
-            }
+        if (rideMeasurement.getHeartSensorData() != null && rideMeasurement.getPowerSensorData() != null) {
+            UserDetails userDetails = SharedPrefsSaver.getAllUserDetails(mStartedFromActivity);
+            rideMeasurement.setEstimatedPowerData(new EstimatedPowerData(rideMeasurement.getHeartSensorData().getHeartRate(), userDetails.getUserAge(), userDetails.getUserWeight(), userDetails.getUserGender(), rideMeasurement.getPowerSensorData().getCalculatedPower()));
         }
 
-        rideMeasurement.setTimestamp(timestamp);
         mRideRecording.addRideMeasurement(timestamp, rideMeasurement);
         mRideRecordingGuiUpdate.onNewRequestedGuiUpdate(DashboardGuiUpdateStates.NEW_MEASUREMENT, rideMeasurement);
     }
 
-    public boolean checkLocationDeviceState() throws LocationIsDisabledException, NoLocationPermissionGiven {
+    public boolean checkLocationDeviceState() throws LocationIsDisabledException, NoLocationPermissionGivenException {
         LocationManager mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
 
         //Check for network location permission
@@ -232,17 +209,20 @@ public class RideRecordingService extends Service {
             //Check for gps sensor location permission
             if (ActivityCompat.checkSelfPermission(mStartedFromActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 //Check if gps or network provider is enabled
-                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    return true;
-                } else {
-                    throw new LocationIsDisabledException();
+                if (mLocationManager != null) {
+                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                        return true;
+                    } else {
+                        throw new LocationIsDisabledException();
+                    }
                 }
             } else {
-                throw new NoLocationPermissionGiven();
+                throw new NoLocationPermissionGivenException();
             }
         } else {
-            throw new NoLocationPermissionGiven();
+            throw new NoLocationPermissionGivenException();
         }
+        return false;
     }
 
     public class RideRecordingBinder extends Binder {

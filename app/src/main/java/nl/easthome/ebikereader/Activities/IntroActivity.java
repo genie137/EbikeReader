@@ -82,7 +82,7 @@ public class IntroActivity extends AppIntro implements ILoginCompletedListener {
     }
 
     /**
-     * When the login has been completed, the body measturement slides and bikeinfo slides get filled with data from the server.
+     * When the login has been completed, the body measurement slides and bikeinfo slides get filled with data from the server.
      */
     @Override
     public void onLoginComplete() {

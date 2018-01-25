@@ -1,16 +1,17 @@
 package nl.easthome.ebikereader.Implementations;
+
 import com.google.android.gms.maps.SupportMapFragment;
 
-import nl.easthome.antpluslibary.SensorData.AntPlusCadenceSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusHeartSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusPowerSensorData;
-import nl.easthome.antpluslibary.SensorData.AntPlusSpeedSensorData;
 import nl.easthome.ebikereader.Activities.DashboardActivity;
 import nl.easthome.ebikereader.Enums.DashboardGuiUpdateStates;
 import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Interfaces.IRideRecordingGuiUpdate;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.R;
+import nl.easthome.ebikereader.SensorData.AntPlusCadenceSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusHeartSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusPowerSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusSpeedSensorData;
 
 public class RideRecordingGuiUpdater implements IRideRecordingGuiUpdate {
 

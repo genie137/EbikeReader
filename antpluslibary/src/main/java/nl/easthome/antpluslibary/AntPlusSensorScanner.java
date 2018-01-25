@@ -59,16 +59,6 @@ public class AntPlusSensorScanner {
     }
 
 
-    public static EnumSet<DeviceType> getBikeDeviceTypeSet() {
-        EnumSet<DeviceType> deviceTypes = getEmptyDeviceTypeSet();
-        deviceTypes.add(DeviceType.BIKE_POWER);
-        deviceTypes.add(DeviceType.BIKE_CADENCE);
-        deviceTypes.add(DeviceType.BIKE_SPD);
-        deviceTypes.add(DeviceType.HEARTRATE);
-        return deviceTypes;
-    }
-
-
     /**
      * Starts the search for nearby Ant+ sensors.
      * @return True if started without exceptions.

@@ -14,9 +14,6 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import nl.easthome.ebikereader.R;
 
-/**
- * Created by joris on 24-Jan-18.
- */
 
 public class FixLocationSnackbarOnClick implements View.OnClickListener {
 

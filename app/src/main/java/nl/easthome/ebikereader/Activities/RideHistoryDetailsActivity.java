@@ -1,6 +1,7 @@
 package nl.easthome.ebikereader.Activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -149,32 +150,33 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
 
 
     private void exportRideDetails(){
-        Dexter.withActivity(this).withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new PermissionListener() {
+        final Activity activity = this;
+        runOnUiThread(new Runnable() {
             @Override
-            public void onPermissionGranted(PermissionGrantedResponse response) {
-                doOnExport();
-            }
-
-            @Override
-            public void onPermissionDenied(PermissionDeniedResponse response) {
-                Snackbar.make(mCoordinatorLayout, R.string.export_permission_denied, Snackbar.LENGTH_LONG);
-            }
-
-            @Override
-            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, final PermissionToken token) {
-                runOnUiThread(new Runnable() {
+            public void run() {
+                Dexter.withActivity(activity).withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new PermissionListener() {
                     @Override
-                    public void run() {
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        doOnExport();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        Snackbar.make(mCoordinatorLayout, R.string.export_permission_denied, Snackbar.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, final PermissionToken token) {
                         Snackbar.make(mCoordinatorLayout, R.string.export_permission_rationale, Snackbar.LENGTH_LONG).setAction(getString(R.string.snackbar_button_fix_this), new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 token.continuePermissionRequest();
                             }
-                        });
+                        }).show();
                     }
-                });
+                }).check();
             }
-        }).check();
+        });
     }
 
     private void doOnExport() {

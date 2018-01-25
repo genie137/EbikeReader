@@ -1,19 +1,25 @@
-package nl.easthome.ebikereader.Sensors;
+package nl.easthome.ebikereader.Implementations.Sensors;
+
+import android.app.Activity;
 import android.util.Log;
 
 import com.dsi.ant.plugins.antplus.pcc.AntPlusBikePowerPcc;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
+import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
 
+import nl.easthome.antpluslibary.Implementations.SensorResultReceiver;
+import nl.easthome.antpluslibary.Implementations.SensorStateChangeReceiver;
 import nl.easthome.antpluslibary.Interfaces.ISensorHandler;
-import nl.easthome.antpluslibary.SensorData.AntPlusPowerSensorData;
+import nl.easthome.ebikereader.SensorData.AntPlusPowerSensorData;
 
 public class EBikePowerSensorImplementation extends ISensorHandler<AntPlusBikePowerPcc, AntPlusPowerSensorData> {
 
-    public EBikePowerSensorImplementation() {
 
+    public EBikePowerSensorImplementation(Activity activity, int deviceID) {
+        super(activity, deviceID);
     }
 
     @Override
@@ -34,5 +40,10 @@ public class EBikePowerSensorImplementation extends ISensorHandler<AntPlusBikePo
                 dataset.dosetCalculatedPower(bigDecimal);
             }
         });
+    }
+
+    @Override
+    public PccReleaseHandle<AntPlusBikePowerPcc> getReleaseHandle(SensorResultReceiver<AntPlusBikePowerPcc, AntPlusPowerSensorData> resultReceiver, SensorStateChangeReceiver<AntPlusBikePowerPcc, AntPlusPowerSensorData> stateReceiver) {
+        return AntPlusBikePowerPcc.requestAccess(mActivity, mDeviceID, PROXIMITY, resultReceiver, stateReceiver);
     }
 }

@@ -133,7 +133,6 @@ public class DashboardActivity extends BaseActivityWithMenu {
 
     /**
      * Shows a snackbar explaining the error that no Location permission was given.
-     * TODO TEST new onclick
      */
     public void showLocationPermissionMissingExceptionSnackbar() {
         Snackbar snackbar = Snackbar.make(mDashboardLayout, R.string.snackbar_no_location_permission, Snackbar.LENGTH_LONG);
