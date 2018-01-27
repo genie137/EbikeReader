@@ -26,6 +26,49 @@ public class AntPlusSensorList {
     public AntPlusSensorList() {
     }
 
+    /**
+     * Add the sensor data of connected sensors to the rideMeasurement.
+     *
+     * @param rideMeasurement The rideMeasurement in which data needs to be added.
+     * @return The RideMeasurement after it has been filled with data.
+     */
+    public RideMeasurement addRideMeasurementDataOfAllConnectedSensors(RideMeasurement rideMeasurement) {
+
+        if (antPlusCadenceSensor != null) {
+            rideMeasurement.setCadenceSensorData(antPlusCadenceSensor.getLastSensorData());
+        }
+        if (antPlusHeartSensor != null) {
+            rideMeasurement.setHeartSensorData(antPlusHeartSensor.getLastSensorData());
+        }
+        if (antPlusPowerSensor != null) {
+            rideMeasurement.setPowerSensorData(antPlusPowerSensor.getLastSensorData());
+        }
+        if (antPlusSpeedSensor != null) {
+            rideMeasurement.setSpeedSensorData(antPlusSpeedSensor.getLastSensorData());
+        }
+        return rideMeasurement;
+    }
+
+    /**
+     * Disconnect all connected sensors.
+     */
+    public void disconnectAllConnectedSensors() {
+
+        if (antPlusCadenceSensor != null) {
+            antPlusCadenceSensor.disconnectSensor();
+        }
+        if (antPlusHeartSensor != null) {
+            antPlusHeartSensor.disconnectSensor();
+        }
+        if (antPlusPowerSensor != null) {
+            antPlusPowerSensor.disconnectSensor();
+        }
+        if (antPlusSpeedSensor != null) {
+            antPlusSpeedSensor.disconnectSensor();
+        }
+    }
+
+
     //Getters and Setters
 
     public AntPlusConnectedSensor<AntPlusBikeCadencePcc, AntPlusCadenceSensorData> getAntPlusCadenceSensor() {
@@ -60,39 +103,7 @@ public class AntPlusSensorList {
         this.antPlusSpeedSensor = antPlusSpeedSensor;
     }
 
-    public RideMeasurement addRideMeasurementDataOfAllConnectedSensors(RideMeasurement rideMeasurment) {
 
 
-        if (antPlusCadenceSensor != null) {
-            rideMeasurment.setCadenceSensorData(antPlusCadenceSensor.getLastSensorData());
-        }
-        if (antPlusHeartSensor != null) {
-            rideMeasurment.setHeartSensorData(antPlusHeartSensor.getLastSensorData());
-        }
-        if (antPlusPowerSensor != null) {
-            rideMeasurment.setPowerSensorData(antPlusPowerSensor.getLastSensorData());
-        }
-        if (antPlusSpeedSensor != null) {
-            rideMeasurment.setSpeedSensorData(antPlusSpeedSensor.getLastSensorData());
-        }
-        return rideMeasurment;
-    }
-
-    public void disconnectAllConnectedSensors() {
-
-
-        if (antPlusCadenceSensor != null) {
-            antPlusCadenceSensor.disconnectSensor();
-        }
-        if (antPlusHeartSensor != null) {
-            antPlusHeartSensor.disconnectSensor();
-        }
-        if (antPlusPowerSensor != null) {
-            antPlusPowerSensor.disconnectSensor();
-        }
-        if (antPlusSpeedSensor != null) {
-            antPlusSpeedSensor.disconnectSensor();
-        }
-    }
 
 }

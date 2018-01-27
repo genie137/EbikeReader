@@ -50,8 +50,9 @@ public abstract class ISensorHandler<SensorPcc extends AntPluginPcc, SensorData 
     /**
      * Gets the ReleaseHandle of the Sensor.
      * Essentially the connection to the device.
-     *
-     * @return
+     * Fill the method with the PCC of the device and calling the requestAccess method.
+     * Ex. AntPlusHeartRatePcc.requestAccess(mActivity, mDeviceID, PROXIMITY, resultReceiver, stateReceiver);
+     * @return The PccReleaseHandle of the device.
      */
     public abstract PccReleaseHandle<SensorPcc> getReleaseHandle(SensorResultReceiver<SensorPcc, SensorData> resultReceiver, SensorStateChangeReceiver<SensorPcc, SensorData> stateReceiver);
 

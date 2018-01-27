@@ -78,7 +78,7 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
         mRideID = getIntent().getStringExtra(intentExtraRideId);
         long mRideStart = getIntent().getLongExtra(intentExtraRideStart, 0L);
         setTitle(getString(R.string.ride_history_detail_title_preamp) + Constants.convertTimestampToDateTime(mRideStart));
-        mRideRecordingMappingHelper = new RideRecordingMappingHelper((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.detailMap), null);
+        mRideRecordingMappingHelper = new RideRecordingMappingHelper(this, (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.detailMap), null);
         getRideRecording();
 
     }
