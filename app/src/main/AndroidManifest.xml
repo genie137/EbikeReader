@@ -56,10 +56,6 @@
             android:label="@string/title_activity_ride_history_details"
             android:parentActivityName=".Activities.RideHistoryActivity">
         </activity>
-        <activity
-            android:name=".Activities.SettingsActivity"
-            android:label="@string/activity_title_settings"
-            android:parentActivityName=".Activities.DashboardActivity"></activity>
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -44,45 +44,51 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    //Android backwards compatibility
+    //Gradle keeps nagging about the versions, has to do with the dependencies of the other used dependencies.
     //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:support-v4:26.1.0'
-    compile 'com.facebook.android:facebook-android-sdk:4.6.0'
-    compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.android.support:design:26.1.0'
+    //noinspection GradleDynamicVersion
     compile 'com.android.support.constraint:constraint-layout:+'
-    testCompile 'junit:junit:4.12'
+
+    //Butterknife (http://jakewharton.github.io/butterknife/)
+    compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    compile 'com.firebaseui:firebase-ui-database:3.1.0'
-    compile 'com.firebaseui:firebase-ui-firestore:3.1.0'
-    compile 'com.firebaseui:firebase-ui-auth:3.1.0'
-    compile 'com.firebaseui:firebase-ui-storage:3.1.0'
-    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
-    compile 'com.github.bmarrdev:android-DecoView-charting:v1.2'
-    //noinspection GradleCompatible
-    compile 'com.google.firebase:firebase-core:11.4.2'
-    compile 'com.google.android.gms:play-services-location:11.4.2'
-    compile 'com.karumi:dexter:4.1.0'
+
+    //Firebase-UI (https://github.com/firebase/FirebaseUI-Android)
+    compile 'com.firebaseui:firebase-ui-database:3.2.1'
+    compile 'com.firebaseui:firebase-ui-firestore:3.2.1'
+    compile 'com.firebaseui:firebase-ui-auth:3.2.1'
+    compile 'com.firebaseui:firebase-ui-storage:3.2.1'
+
+    //Firebase Core and Google Play Services Maps and Location
+    compile 'com.google.firebase:firebase-core:11.8.0'
+    compile 'com.google.android.gms:play-services-maps:11.8.0'
+    compile 'com.google.android.gms:play-services-location:11.8.0'
+
+    //Dexter (https://github.com/Karumi/Dexter)
+    compile 'com.karumi:dexter:4.2.0'
+
+    //Material Dialogs  (https://github.com/afollestad/material-dialogs)
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
-    //https://github.com/Clans/FloatingActionButton
+
+    //Clans FloatingActionButton (https://github.com/Clans/FloatingActionButton)
     compile 'com.github.clans:fab:1.6.4'
-    compile 'com.google.android.gms:play-services-maps:11.4.2'
+
+    //AppIntro (https://github.com/apl-devs/AppIntro)
+    compile 'com.github.apl-devs:appintro:v4.2.2'
+
+    // Crashlitics part of Fabric.io (https://firebase.google.com/docs/crashlytics/)
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
-    compile 'com.github.apl-devs:appintro:v4.2.2'
-    compile 'com.github.ishaan1995:ButtonProgressBar:1.0'
 
-    compile 'com.github.PhilJay:ValueBar:v1.0.2'
-
-
+    //Own antpluslibary (needs to has same root folder), Official AntPluginLib (need to has same root folder)
     compile project(path: ':antpluslibary')
     compile project(path: ':antpluginlib_3-5-0')
-
-    implementation("com.mikepenz:materialdrawer:6.0.2@aar") {
-        transitive = true
-    }
 }
 
-
+//Google GMS plugin, needs to be at the bottom.
 apply plugin: 'com.google.gms.google-services'

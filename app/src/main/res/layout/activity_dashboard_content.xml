@@ -48,31 +48,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="67dp"
                 android:layout_gravity="top|center_horizontal"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="32dp"
                 android:layout_marginEnd="8dp"
                 android:adjustViewBounds="false"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:src="@drawable/ic_play_circle_outline_white_36dp"
                 app:fab_colorNormal="?attr/colorPrimary"
-                app:layout_anchor="@+id/frameLayout"
                 app:layout_anchorGravity="right|center"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintBottom_toBottomOf="@+id/valueTables"
-                app:layout_constraintEnd_toEndOf="@+id/valueTables"/>
-
-            <com.philjay.valuebar.ValueBar
-                android:id="@+id/valueBar"
-                android:layout_width="0dp"
-                android:layout_height="58dp"
-                android:layout_margin="5dp"
-                android:layout_marginBottom="32dp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.375"
-                app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintEnd_toEndOf="@+id/valueTables" />
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/valueTables"
@@ -83,7 +69,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
 
-                app:layout_constraintBottom_toTopOf="@+id/valueBar"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -93,26 +79,28 @@
                 <TextView
                     android:id="@+id/dashboard_statustext"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="8dp"
-                    android:text="STATUS: NOT RECORDING"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/default_dashboar_recording_status"
                     android:textAlignment="center"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:layout_editor_absoluteX="0dp"/>
+                    app:layout_constraintBottom_toTopOf="@+id/userPercentage"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/realtime_speed_kmh"
                     android:layout_width="110dp"
                     android:layout_height="70dp"
                     android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="@string/realtime_display_no_info"
                     android:textColor="#000000"
-                    android:textSize="60dp"
+                    android:textSize="60sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:layout_editor_absoluteY="31dp"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView8"
@@ -120,25 +108,26 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:gravity="center"
-                    android:text="km/h"
+                    android:text="@string/realtime_dashboard_kmhspeed_indicator"
                     android:textColor="#000000"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/realtime_speed_kmh"/>
+                    app:layout_constraintTop_toBottomOf="@+id/realtime_speed_kmh" />
 
                 <TextView
                     android:id="@+id/realtime_power"
                     android:layout_width="110dp"
                     android:layout_height="70dp"
                     android:layout_marginStart="24dp"
+                    android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="@string/realtime_display_no_info"
-                    android:textColor="#000000"
-                    android:textSize="60dp"
 
+                    android:textColor="#000000"
+                    android:textSize="60sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/realtime_speed_kmh"
-                    tools:layout_editor_absoluteY="31dp"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView9"
@@ -146,25 +135,26 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:gravity="center"
-                    android:text="watt"
+                    android:text="@string/realtime_dashboard_watt_indicator"
                     android:textColor="#000000"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     app:layout_constraintStart_toEndOf="@+id/textView8"
-                    app:layout_constraintTop_toBottomOf="@+id/realtime_power"/>
+                    app:layout_constraintTop_toBottomOf="@+id/realtime_power" />
 
                 <TextView
                     android:id="@+id/realtime_heartrate"
                     android:layout_width="110dp"
                     android:layout_height="70dp"
                     android:layout_marginStart="24dp"
+                    android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="@string/realtime_display_no_info"
-                    android:textColor="#000000"
-                    android:textSize="60dp"
 
+                    android:textColor="#000000"
+                    android:textSize="60sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/realtime_power"
-                    tools:layout_editor_absoluteY="31dp"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView11"
@@ -172,11 +162,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:gravity="center"
-                    android:text="bpm"
+                    android:text="@string/realtime_dashboard_bpm_indicator"
                     android:textColor="#000000"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     app:layout_constraintStart_toEndOf="@+id/textView9"
-                    app:layout_constraintTop_toBottomOf="@+id/realtime_heartrate"/>
+                    app:layout_constraintTop_toBottomOf="@+id/realtime_heartrate" />
 
                 <TextView
                     android:id="@+id/realtime_distance"
@@ -188,10 +178,10 @@
                     android:text="@string/realtime_display_no_info"
 
                     android:textColor="#000000"
-                    android:textSize="60dp"
+                    android:textSize="60sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView8"/>
+                    app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
                 <TextView
                     android:id="@+id/textView12"
@@ -199,11 +189,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:gravity="center"
-                    android:text="km"
+                    android:text="@string/realtime_dashboard_kmdistance_indicator"
                     android:textColor="#000000"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/realtime_distance"/>
+                    app:layout_constraintTop_toBottomOf="@+id/realtime_distance" />
 
                 <TextView
                     android:id="@+id/realtime_cadance"
@@ -214,10 +204,10 @@
                     android:gravity="center"
                     android:text="@string/realtime_display_no_info"
                     android:textColor="#000000"
-                    android:textSize="60dp"
+                    android:textSize="60sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/realtime_distance"
-                    app:layout_constraintTop_toBottomOf="@+id/textView9"/>
+                    app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
                 <TextView
                     android:id="@+id/textView13"
@@ -225,11 +215,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:gravity="center"
-                    android:text="rpm"
+                    android:text="@string/realtime_dashboard_rpm_indicator"
                     android:textColor="#000000"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     app:layout_constraintStart_toEndOf="@+id/textView12"
-                    app:layout_constraintTop_toBottomOf="@+id/realtime_cadance"/>
+                    app:layout_constraintTop_toBottomOf="@+id/realtime_cadance" />
+
+                <ProgressBar
+                    android:id="@+id/userPercentage"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
 
             </android.support.constraint.ConstraintLayout>
