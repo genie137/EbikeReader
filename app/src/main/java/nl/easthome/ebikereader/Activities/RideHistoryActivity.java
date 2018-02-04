@@ -103,9 +103,7 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
 
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
-                                    Toast toast = new Toast(RideHistoryActivity.this);
-                                    toast.setText(getString(R.string.toast_error_preamp) + databaseError.getMessage());
-                                    toast.show();
+                                    Toast.makeText(RideHistoryActivity.this, getString(R.string.toast_error_preamp) + databaseError.getMessage(), Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -114,9 +112,7 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Toast toast = new Toast(RideHistoryActivity.this);
-                    toast.setText(getString(R.string.toast_error_preamp) + databaseError.getMessage());
-                    toast.show();
+                    Toast.makeText(RideHistoryActivity.this, getString(R.string.toast_error_preamp) + databaseError.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
             return null;

@@ -77,7 +77,7 @@
     <string name="permission_for_location_on_denied">You can not use the recorder until you give the permission.</string>
     <string name="permission_for_location_rationale">We need the permission to see where you go.</string>
     <string name="toast_error_preamp">ERROR:</string>
-    <string name="ride_history_detail_title_preamp">Ride:</string>
+    <string name="ride_history_detail_title_preamp">Ride: </string>
     <string name="progress_dialog_loading_ride_title">Loading Ride.</string>
     <string name="progress_dialog_loading_ride_message">This wil take a minute…</string>
     <string name="export_permission_denied">If you give no permission, we cannot generate a file.  Change this in settings.</string>

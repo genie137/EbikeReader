@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import com.github.paolorotolo.appintro.AppIntro;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +21,7 @@ import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Helpers.SharedPrefsSaver;
 import nl.easthome.ebikereader.Interfaces.ILoginCompletedListener;
 import nl.easthome.ebikereader.Objects.UserDetails;
+import nl.easthome.ebikereader.R;
 
 /**
  * The IntroActivty handles the different login fragments.
@@ -99,7 +101,7 @@ public class IntroActivity extends AppIntro implements ILoginCompletedListener {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Toast.makeText(IntroActivity.this, getString(R.string.toast_error_preamp) + databaseError.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

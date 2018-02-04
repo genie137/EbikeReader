@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ride_history_detail_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nl.easthome.ebikereader.Activities.RideHistoryDetailsActivity"
-    android:id="@+id/ride_history_detail_layout">
+    tools:context="nl.easthome.ebikereader.Activities.RideHistoryDetailsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -22,7 +22,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_ride_history_details"/>
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_ride_history_details" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/exportFab"

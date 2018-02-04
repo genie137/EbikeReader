@@ -1,7 +1,10 @@
 package nl.easthome.ebikereader.Helpers;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,11 +12,13 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import nl.easthome.ebikereader.Activities.RideHistoryDetailsActivity;
 import nl.easthome.ebikereader.Exceptions.ExportException;
 import nl.easthome.ebikereader.Objects.EstimatedPowerData;
 import nl.easthome.ebikereader.Objects.FirebaseLocation;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
+import nl.easthome.ebikereader.R;
 import nl.easthome.ebikereader.SensorData.AntPlusCadenceSensorData;
 import nl.easthome.ebikereader.SensorData.AntPlusHeartSensorData;
 import nl.easthome.ebikereader.SensorData.AntPlusPowerSensorData;
@@ -22,6 +27,7 @@ import nl.easthome.ebikereader.SensorData.AntPlusSpeedSensorData;
 
 public class CSVExportHelper extends AsyncTask<Void,Void,String> {
 
+    private static final String LOGTAG = "CSV_EXPORT_HELPER";
     private static final String errorString = "error";
     private static final String header_time = "UNIXtimestamp,timeString,";
     private static final String header_gps = "gps_accuracy,gps_altitude,gps_bearing,gps_elapsedrealtimenanos,gps_latitude,gps_longitude,gps_provider,gps_speed,gps_time,";
@@ -34,10 +40,14 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
     private static final String csv_column_break = ",";
     private static final String unknown_item = "X";
     private RideRecording mRideRecording;
+    private ProgressDialog mProgressDialog;
+    @SuppressLint("StaticFieldLeak")
+    private RideHistoryDetailsActivity mRideHistoryDetailsActivity;
 
 
-    public CSVExportHelper(RideRecording rideRecording) {
+    public CSVExportHelper(RideHistoryDetailsActivity detailsActivity, RideRecording rideRecording) {
         mRideRecording = rideRecording;
+        mRideHistoryDetailsActivity = detailsActivity;
     }
 
     public String export() throws ExecutionException, InterruptedException, ExportException {
@@ -50,6 +60,18 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
         }
     }
 
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mRideHistoryDetailsActivity.showOrHideDialog(mRideHistoryDetailsActivity.getString(R.string.progress_csv_export_title), mRideHistoryDetailsActivity.getString(R.string.progress_csv_export_message));
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        mRideHistoryDetailsActivity.showOrHideDialog(null, null);
+    }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
@@ -69,7 +91,7 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
             fw.append(header_time + header_gps + header_speedsens + header_cadancesens + header_powersens + header_heartsens + header_est + csv_line_break);
 
             for (Map.Entry<String, RideMeasurement> recording : mRideRecording.getRideMeasurements().entrySet()) {
-
+                Log.d(LOGTAG, "Processing Measurement");
                 StringBuilder csvLine= new StringBuilder();
                 RideMeasurement recordingValue = recording.getValue();
 

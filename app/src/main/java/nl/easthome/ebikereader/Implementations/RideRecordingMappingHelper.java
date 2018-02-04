@@ -40,12 +40,14 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
     private boolean mIsMapReady;
     private GoogleMap mGoogleMap;
 	private Polyline mPolyline;
+    private SupportMapFragment mMapFragment;
 
 
     public RideRecordingMappingHelper(Activity activity, SupportMapFragment mapFragment, RideRecordingService rideRecordingService) {
         mRideRecordingService = rideRecordingService;
         mActivity = activity;
         mIsMapReady = false;
+        mMapFragment = mapFragment;
         mapFragment.getMapAsync(this);
     }
 
@@ -78,6 +80,24 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
 			mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPoint, 16));
 		}
 	}
+
+    private void setListWithPoints(List<LatLng> list) {
+        if (mIsMapReady && mGoogleMap != null) {
+            if (mPolyline == null) {
+                mPolyline = mGoogleMap.addPolyline(new PolylineOptions().clickable(true).addAll(list));
+            } else {
+                List<LatLng> points = mPolyline.getPoints();
+                points.addAll(list);
+                mPolyline.setPoints(points);
+            }
+        }
+    }
+
+    private void focusOnLastAddedPoint() {
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mPolyline.getPoints().get(mPolyline.getPoints().size() - 1), 16));
+    }
+
+
 
     @Override
 	public void onLocationResult(LocationResult locationResult) {
@@ -132,5 +152,9 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
             throw new NoLocationPermissionGivenException();
         }
         return false;
+    }
+
+    public SupportMapFragment getMapFragment() {
+        return mMapFragment;
     }
 }
