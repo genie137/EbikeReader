@@ -91,7 +91,12 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
                     }
                 }
 
-                mSwipeRefreshLayout.setRefreshing(false);
+                RideHistoryActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                });
             }
 
             @Override
