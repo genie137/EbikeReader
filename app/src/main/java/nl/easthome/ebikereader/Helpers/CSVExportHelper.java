@@ -69,8 +69,8 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
 
     @Override
     protected void onPostExecute(String s) {
-        super.onPostExecute(s);
         mRideHistoryDetailsActivity.showOrHideDialog(null, null);
+        super.onPostExecute(s);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

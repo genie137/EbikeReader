@@ -86,7 +86,6 @@
     <string name="progress_csv_export_message">This wil take a minute…</string>
     <string name="share_intent_title">Send to:</string>
     <string name="export_error">Something went wrong while exporting. Try again later.</string>
-    <string name="detail_duration_format">%d hours, %d minutes, %d seconds</string>
     <string name="ride_date_unknown">Unknown</string>
     <string name="user_pref_unknown_bike_model">Unknown</string>
     <string name="body_measurement_slide_not_all_fields_error">Please enter the data in order to continue.</string>
@@ -97,5 +96,8 @@
     <string name="realtime_dashboard_watt_indicator">watt</string>
     <string name="default_dashboar_recording_status">STATUS: NOT RECORDING</string>
     <string name="realtime_dashboard_kmhspeed_indicator">km/h</string>
+    <string name="details_minavgmax_field">(Min: %d / Avg: %d / Max: %d)</string>
+    <string name="details_no_measurementdata">No measurement data...</string>
+    <string name="details_hoursminutesseconds">%d hours, %d minutes, %d seconds</string>
 
 </resources>

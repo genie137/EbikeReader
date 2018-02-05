@@ -8,11 +8,10 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +26,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,7 +36,6 @@ import nl.easthome.ebikereader.Helpers.Constants;
 import nl.easthome.ebikereader.Helpers.FirebaseExecutorEventListener;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Implementations.RideRecordingMappingHelper;
-import nl.easthome.ebikereader.Objects.RideMeasurement;
 import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.R;
 
@@ -58,16 +51,26 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
     FloatingActionButton mExportFab;
     @BindView(R.id.durationValue)
     TextView mDurationValue;
-    @BindView(R.id.detailMap)
-    Fragment mMapFragment;
+    @BindView(R.id.heartbeatValue)
+    TextView mHeartrateValue;
+    @BindView(R.id.distanceValue)
+    TextView mDistanceValue;
+    @BindView(R.id.speedValue)
+    TextView mSpeedValue;
+    @BindView(R.id.cadanceValue)
+    TextView mCadanceValue;
+    @BindView(R.id.powerValue)
+    TextView mPowerValue;
+    @BindView(R.id.estTotalUserPowerValue)
+    TextView mEstTotalUserPowerValue;
+    @BindView(R.id.userEngineRatioValue)
+    TextView mUserEngineRatioValue;
+    @BindView(R.id.progressBar2)
+    ProgressBar mProgressBar;
+
     private RideRecordingMappingHelper mRideRecordingMappingHelper;
     private RideRecording mRideRecording;
     private MaterialDialog mProgressDialog;
-    private int numberOfMeasurements;
-    private long rideStart = Long.MAX_VALUE;
-    private long rideEnd = Long.MIN_VALUE;
-    private String mRideID;
-    private Executor executor;
 
 
     @OnClick(R.id.exportFab) public void onExportFabButtonPress(){exportRideDetails();}
@@ -83,55 +86,54 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mRideID = getIntent().getStringExtra(intentExtraRideId);
+        String mRideID = getIntent().getStringExtra(intentExtraRideId);
         long mRideStart = getIntent().getLongExtra(intentExtraRideStart, 0L);
         setTitle(getString(R.string.ride_history_detail_title_preamp) + Constants.convertTimestampToDateTime(mRideStart));
         mRideRecordingMappingHelper = new RideRecordingMappingHelper(this, (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.detailMap), null);
-        executor = Executors.newSingleThreadExecutor();
+        getRideRecording(mRideID);
 
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        getRideRecording(mRideID);
+    protected void onPause() {
+        showOrHideDialog(null, null);
+        super.onPause();
     }
 
     private void getRideRecording(String rideID) {
         showOrHideDialog("Loading Ride", "This may take some time depending on the ride duration.");
-        FirebaseSaver.getRideRecording(rideID, new FirebaseExecutorEventListener(executor) {
+        FirebaseSaver.getRideRecording(rideID, new FirebaseExecutorEventListener(Executors.newSingleThreadExecutor()) {
 
             @Override
             protected void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                int measurementCount = 1;
                 mRideRecording = dataSnapshot.getValue(RideRecording.class);
                 if (mRideRecording != null) {
-                    TreeMap<String, RideMeasurement> treeMap = new TreeMap<>(mRideRecording.getRideMeasurements());
-                    numberOfMeasurements = treeMap.size();
-
-                    for (Map.Entry<String, RideMeasurement> measurementEntry : treeMap.entrySet()) {
-                        Log.d("RIDELOADING", "Processing Measurement");
-                        final RideMeasurement recordingValue = measurementEntry.getValue();
-
-                        if (recordingValue.getTimestamp() > rideEnd){
-                            rideEnd =  recordingValue.getTimestamp();
-                        }
-                        if (recordingValue.getTimestamp() < rideStart) {
-                            rideStart = recordingValue.getTimestamp();
-                        }
-
-
-
-                    }
-
-                    fillDurationField(rideStart, rideEnd);
-                    //TODO CALCULATE ALL FIELDS IN UI
-
-                    //TODO SETLISTWITHPOINTS
                     RideHistoryDetailsActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mRideRecordingMappingHelper.addPointToMap();
+                            mRideRecordingMappingHelper.setListWithPoints(mRideRecording.getLatLngList());
+                        }
+                    });
+                    final String[] fields = mRideRecording.createDetailFields(getApplicationContext());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDurationValue.setText(fields[0]);
+                            mDistanceValue.setText(fields[1]);
+                            mSpeedValue.setText(fields[2]);
+                            mCadanceValue.setText(fields[3]);
+                            mHeartrateValue.setText(fields[4]);
+                            mPowerValue.setText(fields[5]);
+                            mEstTotalUserPowerValue.setText(fields[6]);
+                            mUserEngineRatioValue.setText(fields[7]);
 
+                            if (!fields[7].equals(getString(R.string.details_no_measurementdata))) {
+                                int userPercent = Integer.valueOf(fields[7].replace("(", "").replace(" ", "").split("/")[0]);
+                                mProgressBar.setProgress(userPercent);
+                            } else {
+                                mProgressBar.setProgress(50);
+                            }
                         }
                     });
 
@@ -144,37 +146,11 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
 
             @Override
             protected void onCancelledExecutor(DatabaseError databaseError) {
+                showOrHideDialog(null, null);
                 Toast.makeText(RideHistoryDetailsActivity.this, getString(R.string.toast_error_preamp) + databaseError.getMessage(), Toast.LENGTH_LONG).show();
-
             }
         });
     }
-
-
-    @Override
-    protected void onPause() {
-        showOrHideDialog(null, null);
-        super.onPause();
-    }
-
-    public void fillDurationField(long rideStart, long rideEnd) {
-        System.out.println(rideStart);
-        System.out.println(rideEnd);
-        long duration = rideEnd - rideStart;
-        long hours = TimeUnit.MILLISECONDS.toHours(duration);
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(hours);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(minutes) - TimeUnit.HOURS.toSeconds(hours);
-
-        final String formattedString = String.format(Locale.ENGLISH, getString(R.string.detail_duration_format), hours, minutes, seconds);
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mDurationValue.setText(formattedString);
-            }
-        });
-    }
-
 
     private void exportRideDetails(){
         final Activity activity = this;

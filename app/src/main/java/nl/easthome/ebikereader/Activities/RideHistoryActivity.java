@@ -1,8 +1,6 @@
 package nl.easthome.ebikereader.Activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,12 +15,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import nl.easthome.ebikereader.Adapters.RideHistoryAdapter;
 import nl.easthome.ebikereader.Helpers.BaseActivityWithMenu;
+import nl.easthome.ebikereader.Helpers.FirebaseExecutorEventListener;
 import nl.easthome.ebikereader.Helpers.FirebaseSaver;
 import nl.easthome.ebikereader.Objects.RideRecording;
 import nl.easthome.ebikereader.R;
@@ -64,59 +63,43 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
     @Override
     protected void onResume() {
         super.onResume();
-        mSwipeRefreshLayout.setRefreshing(true);
-        gatherData();
     }
-
-    private void gatherData() {
-        try {
-            AsyncTask<Void,Void,Void> task = new GatherDataAsyncTask();
-            rideHistoryAdapter.clear();
-            task.execute().get();
-            mSwipeRefreshLayout.setRefreshing(false);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     @Override
     public void onRefresh() {
-        gatherData();
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    class GatherDataAsyncTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            FirebaseSaver.getUserRides(FirebaseAuth.getInstance().getUid(), new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot rideSnapshot : dataSnapshot.getChildren()) {
-                        if (rideSnapshot.getValue() != null) {
-                            FirebaseSaver.getRideRecording(rideSnapshot.getValue().toString(), new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    RideRecording rideRecording = dataSnapshot.getValue(RideRecording.class);
-                                    rideHistoryAdapter.add(rideRecording);
+        FirebaseSaver.getUserDetails(FirebaseAuth.getInstance().getUid(), new FirebaseExecutorEventListener(Executors.newSingleThreadExecutor()) {
+            @Override
+            protected void onDataChangeExecutor(DataSnapshot dataSnapshot) {
+                for (DataSnapshot rideSnapshot : dataSnapshot.getChildren()) {
+                    if (rideSnapshot.getValue() != null) {
+                        FirebaseSaver.getRideRecording(rideSnapshot.getValue().toString(), new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                RideRecording rideRecording = dataSnapshot.getValue(RideRecording.class);
+                                if (rideRecording != null) {
+                                    if (rideRecording.getRideEnd() > 0) {
+                                        rideHistoryAdapter.add(rideRecording);
+                                    }
                                 }
+                            }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Toast.makeText(RideHistoryActivity.this, getString(R.string.toast_error_preamp) + databaseError.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(RideHistoryActivity.this, getString(R.string.toast_error_preamp) + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(RideHistoryActivity.this, getString(R.string.toast_error_preamp) + databaseError.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
-            return null;
-        }
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            protected void onCancelledExecutor(DatabaseError databaseError) {
+                Toast.makeText(RideHistoryActivity.this, getString(R.string.toast_error_preamp) + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
 }
 

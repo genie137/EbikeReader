@@ -81,20 +81,24 @@ public class RideRecordingMappingHelper extends LocationCallback implements OnMa
 		}
 	}
 
-    private void setListWithPoints(List<LatLng> list) {
+    public void setListWithPoints(List<LatLng> list) {
         if (mIsMapReady && mGoogleMap != null) {
             if (mPolyline == null) {
                 mPolyline = mGoogleMap.addPolyline(new PolylineOptions().clickable(true).addAll(list));
+
             } else {
                 List<LatLng> points = mPolyline.getPoints();
                 points.addAll(list);
                 mPolyline.setPoints(points);
             }
+            focusOnLastAddedPoint();
         }
     }
 
     private void focusOnLastAddedPoint() {
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mPolyline.getPoints().get(mPolyline.getPoints().size() - 1), 16));
+        if (mPolyline.getPoints().size() > 0) {
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mPolyline.getPoints().get(mPolyline.getPoints().size() - 1), 16));
+        }
     }
 
 
