@@ -77,9 +77,9 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 RideRecording rideRecording = dataSnapshot.getValue(RideRecording.class);
                                 if (rideRecording != null) {
-                                    if (rideRecording.getRideEnd() > 0) {
+                                    //TODO check if ended
                                         rideHistoryAdapter.add(rideRecording);
-                                    }
+
                                 }
                             }
 

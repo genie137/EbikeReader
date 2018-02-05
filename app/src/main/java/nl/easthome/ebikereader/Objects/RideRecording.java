@@ -24,8 +24,8 @@ import nl.easthome.ebikereader.SensorData.AntPlusSpeedSensorData;
 public class RideRecording {
 
     private String rideId;
-    private long rideStart = -1;
-    private long rideEnd = -1;
+    private long rideStart;
+    private long rideEnd;
     private HashMap<String, RideMeasurement> mRideMeasurements;
 
     public RideRecording() {
