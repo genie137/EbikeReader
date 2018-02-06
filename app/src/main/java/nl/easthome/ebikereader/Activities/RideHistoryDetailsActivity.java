@@ -1,7 +1,6 @@
 package nl.easthome.ebikereader.Activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -153,14 +152,23 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
     }
 
     private void exportRideDetails(){
-        final Activity activity = this;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        final RideHistoryDetailsActivity activity = this;
                 Dexter.withActivity(activity).withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
-                        doOnExport();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    CSVExportHelper csvExportHelper = new CSVExportHelper(activity, mRideRecording);
+                                    String filename = csvExportHelper.execute().get();
+                                    showSharingIntent(filename);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Snackbar.make(mCoordinatorLayout, R.string.export_error, Snackbar.LENGTH_LONG).show();
+                                }
+                            }
+                        }).run();
                     }
 
                     @Override
@@ -178,23 +186,6 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                         }).show();
                     }
                 }).check();
-            }
-        });
-    }
-
-    private void doOnExport() {
-
-        try {
-            CSVExportHelper csvExportHelper = new CSVExportHelper(this, mRideRecording);
-            String filename = csvExportHelper.export();
-            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + filename));
-            startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_intent_title)));
-        } catch (Exception e) {
-            e.printStackTrace();
-            Snackbar.make(mCoordinatorLayout, R.string.export_error, Snackbar.LENGTH_LONG).show();
-        }
     }
 
     public void showOrHideDialog(final String title, final String content) {
@@ -215,6 +206,19 @@ public class RideHistoryDetailsActivity extends AppCompatActivity {
                             .build();
                     mProgressDialog.show();
                 }
+            }
+        });
+    }
+
+    public void showSharingIntent(final String filename) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(filename);
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + filename));
+                startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_intent_title)));
             }
         });
     }

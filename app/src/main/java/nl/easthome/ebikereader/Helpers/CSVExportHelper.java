@@ -1,19 +1,15 @@
 package nl.easthome.ebikereader.Helpers;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import nl.easthome.ebikereader.Activities.RideHistoryDetailsActivity;
-import nl.easthome.ebikereader.Exceptions.ExportException;
 import nl.easthome.ebikereader.Objects.EstimatedPowerData;
 import nl.easthome.ebikereader.Objects.FirebaseLocation;
 import nl.easthome.ebikereader.Objects.RideMeasurement;
@@ -40,7 +36,6 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
     private static final String csv_column_break = ",";
     private static final String unknown_item = "X";
     private RideRecording mRideRecording;
-    private ProgressDialog mProgressDialog;
     @SuppressLint("StaticFieldLeak")
     private RideHistoryDetailsActivity mRideHistoryDetailsActivity;
 
@@ -49,17 +44,6 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
         mRideRecording = rideRecording;
         mRideHistoryDetailsActivity = detailsActivity;
     }
-
-    public String export() throws ExecutionException, InterruptedException, ExportException {
-        String output = this.execute().get();
-        if (output.equals(errorString)){
-            throw new ExportException();
-        }
-        else {
-            return output;
-        }
-    }
-
 
     @Override
     protected void onPreExecute() {
@@ -91,10 +75,10 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
             fw.append(header_time + header_gps + header_speedsens + header_cadancesens + header_powersens + header_heartsens + header_est + csv_line_break);
 
             for (Map.Entry<String, RideMeasurement> recording : mRideRecording.getRideMeasurements().entrySet()) {
-                Log.d(LOGTAG, "Processing Measurement");
                 StringBuilder csvLine= new StringBuilder();
                 RideMeasurement recordingValue = recording.getValue();
 
+                csvLine.append(csv_line_break);
                 csvLine.append(recordingValue.getTimestamp()).append(csv_column_break).append(recordingValue.getTimeAsString()).append(csv_column_break);
                 csvLine.append(csvLocation(recordingValue.getLocation()));
                 csvLine.append(csvSpeedSensor(recordingValue.getSpeedSensorData()));
@@ -102,7 +86,6 @@ public class CSVExportHelper extends AsyncTask<Void,Void,String> {
                 csvLine.append(csvPowerSensor(recordingValue.getPowerSensorData()));
                 csvLine.append(csvHeartSensor(recordingValue.getHeartSensorData()));
                 csvLine.append(csvEstimatedSensor(recordingValue.getEstimatedPowerData()));
-                csvLine.append(csv_line_break);
                 fw.append(csvLine.toString());
 
             }

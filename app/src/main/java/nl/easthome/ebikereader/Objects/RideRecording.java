@@ -152,10 +152,10 @@ public class RideRecording {
 
         for (Map.Entry<String, RideMeasurement> measurementEntry : treeMap.entrySet()) {
             RideMeasurement rideMeasurement = measurementEntry.getValue();
-            if (rideMeasurement.getCadenceSensorData() != null) {
-                AntPlusPowerSensorData cadenceSensorData = rideMeasurement.getPowerSensorData();
+            if (rideMeasurement.getPowerSensorData() != null) {
+                AntPlusPowerSensorData powerSensorData = rideMeasurement.getPowerSensorData();
                 numberOfPowerMeasurements++;
-                double power = cadenceSensorData.getCalculatedPower();
+                double power = powerSensorData.getCalculatedPower();
                 powerTotal += power;
                 if (power > powerMax) {
                     powerMax = power;
