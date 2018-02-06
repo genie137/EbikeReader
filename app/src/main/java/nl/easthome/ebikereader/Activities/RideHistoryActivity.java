@@ -162,6 +162,8 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
      * Returns -1 if o1 is older (less) then o2
      * Returns 0 if o1 is as old as o2
      * Returns 1 if o1 newer then o2
+     * Should be (top down) for oldest first: -1,1,0
+     * Should be (top down) for newest first: 1,-1,0
      */
     private void sortList() {
         runOnUiThread(new Runnable() {
@@ -171,9 +173,9 @@ public class RideHistoryActivity extends BaseActivityWithMenu implements SwipeRe
                     @Override
                     public int compare(RideRecording o1, RideRecording o2) {
                         if (o1.getRideStart() < o2.getRideStart()) {
-                            return -1;
-                        } else if (o1.getRideStart() > o2.getRideStart()) {
                             return 1;
+                        } else if (o1.getRideStart() > o2.getRideStart()) {
+                            return -1;
                         } else {
                             return 0;
                         }

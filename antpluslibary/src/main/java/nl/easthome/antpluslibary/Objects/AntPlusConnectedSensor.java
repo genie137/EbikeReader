@@ -43,12 +43,22 @@ public class AntPlusConnectedSensor<SensorPcc extends AntPluginPcc, SensorData e
         connectSensor();
     }
 
+    /**
+     * Connects to the sensor.
+     */
     public void connectSensor() {
         mReleaseHandle = mSensorHandler.getReleaseHandle(mSensorResultReceiver, mSensorStateChangeReceiver);
     }
 
+    /**
+     * Disconnects the sensor.
+     * The exception catch occurs if the the method is called before the sensor is actually connected.
+     */
     public void disconnectSensor() {
-        resultConnection.releaseAccess();
+        try {
+            resultConnection.releaseAccess();
+        } catch (NullPointerException ignored) {
+        }
     }
 
     /**

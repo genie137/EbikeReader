@@ -62,7 +62,7 @@ public abstract class ISensorHandler<SensorPcc extends AntPluginPcc, SensorData 
      * @param returnEmptyTypeIfEmptyClazz The type of SensorData.
      * @return The latest dataset which has not been filled completely OR a new instance of an empty dataset.
      */
-    protected SensorData getLatestNonCompletedDataset(Class<SensorData> returnEmptyTypeIfEmptyClazz) {
+    protected synchronized SensorData getLatestNonCompletedDataset(Class<SensorData> returnEmptyTypeIfEmptyClazz) {
         if (mDataDeque.size() >= 1) {
             for (SensorData sensorData : mDataDeque) {
                 if (!sensorData.isDatasetComplete()) {

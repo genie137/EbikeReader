@@ -99,5 +99,7 @@
     <string name="details_minavgmax_field">(Min: %d / Avg: %d / Max: %d)</string>
     <string name="details_no_measurementdata">No measurement data...</string>
     <string name="details_hoursminutesseconds">%d hours, %d minutes, %d seconds</string>
+    <string name="snackbar_bluetooth_is_disabled">Bluetooth is disabled. Please enable.</string>
+    <string name="snackbar_no_bluetooth_adapter">You don\'t have a Bluetooth adapter.</string>
 
 </resources>

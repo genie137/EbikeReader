@@ -66,6 +66,7 @@ public class AntPlusSensorScanner {
     public boolean startFindDevices(){
         try{
             mAntPlusDeviceListViewAdapter = new AntPlusDeviceListViewAdapter(mActivity, mSensors);
+            mAntPlusDeviceListViewAdapter.clear();
             addPreviouslyConnectedDevices();
             mListView.setAdapter(mAntPlusDeviceListViewAdapter);
             MdsSearchCallback mMdsSearchCallbacks = new MdsSearchCallback(mActivity, mSensors, mAntPlusDeviceListViewAdapter);
@@ -101,7 +102,9 @@ public class AntPlusSensorScanner {
      * Stops the search for nearby Ant+ Sensors
      */
     public void stopFindDevices(){
-        mMultiDeviceSearch.close();
+        if (mMultiDeviceSearch != null) {
+            mMultiDeviceSearch.close();
+        }
     }
 
 }

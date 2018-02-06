@@ -19,7 +19,6 @@ public class EBikeSpeedSensorImplementation extends ISensorHandler<AntPlusBikeSp
 
     /**
      * Implementation of the SensorHandler for the speed sensor.
-     * !
      * @param activity
      * @param deviceID
      * @param wheelCircumference in Meters.
@@ -41,8 +40,12 @@ public class EBikeSpeedSensorImplementation extends ISensorHandler<AntPlusBikeSp
              */
             @Override
             public void onNewCalculatedSpeed(long l, EnumSet<EventFlag> enumSet, BigDecimal bigDecimal) {
+
                 AntPlusSpeedSensorData dataset = getLatestNonCompletedDataset(AntPlusSpeedSensorData.class);
                 dataset.dosetSpeedInMeterPerSecond(bigDecimal);
+                System.out.println("curspeed = " + bigDecimal);
+
+
             }
         });
         sensorConnection.subscribeCalculatedAccumulatedDistanceEvent(new AntPlusBikeSpeedDistancePcc.CalculatedAccumulatedDistanceReceiver(mWheelCircumference) {
@@ -56,6 +59,7 @@ public class EBikeSpeedSensorImplementation extends ISensorHandler<AntPlusBikeSp
             public void onNewCalculatedAccumulatedDistance(long l, EnumSet<EventFlag> enumSet, BigDecimal bigDecimal) {
                 AntPlusSpeedSensorData dataset = getLatestNonCompletedDataset(AntPlusSpeedSensorData.class);
                 dataset.dosetCalcAccumulatedDistanceInMeters(bigDecimal);
+                System.out.println("curdist = " + bigDecimal);
             }
         });
     }

@@ -131,6 +131,15 @@ public class DashboardActivity extends BaseActivityWithMenu {
         snackbar.show();
     }
 
+    public void showBluetoothIsDisabledException() {
+        Snackbar.make(mDashboardLayout, R.string.snackbar_bluetooth_is_disabled, Snackbar.LENGTH_LONG).setAction(R.string.snackbar_button_fix_this, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+            }
+        }).show();
+    }
+
     /**
      * Shows a snackbar explaining the error that no Location permission was given.
      */
@@ -172,5 +181,6 @@ public class DashboardActivity extends BaseActivityWithMenu {
     public TextView getRealtimeSpeed() {
         return mRealtimeSpeed;
     }
+
 
 }
