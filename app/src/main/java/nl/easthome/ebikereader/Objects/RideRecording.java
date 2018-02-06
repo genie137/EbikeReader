@@ -202,7 +202,7 @@ public class RideRecording {
 
         if (numberOfCadenceMeasurements > 0 && cadenceTotal > 0) {
             Double avg = cadenceTotal / numberOfCadenceMeasurements;
-            return String.format(Locale.ENGLISH, context.getString(R.string.details_minavgmax_field), cadenceMin.intValue(), avg.intValue(), cadenceMax.intValue());
+            return String.format(Locale.ENGLISH, context.getString(R.string.details_minavgmax_field) + " rpm", cadenceMin.intValue(), avg.intValue(), cadenceMax.intValue());
         } else {
             return context.getString(R.string.details_no_measurementdata);
         }
@@ -221,7 +221,8 @@ public class RideRecording {
             if (rideMeasurement.getSpeedSensorData() != null) {
                 AntPlusSpeedSensorData speedSensorData = rideMeasurement.getSpeedSensorData();
                 numberOfSpeedMeasurements++;
-                double speed = speedSensorData.getSpeedInMeterPerSecond();
+                double speed = Constants.convertMStoKMS(speedSensorData.getSpeedInMeterPerSecond());
+                System.out.println(speed);
                 speedTotal += speed;
                 if (speed > speedMax) {
                     speedMax = speed;
@@ -235,7 +236,7 @@ public class RideRecording {
 
         if (numberOfSpeedMeasurements > 0 && speedTotal > 0) {
             Double avg = speedTotal / numberOfSpeedMeasurements;
-            return String.format(Locale.ENGLISH, context.getString(R.string.details_minavgmax_field), speedMin.intValue(), avg.intValue(), speedMax.intValue());
+            return String.format(Locale.ENGLISH, context.getString(R.string.details_minavgmax_field) + " km/h", speedMin.intValue(), avg.intValue(), speedMax.intValue());
         } else {
             return context.getString(R.string.details_no_measurementdata);
         }
@@ -243,7 +244,27 @@ public class RideRecording {
 
     @Exclude
     private String distanceField(Context context) {
-        return context.getString(R.string.details_no_measurementdata);
+        TreeMap<String, RideMeasurement> treeMap = new TreeMap<>(mRideMeasurements);
+
+        RideMeasurement lastRideMeasurement = treeMap.lastEntry().getValue();
+
+        if (lastRideMeasurement.getSpeedSensorData() != null) {
+            Double calcAccumulatedDistanceInMeters = lastRideMeasurement.getSpeedSensorData().getCalcAccumulatedDistanceInMeters();
+            if (calcAccumulatedDistanceInMeters > 0) {
+                int distInKm = calcAccumulatedDistanceInMeters.intValue() / 1000;
+                if (distInKm < 1) {
+                    return "< 1 km";
+                } else {
+                    return String.format(Locale.ENGLISH, "~ %d km", distInKm);
+
+                }
+            } else {
+                return context.getString(R.string.details_no_measurementdata);
+
+            }
+        } else {
+            return context.getString(R.string.details_no_measurementdata);
+        }
     }
 
     @Exclude
@@ -294,7 +315,7 @@ public class RideRecording {
         }
 
         if (numberOfHrMeasurements > 0 && hrTotal > 0) {
-            return String.format(Locale.ENGLISH, context.getString(R.string.details_minavgmax_field), hrMin, (hrTotal / numberOfHrMeasurements), hrMax);
+            return String.format(Locale.ENGLISH, context.getString(R.string.details_minavgmax_field) + " bpm", hrMin, (hrTotal / numberOfHrMeasurements), hrMax);
         } else {
             return context.getString(R.string.details_no_measurementdata);
         }
